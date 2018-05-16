@@ -30,6 +30,6 @@ module.exports = function (args, message) {
             logger.info('Someone tried to roll something that is NaN!');
             return;
         }
-        message.reply('You rolled a '+result);//+' with your d'+diceSides);
+        message.reply('You rolled a '+result);
     }
 }

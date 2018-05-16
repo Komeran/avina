@@ -4,6 +4,7 @@ var auth = require('./auth.json');
 var apply = require('./commands/apply.js');
 var roll = require('./commands/roll.js');
 var clean = require('./commands/clean.js');
+var draw = require('./commands/draw.js');
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -35,6 +36,8 @@ client.on('message', message => {
         case 'clean':
             //clean(args, message);
             break;
+        case 'draw':
+            draw(args, message);
     }
     // message.delete();
   }
