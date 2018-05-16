@@ -1,0 +1,3 @@
+STAR
+
+Increase one of your ability scores by 2. The score can exceed 20 but can't exceed 24.
