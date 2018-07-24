@@ -5,6 +5,7 @@ var apply = require('./commands/apply.js');
 var roll = require('./commands/roll.js');
 var clean = require('./commands/clean.js');
 var draw = require('./commands/draw.js');
+var rolls = require('./commands/rolls.js');
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -38,6 +39,9 @@ client.on('message', message => {
             break;
         case 'draw':
             draw(args, message);
+            break;
+        case 'rolls':
+            rolls(args, message);
             break;
     }
     // message.delete();
