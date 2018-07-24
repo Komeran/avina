@@ -38,6 +38,7 @@ client.on('message', message => {
             break;
         case 'draw':
             draw(args, message);
+            break;
     }
     // message.delete();
   }
