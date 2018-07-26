@@ -62,3 +62,6 @@ auth.json
 
 # dumps
 .bot.js.swp
+
+# JetBrains stuff
+.idea/*
