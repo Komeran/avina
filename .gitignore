@@ -59,3 +59,6 @@ typings/
 
 # Bot authentication
 auth.json
+
+# dumps
+.bot.js.swp
