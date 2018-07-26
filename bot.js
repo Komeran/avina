@@ -1,6 +1,7 @@
 var Discord = require('discord.js');
 var logger = require('winston');
 var auth = require('./auth.json');
+var games = require('./dnd_util/games.js');
 /*
  * var apply = require('./commands/apply.js');
  * var roll = require('./commands/roll.js');
@@ -45,6 +46,7 @@ client.on('message', message => {
 		var cmd = args[0];
 
 		callCommand(cmd, message, args, commands);
+		console.log(games);
 	}
 });
 
