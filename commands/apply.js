@@ -1,23 +1,35 @@
 var logger = require('winston');
+var applications = require('../util/applications.js');
 
 module.exports = function(args, message) {
     if(args.length == 2) {
         var appliedRole = getRoleForTag(args[1], message.guild.roles);
         if(appliedRole) {
-            message.reply('Your Application for <@&'+appliedRole+'> has been registered and will be reviewed by an <@&381140079298740224> or <@&381777629440638977> member shortly!',
-        {
-
-        });
+            let overridden = false;
+            for(let a in applications) {
+                if(applications[a].user === message.author.id) {
+                    applications[a].role = appliedRole;
+                    overridden = true;
+                    break;
+                }
+            }
+            if(!overridden) {
+                applications.push({
+                    user: message.author.id,
+                    role: appliedRole
+                });
+            }
+            message.reply('Your Application for <@&'+appliedRole+'> has been registered and will be reviewed by an <@&381140079298740224> or <@&381777629440638977> member shortly!');
         }
         else {
-            message.reply('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
+            message.author.send('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
         }
     }
     else if(args.length == 1) {
-        message.reply('\'apply\' command invalid: Missing Channel Tag parameter!');
+        logger.info('\'apply\' command invalid: Missing Channel Tag parameter!');
     }
     else {
-        message.reply('\'apply\' command invalid: Too many parameters!');
+        logger.info('\'apply\' command invalid: Too many parameters!');
     }
 };
 

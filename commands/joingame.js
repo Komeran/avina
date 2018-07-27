@@ -7,14 +7,19 @@ module.exports = function(args, message) {
         return;
     }
 
-    for(g in games) {
+    if(!args[1]) {
+        logger.log("Not enough arguments for !joingame command.");
+        return;
+    }
+
+    for(let g in games) {
         if(games[g].session !== args[1].toLowerCase() && games[g].players.indexOf(message.author.id) !== -1) {
             var oldGame = games[g];
             break;
         }
     }
 
-    for(g in games) {
+    for(let g in games) {
         if(games[g].session === args[1].toLowerCase()) {
             if(games[g].dm === message.author.id) {
                 message.author.send("You are the current DM of the game '" + args[1].toLowerCase() + "'! You can't join it as a player!");
