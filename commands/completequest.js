@@ -27,7 +27,7 @@ module.exports = function(args, message) {
             games[g].quests[id-1].completed = !games[g].quests[id-1].completed;
             message.channel.send({
                 embed: {
-                    title: "Quest of game " + game[g].session + " has been " + (games[g].quests[id-1].completed ? "" : "un") + "completed!",
+                    title: "Quest of game " + games[g].session + " has been " + (games[g].quests[id-1].completed ? "" : "un") + "completed!",
                     description: "[" + id + "] " + games[g].quests[id-1].description,
                     color: 3447003
                 }

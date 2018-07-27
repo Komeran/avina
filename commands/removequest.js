@@ -26,7 +26,7 @@ module.exports = function(args, message) {
             }
             message.channel.send({
                 embed: {
-                    title: "Quest has been removed from game " + game[g].session,
+                    title: "Quest has been removed from game " + games[g].session,
                     description: "[" + id + "] " + games[g].quests[id-1].description,
                     color: 3447003
                 }

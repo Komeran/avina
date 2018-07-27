@@ -23,7 +23,7 @@ module.exports = function(args, message) {
             });
             message.channel.send({
                 embed: {
-                    title: "Added Quest to game " + game[g].session,
+                    title: "Added Quest to game " + games[g].session,
                     description: "[" + games[g].quests.length + "] " + questDescription,
                     color: 3447003
                 }

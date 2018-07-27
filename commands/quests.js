@@ -33,7 +33,7 @@ module.exports = function(args, message) {
             }
             message.channel.send({
                 embed: {
-                    title: "Quest List of game " + game[g].session,
+                    title: "Quest List of game " + games[g].session,
                     color: 3447003,
                     fields: fields
                 }
