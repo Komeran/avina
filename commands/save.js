@@ -20,7 +20,7 @@ module.exports = function(args, message) {
 
 
     if(!fs.existsSync(path.join(__dirname, "../data"))) {
-        fs.mkdirSync(path.join(__dirname, "../data");
+        fs.mkdirSync(path.join(__dirname, "../data"));
     }
 
     fs.writeFile(path.join(__dirname, '../data/games.json'), json, 'utf8', function(err) {
