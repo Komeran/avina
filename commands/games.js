@@ -20,5 +20,5 @@ module.exports = function(args, message) {
         embed.description = "There are no games currently! Be the first to start one using !claimdm <Game> , or have your DM do it!";
     }
 
-    message.channel.send(embed);
+    message.channel.send({'embed': embed});
 };
