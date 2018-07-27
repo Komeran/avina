@@ -2,6 +2,29 @@
 A Discord Bot which I use for my own Guild (as in Discord server, not some Game Guild)
 Invite Avina to your server: https://discordapp.com/oauth2/authorize?client_id=382288187990736916&scope=bot
 
+## Administrative stuff
+Avina is intended to be a bot for a wide variety of tasks to improve users' Discord experience on your server. However, the administrative commands are primarily intended to help you as an admin manage your users, roles and whatnot. Enjoy!
+
+### Commands
+Here is a list of the commands that are already implemented.
+
+* `!apply` command to apply for a role on a server. For this to work, it's important to put tags infront of roles, that users should be
+  able to assume. The command's tag parameter is case insensitive and must not include the tag brackets []. Note that this doesn't work
+  for roles with the Administrator permission, as I highly advise, never to give a bot Administrator rights! Not even your own bots! :D
+
+  Usage example: `!apply gA` -> Saves a registration for the role with the tag [GA], if the user does not already have that role.
+* `!approve` command to apply all roles one ore several users applied for them. Always check, what roles the users applied for before
+  using this command!
+  
+  Usage example: `!approve @AwesomeGuy @ThatDudeEveryoneTalksAbout` -> This will apply all the roles the users applied for to them and
+  update their tags (WIP).
+* `!disapprove` command to delete all role applications of one or several users.
+
+  Usage example: `!disapprove @AwesomeGuy @ThatDudeEveryoneTalksAbout` -> Currently this doesn't update the users' tags.
+* `!save` command for saving the current data. Saved data will be loaded on (re-)start of the bot.
+
+  Usage: `!save`
+
 ## D&D
 Yes, I use this bot for my D&D 5e Campaigns.
 
@@ -46,6 +69,3 @@ Here is a list of the commands that are already implemented.
 * `!quests` command for listing the quests of a game.
 
   Usage example: `!quests foo` -> Will list all the quests of the game "foo" if it exists.
-* `!save` command for saving the current games data. Saved data will be loaded on (re-)start of the bot.
-
-  Usage: `!save`
