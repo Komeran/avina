@@ -27,6 +27,11 @@ module.exports = function(args, message) {
         return;
     }
 
+    if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
+        message.author.send("Only admins of a server may use the !save command! And you are no admin, sorry :/");
+        return;
+    }
+
     if(isSaving) {
         message.author.send("I'm already on it! Please be patient with me, sometimes saving lots of data takes a while :(");
         return;
