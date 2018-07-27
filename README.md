@@ -32,3 +32,20 @@ Here is a list of the commands that are already implemented.
 * `!games` command to list the currently running games, their DMs and player counts.
 
   Usage: `!games`
+* `!newquest` command to create a new quest for a game. User has to be a DM to use this command.
+
+  Usage example: `!newquest Do Stuff` -> Will create a new open quest called "Do Stuff" with an ID Number for the game the user is
+  DMing.
+* `!removequest` command to remove a quest from a game. User hat to be a DM to use this command.
+
+  Usage example: `!removequest 3` -> Will remove the quest with the ID number 3 from the game the user is currently DMing.
+* `!completequest` command to mark a quest as completed/open. User has to be a DM to use this command.
+
+  Usage example: `!completequest 2` -> Will mark the quest with the ID number 2 from the game the user is currently DMing as "completed"
+  if the quest was open, or as "open" if the quest was completed.
+* `!quests` command for listing the quests of a game.
+
+  Usage example: `!quests foo` -> Will list all the quests of the game "foo" if it exists.
+* `!save` command for saving the current games data. Saved data will be loaded on (re-)start of the bot.
+
+  Usage: `!save`
