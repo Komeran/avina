@@ -6,6 +6,7 @@
 var logger = require('winston');
 var games = require('../dnd_util/games.js');
 var fs = require("fs");
+var path = require('path');
 
 module.exports = function(args, message) {
     if(args.length > 1) {
@@ -18,11 +19,11 @@ module.exports = function(args, message) {
     var json = JSON.stringify(games);
 
 
-    if(!fs.existsSync("../data")) {
-        fs.mkdirSync("../data");
+    if(!fs.existsSync(path.join(__dirname, "../data"))) {
+        fs.mkdirSync(path.join(__dirname, "../data");
     }
 
-    fs.writeFile('../data/games.json', json, 'utf8', function(err) {
+    fs.writeFile(path.join(__dirname, '../data/games.json'), json, 'utf8', function(err) {
         if(err) {
             message.channel.send("Something went wrong during saving! Please tell your server admin!");
             logger.warn(err);

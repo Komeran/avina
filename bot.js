@@ -3,18 +3,22 @@ var logger = require('winston');
 var auth = require('./auth.json');
 var games = require('./dnd_util/games.js');
 var fs = require("fs");
+var path = require("path");
 
 
-var normalizedPath = require("path").join(__dirname, "commands");
+var normalizedPath = path.join(__dirname, "commands");
 
 var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
 
 var commands = {};
 
 // Load saved data
-if(fs.existsSync("./data/games.json")) {
-    var dataString = fs.readFileSync('./data/games.json');
-    games = JSON.parse(dataString);
+if(fs.existsSync(path.join(__dirname, "data/games.json"))) {
+    var dataString = fs.readFileSync(path.join(__dirname, "data/games.json"));
+    var gamesData = JSON.parse(dataString);
+    for(let i = 0; i < gamesData.length; i++) {
+    	games.push(gamesData[i]);
+	}
 }
 
 fs.readdirSync(normalizedPath).forEach(function(file) {
