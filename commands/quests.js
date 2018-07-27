@@ -18,7 +18,7 @@ module.exports = function(args, message) {
             if(!games[g].quests || games[g].quests.length === 0) {
                 message.channel.send({
                     embed: {
-                        title: "Quest List of game " + game[g].session,
+                        title: "Quest List of game " + games[g].session,
                         description: "There are no Quests!",
                         color: 3447003
                     }
