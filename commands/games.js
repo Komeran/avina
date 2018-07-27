@@ -6,5 +6,11 @@ module.exports = function(args, message) {
     games.forEach(function(game) {
         msg += "\n" + game.session + "(DM: <@" + game.dm + ">, players: " + game.players.length + ")";
     }, this);
+
+    if(games.length === 0) {
+        message.channel.send("There are no games currently! Be the first to start one using !claimdm <Game> , or have your DM do it!");
+        return;
+    }
+
     message.channel.send(msg);
 };
