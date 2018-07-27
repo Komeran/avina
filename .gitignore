@@ -65,3 +65,6 @@ auth.json
 
 # JetBrains stuff
 .idea/*
+
+# Avina save data
+data/*

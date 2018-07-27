@@ -8,31 +8,6 @@ var path = require("path");
 
 var normalizedPath = path.join(__dirname, "commands");
 
-var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
-
-var commands = {};
-
-// Load saved data
-if(fs.existsSync(path.join(__dirname, "data/games.json"))) {
-    var dataString = fs.readFileSync(path.join(__dirname, "data/games.json"));
-    var gamesData = JSON.parse(dataString);
-    for(let i = 0; i < gamesData.length; i++) {
-    	games.push(gamesData[i]);
-	}
-}
-
-fs.readdirSync(normalizedPath).forEach(function(file) {
-	var commandString = file.substring(0, file.length-3);
-	commands[commandString] = require('./commands/' + file);
-	callCommandString += "    case '" + commandString + "':\n" +
-		"        commands['" + commandString + "'](args, message);\n" +
-		"        break;" + "\n";
-});
-
-callCommandString += "}";
-
-var callCommand = new Function('cmd', 'message', 'args', 'cmds', callCommandString);
-
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -40,6 +15,45 @@ logger.add(logger.transports.Console, {
 });
 logger.level = 'debug';
 
+// Load save data
+logger.info("Loading save data...");
+if(fs.existsSync(path.join(__dirname, "data/games.json"))) {
+    let dataString = fs.readFileSync(path.join(__dirname, "data/games.json"));
+    games = JSON.parse(dataString);
+    logger.info("Games save loaded.");
+}
+else {
+	logger.info("No games save found.");
+}
+if(fs.existsSync(path.join(__dirname, "data/applications.json"))) {
+    let dataString = fs.readFileSync(path.join(__dirname, "data/applications.json"));
+    applications = JSON.parse(dataString);
+    logger.info("Applications save loaded.");
+}
+else {
+    logger.info("No applications save found.");
+}
+logger.info("Done loading save data.");
+// End Load save data
+
+//Load commands
+logger.info("Loading commands...");
+var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
+var commands = {};
+
+fs.readdirSync(normalizedPath).forEach(function(file) {
+	var commandString = file.substring(0, file.length-3);
+	commands[commandString] = require('./commands/' + file);
+	callCommandString += "    case '" + commandString + "':\n" +
+		"        commands['" + commandString + "'](args, message);\n" +
+		"        break;" + "\n";
+	logger.info("Loaded command [!" + commandString + "]");
+});
+callCommandString += "}";
+var callCommand = new Function('cmd', 'message', 'args', 'cmds', callCommandString);
+// End Load commands
+
+// Setup Discord client
 var client = new Discord.Client();
 
 client.on('ready', () => {
@@ -57,4 +71,4 @@ client.on('message', message => {
 });
 
 client.login(auth.token);
-
+// End Setup Discord client
