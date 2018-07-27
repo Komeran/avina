@@ -4,11 +4,12 @@ var applications = require('../util/applications.js');
 module.exports = function(args, message) {
     if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
         message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
+        message.delete();
         return;
     }
 
     if(args.length >= 2) {
-        message.mentions.members.every(function(user) {
+        message.mentions.members.array().forEach(function(user) {
             for(let a in applications) {
                 if(applications[a].user === user.id) {
                     let newTag = '';
@@ -42,6 +43,7 @@ module.exports = function(args, message) {
     else {
         message.author.send('\'apply\' command invalid: Too many parameters!');
     }
+    message.delete();
 };
 
 function getRoleForTag(text, roles) {

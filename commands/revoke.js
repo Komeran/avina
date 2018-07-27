@@ -3,6 +3,7 @@ var logger = require('winston');
 module.exports = function(args, message) {
     if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
         message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
+        message.delete();
         return;
     }
 
@@ -57,11 +58,12 @@ module.exports = function(args, message) {
         message.author.send('\'apply\' command invalid: Missing Role Tag parameter(s)!');
     }
     else if(args.length === 1) {
-
+        message.author.send('\'apply\' command invalid: Missing User parameter!');
     }
     else {
         message.author.send('\'apply\' command invalid: Too many parameters!');
     }
+    message.delete();
 };
 
 function getRoleForTag(text, roles) {

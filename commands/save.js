@@ -13,12 +13,14 @@ var isSaving = false;
 
 const emitter = new events.EventEmitter();
 
-emitter.on("games", function(message) {
-    saveApplications(message);
+emitter.on("games", function(message, savingMessage) {
+    saveApplications(message, savingMessage);
 });
-emitter.on("applications", function(message) {
+emitter.on("applications", function(message, savingMessage) {
     message.channel.send("Saving complete!");
     isSaving = false;
+    savingMessage.delete();
+    message.delete();
 });
 
 module.exports = function(args, message) {
@@ -29,21 +31,24 @@ module.exports = function(args, message) {
 
     if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
         message.author.send("Only admins of a server may use the !save command! And you are no admin, sorry :/");
+        message.delete();
         return;
     }
 
     if(isSaving) {
         message.author.send("I'm already on it! Please be patient with me, sometimes saving lots of data takes a while :(");
+        message.delete();
         return;
     }
 
     // Start saving process...
-    message.channel.send("Saving...");
-    isSaving = true;
-    saveGames(message);
+    message.channel.send("Saving...").then(function(msg) {
+        isSaving = true;
+        saveGames(message, msg);
+    });
 };
 
-let saveGames = function(message) {
+let saveGames = function(message, msg) {
     var json = JSON.stringify(games);
 
     if(!fs.existsSync(path.join(__dirname, "../data"))) {
@@ -56,11 +61,11 @@ let saveGames = function(message) {
             logger.warn(err);
             return;
         }
-        emitter.emit("games", message);
+        emitter.emit("games", message, msg);
     });
 };
 
-let saveApplications = function(message) {
+let saveApplications = function(message, msg) {
     var json = JSON.stringify(applications);
 
     if(!fs.existsSync(path.join(__dirname, "../data"))) {
@@ -73,6 +78,6 @@ let saveApplications = function(message) {
             logger.warn(err);
             return;
         }
-        emitter.emit("applications", message);
+        emitter.emit("applications", message, msg);
     });
 };
