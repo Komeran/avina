@@ -27,7 +27,7 @@ module.exports = function(args, message) {
             }
             for(let q in games[g].quests) {
                 fields.push({
-                    name: "[" + (q+1) + "] " + games[g].quests[q].description,
+                    name: "[" + (Number(q)+1) + "] " + games[g].quests[q].description,
                     value: "Status: " + (games[g].quests[q].completed ? "Completed" : "Open")
                 });
             }
