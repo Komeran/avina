@@ -36,8 +36,8 @@ module.exports = function(args, message) {
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();
     logger.info(text);
-    for(let entry in roles) {
-        var role = roles[entry][1];
+    for(let entry of roles) {
+        var role = entry[1];
         var tagCloserPos = role.name.substring(3,5).indexOf(']');
         if(role.name.substring(0,1) == '[' && tagCloserPos != -1) {
             logger.info('tagged role: '+role.name);
