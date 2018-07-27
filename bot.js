@@ -5,9 +5,6 @@ var games = require('./dnd_util/games.js');
 var fs = require("fs");
 var path = require("path");
 
-
-var normalizedPath = path.join(__dirname, "commands");
-
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, {
@@ -37,6 +34,7 @@ logger.info("Done loading save data.");
 // End Load save data
 
 //Load commands
+var normalizedPath = path.join(__dirname, "commands");  
 logger.info("Loading commands...");
 var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
 var commands = {};
