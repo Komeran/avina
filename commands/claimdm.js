@@ -28,7 +28,7 @@ module.exports = function(args, message) {
     for(let game in currentGames) {
         if(currentGames[game].session === args[1].toLowerCase()) {
             currentGames[game].claimRequester = message.author.id;
-            message.reply("<@" + currentGames[game].dm.id + "> is the current DM of game '" + currentGames[game].session + "'. Your request for" +
+            message.reply("<@" + currentGames[game].dm + "> is the current DM of game '" + currentGames[game].session + "'. Your request for" +
                 " a claim has been noted. As soon as the current DM uses the !abandondm command, you will be the new" +
                 " DM.");
             return;
