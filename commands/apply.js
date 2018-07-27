@@ -4,21 +4,24 @@ var applications = require('../util/applications.js');
 module.exports = function(args, message) {
     if(args.length == 2) {
         var appliedRole = getRoleForTag(args[1], message.guild.roles);
+        if(message.guild.member(message.author).roles.has(appliedRole)) {
+            message.author.send("You already have that role! No need to apply for it :)");
+            return;
+        }
         if(appliedRole) {
-            let overridden = false;
             for(let a in applications) {
                 if(applications[a].user === message.author.id) {
-                    applications[a].role = appliedRole;
-                    overridden = true;
-                    break;
+                    if(applications[a].roles.indexOf(appliedRole) !== -1)
+                        message.author.send("You have already applied for this role! Admins will review it, just be patient. :)");
+                    applications[a].roles.push(appliedRole);
+                    message.reply('Your Application for <@&'+appliedRole+'> has been registered and will be reviewed by an <@&381140079298740224> or <@&381777629440638977> member shortly!');
+                    return;
                 }
             }
-            if(!overridden) {
-                applications.push({
-                    user: message.author.id,
-                    role: appliedRole
-                });
-            }
+            applications.push({
+                user: message.author.id,
+                roles: [appliedRole]
+            });
             message.reply('Your Application for <@&'+appliedRole+'> has been registered and will be reviewed by an <@&381140079298740224> or <@&381777629440638977> member shortly!');
         }
         else {
