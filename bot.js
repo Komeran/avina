@@ -12,8 +12,10 @@ var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
 var commands = {};
 
 // Load saved data
-var dataString = fs.readFileSync('../data/games.json');
-games = JSON.parse(dataString);
+if(fs.existsSync("./data/games.json")) {
+    var dataString = fs.readFileSync('./data/games.json');
+    games = JSON.parse(dataString);
+}
 
 fs.readdirSync(normalizedPath).forEach(function(file) {
 	var commandString = file.substring(0, file.length-3);
