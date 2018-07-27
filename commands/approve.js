@@ -8,11 +8,11 @@ module.exports = function(args, message) {
                 if(applications[a].user === user.id) {
                     user.addRole(applications[a].role);
                     let nickname = user.nickname;
-                    if(getRoleForTag(nickname.split(' ')[0])) {
+                    if(getRoleForTag(nickname.split(' ')[0], message.guild.roles)) {
                         nickname = nickname.substring(4, nickname.length);
                     }
                     user.edit({
-                        nick: getTagForRole(applications[a].role) + ' ' + nickname
+                        nick: getTagForRole(applications[a].role, message.guild.roles) + ' ' + nickname
                     });
                     applications.splice(Number(a), 1);
                     break;
@@ -30,8 +30,8 @@ module.exports = function(args, message) {
 
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();
-    for(let entry of roles) {
-        var role = entry[1];
+    for(let entry in roles) {
+        var role = roles[entry][1];
         var tagCloserPos = role.name.substring(3,5).indexOf(']');
         if(role.name.substring(0,1) === '[' && tagCloserPos !== -1) {
             logger.info('tagged role: '+role.name);
@@ -46,8 +46,8 @@ function getRoleForTag(text, roles) {
 }
 
 function getTagForRole(role, roles) {
-    for(let entry of roles) {
-        var r = entry[1];
+    for(let entry in roles) {
+        var r = roles[entry][1];
         if(r.id === role) {
             return r.name.substring(0, 3);
         }
