@@ -18,3 +18,17 @@ Here is a list of the commands that are already implemented.
 * `!rolls` command to roll several dice and return every result.
 
   Usage example: `!rolls 5d20` Possible output: `You rolled 12, 6, 19, 4, 20!`
+* `!claimdm` command to claim DM status for a game and create the game if it doesn't already exist. If the game already exists, the
+  claim request will be noted and when the current DM abandons the game, the requester will be the new DM of the game. Fails, if the user
+  currently is the DM of a game.
+  
+  Usage example: `!claimdm AwesomeGame` -> All Game Names will be changed to lowercase and spaces will cause the command to fail.
+* `!abandondm` command to abandon DM status of the current game and delete the game instance if nobody else requested DM status for it.
+
+  Usage: `!abandondm`
+* `!joingame` command to join a running game. Fails, if the game doesn't exist, or the user is the DM of the game.
+
+  Usage: `!joingame AwesomeGame` -> Will join the game 'awesomegame'.
+* `!games` command to list the currently running games, their DMs and player counts.
+
+  Usage: `!games`
