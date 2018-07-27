@@ -17,10 +17,10 @@ Here is a list of the commands that are already implemented.
   using this command!
   
   Usage example: `!approve @AwesomeGuy @ThatDudeEveryoneTalksAbout` -> This will apply all the roles the users applied for to them and
-  update their tags (WIP).
+  update their tags.
 * `!disapprove` command to delete all role applications of one or several users.
 
-  Usage example: `!disapprove @AwesomeGuy @ThatDudeEveryoneTalksAbout` -> Currently this doesn't update the users' tags.
+  Usage example: `!disapprove @AwesomeGuy @ThatDudeEveryoneTalksAbout`
 * `!save` command for saving the current data. Saved data will be loaded on (re-)start of the bot.
 
   Usage: `!save`
@@ -35,15 +35,15 @@ Here is a list of the commands that are already implemented.
 
   Usage examples: `!roll d20` or `!roll 4d6` or `!roll 2d20+5-2+3d6-d4`
 * `!draw` command to draw a card of the default (22 cards) Deck of Many Things. Will send a picture of the drawn card to the user and a
-  text description to the DM (Claiming DM is WIP).
+  text description to the DM.
 
   Usage: `!draw`
 * `!rolls` command to roll several dice and return every result.
 
   Usage example: `!rolls 5d20` Possible output: `You rolled 12, 6, 19, 4, 20!`
 * `!claimdm` command to claim DM status for a game and create the game if it doesn't already exist. If the game already exists, the
-  claim request will be noted and when the current DM abandons the game, the requester will be the new DM of the game. Fails, if the user
-  currently is the DM of a game.
+  claim request will be noted and when the current DM abandons the game, the requester will be the new DM of the game. Fails, if the
+  user currently is the DM of a game.
   
   Usage example: `!claimdm AwesomeGame` -> All Game Names will be changed to lowercase and spaces will cause the command to fail.
 * `!abandondm` command to abandon DM status of the current game and delete the game instance if nobody else requested DM status for it.
