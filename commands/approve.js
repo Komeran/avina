@@ -2,6 +2,13 @@ var logger = require('winston');
 var applications = require('../util/applications.js');
 
 module.exports = function(args, message) {
+    let id = message.author.id;
+
+    if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
+        message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
+        return;
+    }
+
     if(args.length === 2) {
         message.mentions.members.every(function(user) {
             for(let a in applications) {
