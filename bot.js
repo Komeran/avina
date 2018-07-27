@@ -64,7 +64,6 @@ client.on('message', message => {
 		var cmd = args[0];
 
 		callCommand(cmd, message, args, commands);
-		console.log(games);
 	}
 });
 
