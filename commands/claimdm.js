@@ -33,7 +33,8 @@ module.exports = function(args, message) {
     currentGames.push({ 
         session: args[1].toLowerCase(),
         dm: message.author.id,
-        players: []
+        players: [],
+        quests: []
     });
     message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
         + " to join the game!");

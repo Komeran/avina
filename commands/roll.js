@@ -41,7 +41,7 @@ module.exports = function (args, message) {
                 if(!isNaN(Number(minusPart)))
                     minusToSubtract += Number(minusPart);
                 else {
-                    // TODO: Reply that minusPart is neither a valid die, nor a number
+                    message.author.send(minusPart + " is neither a valid die nor a valid number.");
                     return;
                 }
             }
@@ -52,13 +52,13 @@ module.exports = function (args, message) {
                 if(minusPart.indexOf('d') !== 0) {
                     diceCount = Number(dieParts[0]);
                     if(isNaN(diceCount)) {
-                        // TODO: Reply that minusPart is neither a valid die, nor a number
+                        message.author.send(minusPart + " is neither a valid die nor a valid number.");
                         return;
                     }
                 }
                 diceValue = Number(dieParts[1]);
                 if(isNaN(diceValue) || diceValue < 2) {
-                    // TODO: Reply that minusPart is neither a valid die, nor a number
+                    message.author.send(minusPart + " is neither a valid die nor a valid number.");
                     return;
                 }
                 let result = 0;
@@ -68,7 +68,7 @@ module.exports = function (args, message) {
                 minusToSubtract += result;
             }
             else {
-                // TODO: Reply that minusPart is neither a valid die, nor a number
+                message.author.send(minusPart + " is neither a valid die nor a valid number.");
                 return;
             }
             // Now subtract the resulting minusToSubtract from plusToAdd.
@@ -84,5 +84,10 @@ module.exports = function (args, message) {
         total += plusToAdd;
     }
 
-    message.reply('You rolled a ' + total);
-}
+    message.channel.send({
+        embed: {
+            title: '<@' + message.author.id + '> rolled a ' + total,
+            color: 3447003
+        }
+    });
+};

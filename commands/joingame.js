@@ -17,7 +17,7 @@ module.exports = function(args, message) {
     for(g in games) {
         if(games[g].session === args[1].toLowerCase()) {
             if(games[g].dm === message.author.id) {
-                message.reply("You are the current DM of this game! You can't join it as a player!");
+                message.author.send("You are the current DM of the game '" + args[1].toLowerCase() + "'! You can't join it as a player!");
                 return;
             }
             let msg = "";
@@ -33,5 +33,5 @@ module.exports = function(args, message) {
         }
     }
 
-    message.reply("There is no game '" + args[1].toLowerCase() + "'! Create one as a DM using !claimdm " + args[1].toLowerCase());
-}
+    message.reply("There is no game '" + args[1].toLowerCase() + "'! Have your DM create one using !claimdm " + args[1].toLowerCase());
+};

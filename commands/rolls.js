@@ -30,10 +30,15 @@ module.exports = function(args, message) {
     let replyString = "You rolled";
     for(let i = 0; i < diceCount; i++) {
         let result = Math.floor(Math.random() * diceValue) + 1;
-        replyString += " " + result + ",";
+        replyString += result + ", ";
     }
     replyString = replyString.substring(0, replyString.length-1);
-    replyString += "!";
 
-    message.reply(replyString);
-}
+    message.reply({
+        embed: {
+            title: '<@' + message.author.id + '> rolled:',
+            color: 3447003,
+            description: replyString
+        }
+    });
+};

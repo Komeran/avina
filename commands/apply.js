@@ -19,7 +19,7 @@ module.exports = function(args, message) {
     else {
         message.reply('\'apply\' command invalid: Too many parameters!');
     }
-}
+};
 
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();
