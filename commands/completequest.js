@@ -12,6 +12,11 @@ module.exports = function(args, message) {
         return;
     }
 
+    if(!args[1]) {
+        logger.log("Not enough arguments for !completequest command.");
+        return;
+    }
+
     let id = Number(args[1]);
 
     if(isNaN(id) || id % 1 !== 0) {

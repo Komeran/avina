@@ -5,6 +5,11 @@ module.exports = function(args, message) {
         return;
     }
 
+    if(!args[1]) {
+        logger.log("Not enough arguments for !rolls command.");
+        return;
+    }
+
     if(args[1].indexOf('d') === -1 || args[1].indexOf('d') !== args[1].lastIndexOf('d')) {
         // TODO: Reply that args[1] is neither a valid die, nor a number
         return;

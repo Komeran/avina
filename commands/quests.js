@@ -12,6 +12,11 @@ module.exports = function(args, message) {
         return;
     }
 
+    if(!args[1]) {
+        logger.log("Not enough arguments for !quests command.");
+        return;
+    }
+
     for(let g in games) {
         if(games[g].session === args[1].toLowerCase()) {
             let fields = [];

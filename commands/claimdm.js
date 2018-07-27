@@ -12,6 +12,11 @@ module.exports = function(args, message) {
         return;
     }
 
+    if(!args[1]) {
+        logger.log("Not enough arguments for !claimdm command.");
+        return;
+    }
+
     for(let game in currentGames) {
         if(currentGames[game].dm === message.author.id) {
             message.reply("You are already DM of game '" + currentGames[game].session + "'. Please use !abandondm first before" +

@@ -7,6 +7,12 @@ var logger = require('winston');
 var games = require('../dnd_util/games.js');
 
 module.exports = function(args, message) {
+
+    if(!args[1]) {
+        logger.log("Not enough arguments for !newquest command.");
+        return;
+    }
+
     let questDescription = "";
     for(let i = 1; i < args.length; i++) {
         questDescription += args[i] + " ";
