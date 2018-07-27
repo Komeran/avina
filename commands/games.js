@@ -12,7 +12,7 @@ module.exports = function(args, message) {
     games.forEach(function(game) {
         embed.fields.push({
             name: game.session,
-            value: "DM: <@" + game.dm + ">\nPlayers: " + game.players.length
+            value: "DM: <@" + game.dm + ">\nPlayers: " + game.players.length + "/" + game.maxPlayers
         });
     }, this);
 

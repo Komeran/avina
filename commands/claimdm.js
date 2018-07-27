@@ -7,7 +7,7 @@ var logger = require('winston');
 var currentGames = require('../dnd_util/games.js');
 
 module.exports = function(args, message) {
-    if(args.length > 2) {
+    if(args.length > 3) {
         logger.info('The !claimdm command takes only 1 argument but it was given at least 2!');
         return;
     }
@@ -39,8 +39,13 @@ module.exports = function(args, message) {
         session: args[1].toLowerCase(),
         dm: message.author.id,
         players: [],
-        quests: []
+        quests: [],
+        maxPlayers: 6
     });
+
+    if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
+        currentGames[currentGames.length-1].maxPlayers = Number(args[2]);
+
     message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
         + " to join the game!");
 };

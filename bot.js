@@ -34,7 +34,7 @@ logger.info("Done loading save data.");
 // End Load save data
 
 //Load commands
-var normalizedPath = path.join(__dirname, "commands");  
+var normalizedPath = path.join(__dirname, "commands");
 logger.info("Loading commands...");
 var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
 var commands = {};

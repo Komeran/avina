@@ -25,14 +25,18 @@ module.exports = function(args, message) {
                 message.author.send("You are the current DM of the game '" + args[1].toLowerCase() + "'! You can't join it as a player!");
                 return;
             }
+            if(games[g].maxPlayers === games[g].players.length) {
+                message.author.send("Game " + games[g].session + " is already full, sorry! :(");
+                return;
+            }
             let msg = "";
+            games[g].players.push(message.author.id);
+            if(oldGame)
+                oldGame.players.splice(oldGame.players.indexOf(message.author.id), 1);
             if(oldGame)
                 msg = "You left game '" + oldGame.session + "' and joined game '" + games[g].session +"'.";
             else
                 msg = "Successfully joined game '" + games[g].session + "'!";
-            games[g].players.push(message.author.id);
-            if(oldGame)
-                oldGame.players.splice(oldGame.players.indexOf(message.author.id), 1);
             message.reply(msg);
             return;
         }
