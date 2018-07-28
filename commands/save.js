@@ -10,6 +10,25 @@ var fs = require("fs");
 var path = require('path');
 var events = require('events');
 var isSaving = false;
+var config = require('config.json');
+
+// Fall back to default config if there is no config
+if(!config) {
+    config = {
+        "logger": {
+            "console": {
+                "level": "info",
+                "colorize": true
+            },
+            "files": []
+        },
+        "saving": {
+            "path": "data"
+        }
+    }
+}
+
+let dataPath = path.join(__dirname, "..", config.saving.path);
 
 const emitter = new events.EventEmitter();
 
@@ -51,11 +70,11 @@ module.exports = function(args, message) {
 let saveGames = function(message, msg) {
     var json = JSON.stringify(games);
 
-    if(!fs.existsSync(path.join(__dirname, "../data"))) {
-        fs.mkdirSync(path.join(__dirname, "../data"));
+    if(!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath);
     }
 
-    fs.writeFile(path.join(__dirname, '../data/games.json'), json, 'utf8', function(err) {
+    fs.writeFile(path.join(dataPath, 'games.json'), json, 'utf8', function(err) {
         if(err) {
             message.channel.send("Something went wrong during saving! Please tell your server admin!");
             logger.warn(err);
@@ -68,11 +87,11 @@ let saveGames = function(message, msg) {
 let saveApplications = function(message, msg) {
     var json = JSON.stringify(applications);
 
-    if(!fs.existsSync(path.join(__dirname, "../data"))) {
-        fs.mkdirSync(path.join(__dirname, "../data"));
+    if(!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath);
     }
 
-    fs.writeFile(path.join(__dirname, '../data/applications.json'), json, 'utf8', function(err) {
+    fs.writeFile(path.join(dataPath, 'applications.json'), json, 'utf8', function(err) {
         if(err) {
             message.channel.send("Something went wrong during saving! Please tell your server admin!");
             logger.warn(err);

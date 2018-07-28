@@ -4,26 +4,64 @@ var auth = require('./auth.json');
 var games = require('./dnd_util/games.js');
 var fs = require("fs");
 var path = require("path");
+var config = require('./config.json');
+
+// Fall back to default config if there is no config
+if(!config) {
+    config = {
+        "logger": {
+            "console": {
+                "level": "info",
+                "colorize": true
+            },
+            "files": []
+        },
+        "saving": {
+            "path": "data"
+        }
+    }
+}
 
 // Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    colorize: true
-});
-logger.level = 'debug';
+logger.clear();
+logger.add(new logger.transports.Console({
+    colorize: config.logger.console.colorize,
+    level: config.logger.console.level,
+    format: logger.format.combine(
+        logger.format.colorize(),
+        logger.format.timestamp(),
+        logger.format.printf(info => {
+            return `${info.timestamp} ${info.level}: ${info.message}`;
+        })
+    )
+}));
+for(let f in config.logger.files) {
+    logger.add(new logger.transports.File({
+        filename: config.logger.files[f].path,
+        level: config.logger.files[f].level,
+        format: logger.format.combine(
+            logger.format.timestamp(),
+            logger.format.printf(info => {
+                return `${info.timestamp} ${info.level}: ${info.message}`;
+            })
+        )
+    }));
+}
 
 // Load save data
 logger.info("Loading save data...");
-if(fs.existsSync(path.join(__dirname, "data/games.json"))) {
-    let dataString = fs.readFileSync(path.join(__dirname, "data/games.json"));
+let gamesPath = path.join(__dirname, config.saving.path,"games.json");
+if(fs.existsSync(gamesPath)) {
+    let dataString = fs.readFileSync(gamesPath);
     games = JSON.parse(dataString);
     logger.info("Games save loaded.");
 }
 else {
 	logger.info("No games save found.");
 }
-if(fs.existsSync(path.join(__dirname, "data/applications.json"))) {
-    let dataString = fs.readFileSync(path.join(__dirname, "data/applications.json"));
+let appsPath = path.join(__dirname, config.saving.path,"applications.json")
+if(fs.existsSync(appsPath)) {
+    let dataString = fs.readFileSync(appsPath);
     applications = JSON.parse(dataString);
     logger.info("Applications save loaded.");
 }
@@ -38,6 +76,7 @@ var normalizedPath = path.join(__dirname, "commands");
 logger.info("Loading commands...");
 var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
 var commands = {};
+let cmdCount = 0;
 
 fs.readdirSync(normalizedPath).forEach(function(file) {
 	var commandString = file.substring(0, file.length-3);
@@ -45,10 +84,12 @@ fs.readdirSync(normalizedPath).forEach(function(file) {
 	callCommandString += "    case '" + commandString + "':\n" +
 		"        commands['" + commandString + "'](args, message);\n" +
 		"        break;" + "\n";
-	logger.info("Loaded command [!" + commandString + "]");
+	logger.debug("Loaded command [!" + commandString + "]");
+    cmdCount++;
 });
 callCommandString += "}";
 var callCommand = new Function('cmd', 'message', 'args', 'cmds', callCommandString);
+logger.info("Loaded " + cmdCount + " commands.");
 // End Load commands
 
 // Setup Discord client
