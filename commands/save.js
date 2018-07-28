@@ -10,7 +10,7 @@ var fs = require("fs");
 var path = require('path');
 var events = require('events');
 var isSaving = false;
-var config = require('config.json');
+var config = require('../config.json');
 
 // Fall back to default config if there is no config
 if(!config) {
