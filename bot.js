@@ -53,7 +53,11 @@ logger.info("Loading save data...");
 let gamesPath = path.join(__dirname, config.saving.path,"games.json");
 if(fs.existsSync(gamesPath)) {
     let dataString = fs.readFileSync(gamesPath);
-    games = JSON.parse(dataString);
+    let data = JSON.parse(dataString);
+    for(let i = 0; i < data.length; i++) {
+        games.push(data[i]);
+	logger.debug("Game " + data[i].session + "loaded");
+    }
     logger.info("Games save loaded.");
 }
 else {

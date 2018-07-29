@@ -26,7 +26,7 @@ module.exports = {
 
         for(let g in games) {
             if(games[g].dm === message.author.id) {
-                if(!games[g].quests || games[g].quests.length <= id) {
+                if(!games[g].quests || games[g].quests.length < id) {
                     message.author.send("There is no quest with ID " + id + " in the game " + games[g].session);
                     return;
                 }

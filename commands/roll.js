@@ -87,7 +87,7 @@ module.exports = {
 
         message.channel.send({
             embed: {
-                title: message.author.name + " rolled a " + total,
+                title: message.author.username + " rolled a " + total,
                 color: 3447003
             }
         });

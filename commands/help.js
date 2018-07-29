@@ -9,8 +9,8 @@ module.exports = {
             return;
         }
 
-        message.channel.send("For a list of my commands, have a look at " + pkg.repository);
-        return;
+        // message.channel.send("For a list of my commands, have a look at " + pkg.repository);
+        // return;
 
         let fields = [];
 
