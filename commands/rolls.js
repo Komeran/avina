@@ -40,9 +40,9 @@ module.exports = {
         }
         replyString = replyString.substring(0, replyString.length-2) + "!";
 
-        message.reply({
+        message.channel.send({
             embed: {
-                title: message.author.name + ' rolled:',
+                title: message.author.username + ' rolled:',
                 color: 3447003,
                 description: replyString
             }
