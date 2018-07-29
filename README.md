@@ -14,13 +14,17 @@ Here is a list of the commands that are already implemented.
 
   Usage example: `!apply gA` -> Saves a registration for the role with the tag [GA], if the user does not already have that role.
 * `!approve` command to apply all roles one ore several users applied for them. Always check, what roles the users applied for before
-  using this command!
+  using this command! Only users with Administrator permission can use this command.
   
   Usage example: `!approve @AwesomeGuy @ThatDudeEveryoneTalksAbout` -> This will apply all the roles the users applied for to them and
   update their tags.
-* `!disapprove` command to delete all role applications of one or several users.
+* `!disapprove` command to delete all role applications of one or several users. Only users with Administrator permission can use this
+  command.
 
   Usage example: `!disapprove @AwesomeGuy @ThatDudeEveryoneTalksAbout`
+* `!apps` command to list all current applications for roles. Only users with Administrator permission can use this command.
+
+  Usage: `!apps`
 * `!save` command for saving the current data. Saved data will be loaded on (re-)start of the bot.
 
   Usage: `!save`
