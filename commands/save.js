@@ -42,29 +42,32 @@ emitter.on("applications", function(message, savingMessage) {
     message.delete();
 });
 
-module.exports = function(args, message) {
-    if(args.length > 1) {
-        logger.log("Too many arguments for command '!save'.");
-        return;
-    }
+module.exports = {
+    execute: function(args, message) {
+        if(args.length > 1) {
+            logger.log("Too many arguments for command '!save'.");
+            return;
+        }
 
-    if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
-        message.author.send("Only admins of a server may use the !save command! And you are no admin, sorry :/");
-        message.delete();
-        return;
-    }
+        if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
+            message.author.send("Only admins of a server may use the !save command! And you are no admin, sorry :/");
+            message.delete();
+            return;
+        }
 
-    if(isSaving) {
-        message.author.send("I'm already on it! Please be patient with me, sometimes saving lots of data takes a while :(");
-        message.delete();
-        return;
-    }
+        if(isSaving) {
+            message.author.send("I'm already on it! Please be patient with me, sometimes saving lots of data takes a while :(");
+            message.delete();
+            return;
+        }
 
-    // Start saving process...
-    message.channel.send("Saving...").then(function(msg) {
-        isSaving = true;
-        saveGames(message, msg);
-    });
+        // Start saving process...
+        message.channel.send("Saving...").then(function(msg) {
+            isSaving = true;
+            saveGames(message, msg);
+        });
+    },
+    help: ""
 };
 
 let saveGames = function(message, msg) {

@@ -72,24 +72,7 @@ logger.info("Done loading save data.");
 // End Load save data
 
 //Load commands
-var normalizedPath = path.join(__dirname, "commands");
-logger.info("Loading commands...");
-var callCommandString = "var commands = cmds;\nswitch(cmd) {\n";
-var commands = {};
-let cmdCount = 0;
-
-fs.readdirSync(normalizedPath).forEach(function(file) {
-	var commandString = file.substring(0, file.length-3);
-	commands[commandString] = require('./commands/' + file);
-	callCommandString += "    case '" + commandString + "':\n" +
-		"        commands['" + commandString + "'](args, message);\n" +
-		"        break;" + "\n";
-	logger.debug("Loaded command [!" + commandString + "]");
-    cmdCount++;
-});
-callCommandString += "}";
-var callCommand = new Function('cmd', 'message', 'args', 'cmds', callCommandString);
-logger.info("Loaded " + cmdCount + " commands.");
+let commands = require('./util/commands.js');
 // End Load commands
 
 // Setup Discord client
@@ -101,10 +84,10 @@ client.on('ready', () => {
 
 client.on('message', message => {
 	if (message.content.substring(0,1) === '!') {
-		var args = message.content.substring(1).split(' ');
-		var cmd = args[0];
+		let args = message.content.substring(1).split(' ');
+		let cmd = args[0];
 
-		callCommand(cmd, message, args, commands);
+        commands.callCommand(cmd, message, args);
 	}
 });
 

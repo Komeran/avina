@@ -1,69 +1,72 @@
 var logger = require('winston');
 
-module.exports = function(args, message) {
-    if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
-        message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
-        message.delete();
-        return;
-    }
+module.exports = {
+    execute: function(args, message) {
+        if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
+            message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
+            message.delete();
+            return;
+        }
 
-    if(args.length >= 3) {
+        if(args.length >= 3) {
 
-        let rolesToRevoke = [];
-        let reason = "";
-        for(let i = 2; i < args.length; i++) {
-            if(args[i].toLowerCase() === "reason:") {
-                // That means, the rest of the command is the reason for revoking the roles!
-                for(let j = i+1; j < args.length; j++) {
-                    reason += args[j] + " ";
+            let rolesToRevoke = [];
+            let reason = "";
+            for(let i = 2; i < args.length; i++) {
+                if(args[i].toLowerCase() === "reason:") {
+                    // That means, the rest of the command is the reason for revoking the roles!
+                    for(let j = i+1; j < args.length; j++) {
+                        reason += args[j] + " ";
+                    }
+                    reason = reason.substring(0, reason.length-1);
+                    break;
                 }
-                reason = reason.substring(0, reason.length-1);
-                break;
+                if(!getRoleForTag(args[i], message.guild.roles)) {
+                    message.author.send("There is no role with tag [" + args[2].toUpperCase() + "] on this server, so I won't revoke it, sorry :(");
+                    continue;
+                }
+                rolesToRevoke.push(getRoleForTag(args[i], message.guild.roles));
             }
-            if(!getRoleForTag(args[i], message.guild.roles)) {
-                message.author.send("There is no role with tag [" + args[2].toUpperCase() + "] on this server, so I won't revoke it, sorry :(");
-                continue;
+
+            let user = message.mentions.members.array()[0];
+            user.removeRoles(rolesToRevoke, reason);
+
+            let newTag = '';
+            let pos = 0;
+
+            user.roles.array().forEach(function(role) {
+                if(role.hoist && role.position > pos) {
+                    pos = role.position;
+                    newTag = getTagForRole(role.id, message.guild.roles);
+                }
+            });
+
+            let nickname = user.nickname;
+            if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
+                nickname = nickname.substring(5, nickname.length);
             }
-            rolesToRevoke.push(getRoleForTag(args[i], message.guild.roles));
+
+            user.edit({
+                nick: newTag + ' ' + nickname
+            }).then(function() {
+                message.author.send("Successfully revoked roles from user " + newTag + " " + nickname);
+                user.send("You have been revoked of your roles by " + message.author.username + "! :(");
+            }).catch(function(e) {
+                logger.warn(e.message);
+            });
         }
-
-        let user = message.mentions.members.array()[0];
-        user.removeRoles(rolesToRevoke, reason);
-
-        let newTag = '';
-        let pos = 0;
-
-        user.roles.array().forEach(function(role) {
-            if(role.hoist && role.position > pos) {
-                pos = role.position;
-                newTag = getTagForRole(role.id, message.guild.roles);
-            }
-        });
-
-        let nickname = user.nickname;
-        if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
-            nickname = nickname.substring(5, nickname.length);
+        else if(args.length === 2) {
+            message.author.send('\'apply\' command invalid: Missing Role Tag parameter(s)!');
         }
-
-        user.edit({
-            nick: newTag + ' ' + nickname
-        }).then(function() {
-            message.author.send("Successfully revoked roles from user " + newTag + " " + nickname);
-            user.send("You have been revoked of your roles by " + message.author.username + "! :(");
-        }).catch(function(e) {
-            logger.warn(e.message);
-        });
-    }
-    else if(args.length === 2) {
-        message.author.send('\'apply\' command invalid: Missing Role Tag parameter(s)!');
-    }
-    else if(args.length === 1) {
-        message.author.send('\'apply\' command invalid: Missing User parameter!');
-    }
-    else {
-        message.author.send('\'apply\' command invalid: Too many parameters!');
-    }
-    message.delete();
+        else if(args.length === 1) {
+            message.author.send('\'apply\' command invalid: Missing User parameter!');
+        }
+        else {
+            message.author.send('\'apply\' command invalid: Too many parameters!');
+        }
+        message.delete();
+    },
+    help: ""
 };
 
 function getRoleForTag(text, roles) {

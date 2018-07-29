@@ -1,42 +1,45 @@
 var logger = require('winston');
 var applications = require('../util/applications.js');
 
-module.exports = function(args, message) {
-    if(args.length == 2) {
-        var appliedRole = getRoleForTag(args[1], message.guild.roles).id;
-        if(message.guild.member(message.author).roles.has(appliedRole)) {
-            message.author.send("You already have that role! No need to apply for it :)");
-            message.delete();
-            return;
-        }
-        if(appliedRole) {
-            for(let a in applications) {
-                if(applications[a].user === message.author.id) {
-                    if(applications[a].roles.indexOf(appliedRole) !== -1)
-                        message.author.send("You have already applied for this role! Admins will review it, just be patient. :)");
-                    applications[a].roles.push(appliedRole);
-                    message.reply('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
-                    message.delete();
-                    return;
-                }
+module.exports = {
+    execute: function(args, message) {
+        if(args.length == 2) {
+            var appliedRole = getRoleForTag(args[1], message.guild.roles).id;
+            if(message.guild.member(message.author).roles.has(appliedRole)) {
+                message.author.send("You already have that role! No need to apply for it :)");
+                message.delete();
+                return;
             }
-            applications.push({
-                user: message.author.id,
-                roles: [appliedRole]
-            });
-            message.author.send('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
+            if(appliedRole) {
+                for(let a in applications) {
+                    if(applications[a].user === message.author.id) {
+                        if(applications[a].roles.indexOf(appliedRole) !== -1)
+                            message.author.send("You have already applied for this role! Admins will review it, just be patient. :)");
+                        applications[a].roles.push(appliedRole);
+                        message.reply('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
+                        message.delete();
+                        return;
+                    }
+                }
+                applications.push({
+                    user: message.author.id,
+                    roles: [appliedRole]
+                });
+                message.author.send('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
+            }
+            else {
+                message.author.send('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
+            }
+        }
+        else if(args.length == 1) {
+            logger.info('\'apply\' command invalid: Missing Channel Tag parameter!');
         }
         else {
-            message.author.send('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
+            logger.info('\'apply\' command invalid: Too many parameters!');
         }
-    }
-    else if(args.length == 1) {
-        logger.info('\'apply\' command invalid: Missing Channel Tag parameter!');
-    }
-    else {
-        logger.info('\'apply\' command invalid: Too many parameters!');
-    }
-    message.delete();
+        message.delete();
+    },
+    help: ""
 };
 
 function getRoleForTag(text, roles) {

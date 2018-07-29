@@ -3,42 +3,45 @@ var applications = require('../util/applications.js');
 
 let rolesCache = {};
 
-module.exports = function(args, message) {
-    if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
-        message.author.send("Only admins of a server may use the !apps command! And you are no admin, sorry :/");
-        return;
-    }
-
-    if(!rolesCache[message.guild.id]) {
-        rolesCache[message.guild.id] = message.guild.roles;
-    }
-
-    if(args.length > 1) {
-        sendApplicationsOfUsers(message);
-        return;
-    }
-
-    let fields = [];
-
-    applications.forEach(function(app) {
-        let roles = "";
-        app.roles.forEach(function(role) {
-            roles += getRoleNameById(role, message.guild.id) + ", ";
-        });
-        roles = roles.substring(0, roles.length-2);
-        fields.push({
-            name: message.guild.member(app.user).nickname,
-            value: "Roles: " + roles
-        });
-    });
-
-    message.author.send({
-        embed: {
-            title: "List of current role applications",
-            fields: fields,
-            color: 3447003
+module.exports = {
+    execute: function(args, message) {
+        if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
+            message.author.send("Only admins of a server may use the !apps command! And you are no admin, sorry :/");
+            return;
         }
-    });
+
+        if(!rolesCache[message.guild.id]) {
+            rolesCache[message.guild.id] = message.guild.roles;
+        }
+
+        if(args.length > 1) {
+            sendApplicationsOfUsers(message);
+            return;
+        }
+
+        let fields = [];
+
+        applications.forEach(function(app) {
+            let roles = "";
+            app.roles.forEach(function(role) {
+                roles += getRoleNameById(role, message.guild.id) + ", ";
+            });
+            roles = roles.substring(0, roles.length-2);
+            fields.push({
+                name: message.guild.member(app.user).nickname,
+                value: "Roles: " + roles
+            });
+        });
+
+        message.author.send({
+            embed: {
+                title: "List of current role applications",
+                fields: fields,
+                color: 3447003
+            }
+        });
+    },
+    help: ""
 };
 
 let getRoleNameById = function(roleId, guildId) {

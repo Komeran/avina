@@ -1,49 +1,52 @@
 var logger = require('winston');
 var applications = require('../util/applications.js');
 
-module.exports = function(args, message) {
-    if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
-        message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
-        message.delete();
-        return;
-    }
+module.exports = {
+    execute: function(args, message) {
+        if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
+            message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
+            message.delete();
+            return;
+        }
 
-    if(args.length >= 2) {
-        message.mentions.members.array().forEach(function(user) {
-            for(let a in applications) {
-                if(applications[a].user === user.id) {
-                    let newTag = '';
-                    let pos = 0;
-                    for(let r in applications[a].roles) {
-                        let role = message.guild.roles.find('id', applications[a].roles[r]);
-                        if(role && role.hoist && role.position > pos && getTagForRole(role.id, message.guild.roles)) {
-                            user.addRole(role.id);
-                            newTag = getTagForRole(role.id, message.guild.roles);
-                            pos = role.position;
+        if(args.length >= 2) {
+            message.mentions.members.array().forEach(function(user) {
+                for(let a in applications) {
+                    if(applications[a].user === user.id) {
+                        let newTag = '';
+                        let pos = 0;
+                        for(let r in applications[a].roles) {
+                            let role = message.guild.roles.find('id', applications[a].roles[r]);
+                            if(role && role.hoist && role.position > pos && getTagForRole(role.id, message.guild.roles)) {
+                                user.addRole(role.id);
+                                newTag = getTagForRole(role.id, message.guild.roles);
+                                pos = role.position;
+                            }
                         }
+                        let nickname = user.nickname;
+                        if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
+                            nickname = nickname.substring(5, nickname.length);
+                        }
+                        user.edit({
+                            nick: newTag + ' ' + nickname
+                        }).catch(function(e) {
+                            logger.warn(e.message);
+                        });
+                        applications.splice(Number(a), 1);
+                        break;
                     }
-                    let nickname = user.nickname;
-                    if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
-                        nickname = nickname.substring(5, nickname.length);
-                    }
-                    user.edit({
-                        nick: newTag + ' ' + nickname
-                    }).catch(function(e) {
-                        logger.warn(e.message);
-                    });
-                    applications.splice(Number(a), 1);
-                    break;
                 }
-            }
-        });
-    }
-    else if(args.length === 1) {
-        message.author.send('\'apply\' command invalid: Missing Channel Tag parameter!');
-    }
-    else {
-        message.author.send('\'apply\' command invalid: Too many parameters!');
-    }
-    message.delete();
+            });
+        }
+        else if(args.length === 1) {
+            message.author.send('\'apply\' command invalid: Missing Channel Tag parameter!');
+        }
+        else {
+            message.author.send('\'apply\' command invalid: Too many parameters!');
+        }
+        message.delete();
+    },
+    help: ""
 };
 
 function getRoleForTag(text, roles) {
