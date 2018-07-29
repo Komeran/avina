@@ -43,5 +43,6 @@ module.exports = {
         }
         message.author.send("Sorry, but you are currently not the DM of a game. Quests can only be (un-)completed by DMs!");
     },
-    help: ""
+    help: "Usage: `!completequest <ID>` where `<ID>` is the ID number of a quest\n" +
+        "Marks the quest with the provided ID number as completed if it was open, or as open if it was completed. Only DMs may use this command."
 };

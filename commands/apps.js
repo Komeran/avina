@@ -41,7 +41,9 @@ module.exports = {
             }
         });
     },
-    help: ""
+    help: "Usage: `!apps`\n" +
+        "Lists all current applications for roles on this server. " +
+        "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };
 
 let getRoleNameById = function(roleId, guildId) {

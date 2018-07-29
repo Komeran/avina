@@ -39,7 +39,8 @@ module.exports = {
         }
         message.delete();
     },
-    help: ""
+    help: "Usage: `!apply <Tag>` where `<Tag>` can be the tag of any role, e.g. `ga` for the role `[GA] Gamer`\n" +
+        "Notes an application for a role on this server, if you don't already have the role."
 };
 
 function getRoleForTag(text, roles) {

@@ -45,5 +45,6 @@ module.exports = {
 
         message.reply("There is no game '" + args[1].toLowerCase() + "'! Have your DM create one using !claimdm " + args[1].toLowerCase());
     },
-    help: ""
+    help: "Usage: `!joingame <game>` where `<game>` is the name of the game you'd like to join.\n" +
+        "Joins the game with the provided name if it isn't already full and you are not the DM of this game."
 };

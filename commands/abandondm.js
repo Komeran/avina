@@ -27,5 +27,6 @@ module.exports = {
 
         message.author.send("Nice try, but you are no DM of a game right now.");
     },
-    help: ""
+    help: "Usage: `!abandondm`\n" +
+        "If you are DM of a running game, this will make someone else the DM of it if someone applied, or delete the game session if not."
 };

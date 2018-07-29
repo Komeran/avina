@@ -40,5 +40,6 @@ module.exports = {
         }
         message.author.send("Sorry, but you are currently not the DM of a game. New quests can only be added by DMs!");
     },
-    help: ""
+    help: "Usage: `!newquest <quest>` where `<quest>` is the name (including spaces) of the quest you'd like to create.\n" +
+        "Creates a new quest with the given name for the game you are currently DMing. Only DMs may use this command."
 };

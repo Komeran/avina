@@ -49,5 +49,6 @@ module.exports = {
         }
         message.author.send("Sorry, but the game '" + args[1].toLowerCase() + "' doesn't exist yet.");
     },
-    help: ""
+    help: "Usage: `!quests <game>` where `<game>` is the name of the game of which you'd like to list the quests.\n" +
+        "Lists all quests of the provided game if the game exists."
 };

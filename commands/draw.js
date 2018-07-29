@@ -4,7 +4,7 @@ var games = require('../dnd_util/games.js');
 
 module.exports = {
     execute: function (args, message) {
-        if(message.channel.name != 'dnd-dice') {
+        if(message.channel.name !== 'dnd-dice') {
             logger.info('Someone tried to draw a card of the Deck of Many Things in the wrong channel... This is a D&D only feature!');
         }
 
@@ -25,7 +25,7 @@ module.exports = {
 
         if(args.length <= 2) {
             var count = args[1];
-            if(!args[1]){
+            if(!count){
                 count = 1;
             }
             if(count < 1 || count > 10) {
@@ -45,5 +45,7 @@ module.exports = {
             dm.send(description);
         }
     },
-    help: ""
+    help: "Usage: `!draw [<count>]` where `<count>` is the number of cards you'd like to draw.\n" +
+        "Draws a number of cards equal to the provided count or only one card if none was provided of the DnD " +
+        "Deck of Many Things (22 Cards version) and sends a description of the drawn card(s) to your DM."
 };

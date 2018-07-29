@@ -14,11 +14,21 @@ module.exports = {
 
         let fields = [];
 
-        for(let cmd of commands.commands) {
+        for(let cmd in commands.commands) {
             fields.push({
-
+                name: "!" + cmd,
+                value: commands.commands[cmd].help
             });
         }
+
+        message.channel.send({
+            embed: {
+                title: "List of my commands",
+                color: 3447003,
+                fields: fields
+            }
+        })
     },
-    help: ""
+    help: "Usage: `!help`\n" +
+        "Lists all of my commands just like this!"
 };

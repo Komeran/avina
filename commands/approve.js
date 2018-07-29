@@ -46,7 +46,9 @@ module.exports = {
         }
         message.delete();
     },
-    help: ""
+    help: "Usage: `!approve <mention(s)>` where `<mention(s)>` is one or several user mentions, e.g. `@AwesomeGuy @SuperDude`\n" +
+        "Approves all role applications of the mentioned users. " +
+        "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };
 
 function getRoleForTag(text, roles) {

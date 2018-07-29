@@ -23,5 +23,6 @@ module.exports = {
 
         message.channel.send({'embed': embed});
     },
-    help: ""
+    help: "Usage: `!games`\n" +
+        "Lists the current running games including their DMs and Player Numbers"
 };

@@ -87,10 +87,12 @@ module.exports = {
 
         message.channel.send({
             embed: {
-                title: '<@' + message.author.id + '> rolled a ' + total,
+                title: message.author.name + " rolled a " + total,
                 color: 3447003
             }
         });
     },
-    help: ""
+    help: "Usage: `!roll <dice>` where `<dice>` can be any calculation including dice and modifiers.\n" +
+        "Example: `!roll 3d6+4-2d4+3+d8`\n" +
+        "Will roll the given dice and add/subtract them accordingly. Only addition and subtraction are supported at the moment!"
 };

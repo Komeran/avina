@@ -66,7 +66,8 @@ module.exports = {
         }
         message.delete();
     },
-    help: ""
+    help: "Usage: `!revoke <mention> <role(s)> [reason: <reason>]` where `<mention>` is the user that gets revoked, `<role(s)>` are the roles to revoke and `<reason>` is the (optional) reason for revoking the roles.\n" +
+        "Removes the provided role(s) from the mentioned user and provides the user with a reason if provided."
 };
 
 function getRoleForTag(text, roles) {

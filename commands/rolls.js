@@ -33,20 +33,21 @@ module.exports = {
             return;
         }
 
-        let replyString = "You rolled";
+        let replyString = "";
         for(let i = 0; i < diceCount; i++) {
             let result = Math.floor(Math.random() * diceValue) + 1;
             replyString += result + ", ";
         }
-        replyString = replyString.substring(0, replyString.length-1);
+        replyString = replyString.substring(0, replyString.length-2) + "!";
 
         message.reply({
             embed: {
-                title: '<@' + message.author.id + '> rolled:',
+                title: message.author.name + ' rolled:',
                 color: 3447003,
                 description: replyString
             }
         });
     },
-    help: ""
+    help: "Usage: `!rolls <dice>` where `<dice>` are the dice you want to roll (no calculations or mods).\n" +
+        "rolls the dice and "
 };

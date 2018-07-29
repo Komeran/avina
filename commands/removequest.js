@@ -43,5 +43,6 @@ module.exports = {
         }
         message.author.send("Sorry, but you are currently not the DM of a game. Quests can only be removed by DMs!");
     },
-    help: ""
+    help: "Usage: `!removequest <ID>` where `<ID>` is the ID number of the quest you'd like to remove.\n" +
+        "Removes the quest with the provided ID number from the game you are currently DMing. Only DMs may use this command."
 };

@@ -87,7 +87,8 @@ client.on('message', message => {
 		let args = message.content.substring(1).split(' ');
 		let cmd = args[0];
 
-        commands.callCommand(cmd, message, args);
+		if(commands.commands[cmd])
+            commands.callCommand(cmd, message, args);
 	}
 });
 
