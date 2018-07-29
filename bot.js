@@ -5,6 +5,7 @@ var games = require('./dnd_util/games.js');
 var fs = require("fs");
 var path = require("path");
 var config = require('./config.json');
+let reactTo = require('./util/reactTo.js');
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -90,10 +91,16 @@ client.on('message', message => {
 	if (message.content.substring(0,1) === '!') {
 		let args = message.content.substring(1).split(' ');
 		let cmd = args[0];
-
-		if(commands.commands[cmd])
+		if(commands.cmds()[cmd])
             commands.callCommand(cmd, message, args);
 	}
+	for(let user of message.mentions.users) {
+	    if(user[0] === client.user.id) {
+            logger.info('Hey! I have been mentioned!');
+            reactTo(message, client.user.id);
+            return;
+        }
+    }
 });
 
 client.login(auth.token);

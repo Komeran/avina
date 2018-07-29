@@ -9,15 +9,14 @@ module.exports = {
             return;
         }
 
-        // message.channel.send("For a list of my commands, have a look at " + pkg.repository);
-        // return;
-
         let fields = [];
 
-        for(let cmd in commands.commands) {
+        console.log(commands.cmds());
+
+        for(let cmd in commands.cmds()) {
             fields.push({
                 name: "!" + cmd,
-                value: commands.commands[cmd].help
+                value: commands.cmds()[cmd].help
             });
         }
 

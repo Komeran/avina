@@ -2,17 +2,13 @@ var logger = require('winston');
 
 module.exports = {
     execute: function (args, message) {
-        if(message.channel.name != 'dnd-dice') {
-            logger.info('Someone tried to roll a dice in the wrong channel... This is a D&D only feature!');
-            return;
-        }
-
         if(!args[1]) {
             logger.info('Missing Die Argument for !roll command!');
             return;
         }
 
         let calculationString = "";
+
         for(let i = 1; i < args.length; i++) {
             calculationString += args[i];
         }
@@ -23,13 +19,12 @@ module.exports = {
         let total = 0; // This is the total of the calculation. Reply with this.
 
         // Separate the plus parts
-        let firstPlus = true;
         let plusParts = calculationString.split('+');
         for(let p = 0; p < plusParts.length; p++) {
             let plusToAdd = 0;
             // Now separate the minus parts
 
-            minusParts = plusParts[p].split('-');
+            let minusParts = plusParts[p].split('-');
             for(let m = 0; m < minusParts.length; m++) {
                 let minusToSubtract = 0;
                 let minusPart = minusParts[m];
@@ -87,7 +82,7 @@ module.exports = {
 
         message.channel.send({
             embed: {
-                title: message.author.username + " rolled a " + total,
+                title: message.guild.member(message.author).nickname + " rolled a " + total,
                 color: 3447003
             }
         });

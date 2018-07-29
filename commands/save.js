@@ -3,14 +3,14 @@
  * @date 27.07.2018
  */
 
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
-var applications = require('../util/applications.js');
-var fs = require("fs");
-var path = require('path');
-var events = require('events');
-var isSaving = false;
-var config = require('../config.json');
+let logger = require('winston');
+let games = require('../dnd_util/games.js');
+let applications = require('../util/applications.js');
+let fs = require("fs");
+let path = require('path');
+let events = require('events');
+let isSaving = false;
+let config = require('../config.json');
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -71,7 +71,7 @@ module.exports = {
 };
 
 let saveGames = function(message, msg) {
-    var json = JSON.stringify(games);
+    let json = JSON.stringify(games);
 
     if(!fs.existsSync(dataPath)) {
         fs.mkdirSync(dataPath);
@@ -88,7 +88,7 @@ let saveGames = function(message, msg) {
 };
 
 let saveApplications = function(message, msg) {
-    var json = JSON.stringify(applications);
+    let json = JSON.stringify(applications);
 
     if(!fs.existsSync(dataPath)) {
         fs.mkdirSync(dataPath);
