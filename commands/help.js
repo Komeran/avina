@@ -1,5 +1,5 @@
-let logger = require('winston');
-let commands = require('../util/commands.js');
+var logger = require('winston');
+var commands = require('../util/commands.js');
 let pkg = require('../package.json');
 
 module.exports = {

@@ -77,7 +77,7 @@ logger.info("Done loading save data.");
 // End Load save data
 
 //Load commands
-let commands = require('./util/commands.js');
+var commands = require('./util/commands.js');
 // End Load commands
 
 // Setup Discord client
