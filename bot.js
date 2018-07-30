@@ -55,7 +55,7 @@ let gamesPath = path.join(__dirname, config.saving.path,"games.json");
 if(fs.existsSync(gamesPath)) {
     let dataString = fs.readFileSync(gamesPath);
     let data = JSON.parse(dataString);
-    for(let gid of data) {
+    for(let gid in data) {
         games[gid] = data[gid];
 	    logger.debug("Games of server " + gid + "loaded");
     }
@@ -64,12 +64,12 @@ if(fs.existsSync(gamesPath)) {
 else {
 	logger.info("No games save found.");
 }
-let applications = require('.util/applications.js');
+let applications = require('./util/applications.js');
 let appsPath = path.join(__dirname, config.saving.path,"applications.json")
 if(fs.existsSync(appsPath)) {
     let dataString = fs.readFileSync(appsPath);
     let apps = JSON.parse(dataString);
-    for(let a of apps) {
+    for(let a in apps) {
         applications[a] = apps[a];
     }
     logger.info("Applications save loaded.");
