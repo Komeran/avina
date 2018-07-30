@@ -114,7 +114,7 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
         }
     });
 
-    let nickname = newMember.nick;
+    let nickname = newMember.nickname;
     if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), newMember.guild.roles)) {
         nickname = nickname.substring(5, nickname.length);
     }
