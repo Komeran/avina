@@ -2,6 +2,10 @@
 A Discord Bot which I use for my own Guild (as in Discord server, not some Game Guild)
 Invite Avina to your server: https://discordapp.com/oauth2/authorize?client_id=382288187990736916&scope=bot
 
+## Credits
+I'd like to thank the following people for contributing! You've made my work here alot easier and provided useful input!
+* **Noémi** for providing lots of command ideas, testing and contributing to Avina's personality! Thank you alot! :)
+
 ## Administrative stuff
 Avina is intended to be a bot for a wide variety of tasks to improve users' Discord experience on your server. However, the administrative commands are primarily intended to help you as an admin manage your users, roles and whatnot. Enjoy!
 
