@@ -60,13 +60,3 @@ function getRoleForTag(text, roles) {
     }
     return undefined;
 }
-
-function getTagForRole(role, roles) {
-    for(let entry of roles) {
-        let r = entry[1];
-        if(r.id === role) {
-            return r.name.substring(0, 4);
-        }
-    }
-    return undefined;
-}
