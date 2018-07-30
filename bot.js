@@ -95,10 +95,12 @@ client.on('message', message => {
             commands.callCommand(cmd, message, args);
 		return;
 	}
-	if(!message.guild) {
+	if(!message.guild && message.author.id !== client.user.id) {
         reactTo(message, client.user.id);
         return;
     }
+    if(message.author.id === client.user.id)
+        return;
 	for(let user of message.mentions.users) {
 	    if(user[0] === client.user.id) {
             logger.info('Hey! I have been mentioned!');
