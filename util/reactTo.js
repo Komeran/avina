@@ -2,7 +2,7 @@ let logger = require('winston');
 let reactions = require('./reactions.json');
 
 module.exports = function(message, clientId) {
-    let arr = message.content.replace('<@' + clientId + '>', '').replace('[:punct:]', '').split(' ');
+    let arr = message.content.replace('<@' + clientId + '>', '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').split(' ');
     let msg = "";
     for(let i = 0; i < arr.length; i++) {
         if(arr[i] && arr[i] !== '') {
