@@ -1,5 +1,5 @@
 var logger = require('winston');
-var commands = require('../util/commands.js');
+var commands = require('../bot.js').commands;
 let pkg = require('../package.json');
 
 module.exports = {
