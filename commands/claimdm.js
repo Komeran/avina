@@ -23,25 +23,31 @@ module.exports = {
             return;
         }
 
-        for(let game in currentGames) {
-            if(currentGames[game].dm === message.author.id) {
-                message.reply("You are already DM of game '" + currentGames[game].session + "'. Please use !abandondm first before" +
+        let cg = currentGames[message.guild.id];
+
+        if(!cg) {
+            currentGames[message.guild.id] = [];
+        }
+
+        for(let game in cg) {
+            if(cg[game].dm === message.author.id) {
+                message.reply("You are already DM of game '" + cg[game].session + "'. Please use !abandondm first before" +
                     " claiming DM status of a new game.");
                 return;
             }
         }
 
-        for(let game in currentGames) {
-            if(currentGames[game].session === args[1].toLowerCase()) {
-                currentGames[game].claimRequester = message.author.id;
-                message.reply("<@" + currentGames[game].dm + "> is the current DM of game '" + currentGames[game].session + "'. Your request for" +
+        for(let game in cg) {
+            if(cg[game].session === args[1].toLowerCase()) {
+                cg[game].claimRequester = message.author.id;
+                message.reply("<@" + cg[game].dm + "> is the current DM of game '" + cg[game].session + "'. Your request for" +
                     " a claim has been noted. As soon as the current DM uses the !abandondm command, you will be the new" +
                     " DM.");
                 return;
             }
         }
 
-        currentGames.push({
+        currentGames[message.guild.id].push({
             session: args[1].toLowerCase(),
             dm: message.author.id,
             players: [],
@@ -50,7 +56,7 @@ module.exports = {
         });
 
         if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
-            currentGames[currentGames.length-1].maxPlayers = Number(args[2]);
+            currentGames[message.guild.id][currentGames[message.guild.id].length-1].maxPlayers = Number(args[2]);
 
         message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
             + " to join the game!");

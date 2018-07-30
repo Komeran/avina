@@ -23,28 +23,35 @@ module.exports = {
             return;
         }
 
-        for(let g in games) {
-            if(games[g].session === args[1].toLowerCase()) {
+        let gid = message.guild.id;
+
+        if(!games[gid]) {
+            message.author.send("Sorry, but that server doesn't have any games running currently!");
+            return;
+        }
+
+        for(let g in games[gid]) {
+            if(games[gid][g].session === args[1].toLowerCase()) {
                 let fields = [];
-                if(!games[g].quests || games[g].quests.length === 0) {
+                if(!games[gid][g].quests || games[gid][g].quests.length === 0) {
                     message.channel.send({
                         embed: {
-                            title: "Quest List of game " + games[g].session,
+                            title: "Quest List of game " + games[gid][g].session,
                             description: "There are no Quests!",
                             color: 3447003
                         }
                     });
                     return;
                 }
-                for(let q in games[g].quests) {
+                for(let q in games[gid][g].quests) {
                     fields.push({
-                        name: "[" + (Number(q)+1) + "] " + games[g].quests[q].description,
-                        value: "Status: " + (games[g].quests[q].completed ? "Completed" : "Open")
+                        name: "[" + (Number(q)+1) + "] " + games[gid][g].quests[q].description,
+                        value: "Status: " + (games[gid][g].quests[q].completed ? "Completed" : "Open")
                     });
                 }
                 message.channel.send({
                     embed: {
-                        title: "Quest List of game " + games[g].session,
+                        title: "Quest List of game " + games[gid][g].session,
                         color: 3447003,
                         fields: fields
                     }
