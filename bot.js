@@ -103,5 +103,53 @@ client.on('message', message => {
     }
 });
 
+client.on('guildMemberUpdate', function(oldMember, newMember) {
+    let newTag = '';
+    let pos = 0;
+
+    newMember.roles.array().forEach(function(role) {
+        if(role.hoist && role.position > pos) {
+            pos = role.position;
+            newTag = getTagForRole(role.id, newMember.guild.roles);
+        }
+    });
+
+    let nickname = newMember.nick;
+    if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), newMember.guild.roles)) {
+        nickname = nickname.substring(5, nickname.length);
+    }
+
+    newMember.edit({
+        nick: newTag + ' ' + nickname
+    }).catch(function(e) {
+        logger.warn(e.message);
+    });
+});
+
 client.login(auth.token);
 // End Setup Discord client
+
+function getRoleForTag(text, roles) {
+    text = text.toLowerCase();
+    for(let entry of roles) {
+        var role = entry[1];
+        var tagCloserPos = role.name.substring(3,5).indexOf(']');
+        if(role.name.substring(0,1) === '[' && tagCloserPos !== -1) {
+            var roleTag = role.name.substring(1,3+tagCloserPos).toLowerCase();
+            if(text === roleTag) {
+                return role.id;
+            }
+        }
+    }
+    return undefined;
+}
+
+function getTagForRole(role, roles) {
+    for(let entry of roles) {
+        let r = entry[1];
+        if(r.id === role) {
+            return r.name.substring(0, 4);
+        }
+    }
+    return undefined;
+}
