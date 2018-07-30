@@ -8,6 +8,11 @@ var games = require('../dnd_util/games.js');
 
 module.exports = {
     execute: function(args, message) {
+        if(!message.guild) {
+            message.author.send("Sorry, but this command doesn't work in direct messages!");
+            return;
+        }
+
         if(args.length > 2) {
             logger.log("Too many arguments for !removequest command.");
             return;

@@ -93,6 +93,7 @@ client.on('message', message => {
 		let cmd = args[0];
 		if(commands.cmds[cmd])
             commands.callCommand(cmd, message, args);
+		return;
 	}
 	for(let user of message.mentions.users) {
 	    if(user[0] === client.user.id) {

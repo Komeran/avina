@@ -95,7 +95,7 @@ module.exports = {
 
         message.channel.send({
             embed: {
-                title: message.guild.member(message.author).nickname + ' rolled:',
+                title: (message.guild ? message.guild.member(message.author).nickname : "You") + ' rolled:',
                 color: 3447003,
                 description: replyString
             }

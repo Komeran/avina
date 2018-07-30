@@ -2,6 +2,11 @@ var logger = require('winston');
 
 module.exports = {
     execute: function(args, message) {
+        if(!message.guild) {
+            message.author.send("Sorry, but this command doesn't work in direct messages!");
+            return;
+        }
+
         if(!message.guild.member(message.author.id).hasPermission('ADMINISTRATOR')) {
             message.author.send("Only admins of a server may use the !approve command! And you are no admin, sorry :/");
             message.delete();

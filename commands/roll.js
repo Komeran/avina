@@ -82,7 +82,7 @@ module.exports = {
 
         message.channel.send({
             embed: {
-                title: message.guild.member(message.author).nickname + " rolled a " + total,
+                title: (message.guild ? message.guild.member(message.author).nickname : "You") + " rolled a " + total,
                 color: 3447003
             }
         });

@@ -49,6 +49,11 @@ module.exports = {
             return;
         }
 
+        if(!message.guild) {
+            message.author.send("Sorry, but this command doesn't work in direct messages!");
+            return;
+        }
+
         if(!message.guild.member(message.author).hasPermission('ADMINISTRATOR')) {
             message.author.send("Only admins of a server may use the !save command! And you are no admin, sorry :/");
             message.delete();

@@ -4,6 +4,11 @@ var games = require('../dnd_util/games.js');
 
 module.exports = {
     execute: function (args, message) {
+        if(!message.guild) {
+            message.author.send("Sorry, but this command doesn't work in direct messages!");
+            return;
+        }
+
         if(message.channel.name !== 'dnd-dice') {
             logger.info('Someone tried to draw a card of the Deck of Many Things in the wrong channel... This is a D&D only feature!');
         }
