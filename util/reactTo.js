@@ -13,8 +13,8 @@ module.exports = function(message, clientId) {
     if(msg.indexOf("avina") === 0) {
         msg = msg.substring(6, msg.length);
     }
-    if(msg.indexOf("avina") === msg.length - 6) {
-        msg = msg.substring(0, msg.length-5);
+    if(msg.indexOf("avina") === msg.length - 5) {
+        msg = msg.substring(0, msg.length-6);
     }
 
     for(let i = 0; i < reactions.length; i++) {
