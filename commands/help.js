@@ -13,11 +13,7 @@ module.exports = {
         if(args[1]) {
             let command = args[1].replace('!', '');
 
-<<<<<<< HEAD
-            if(!commands.cmds.[command.toLowerCase()]) {
-=======
-            if(!commands.cmds.includes(command.toLowerCase())) {
->>>>>>> 9c00c0c7b333a300727c38f6fefd81b687ce7d60
+            if(!commands.cmds[command.toLowerCase()]) {
                 message.author.send("Sorry, but `" + command + "` is not one of my commands!\nMaybe you misspelled it?\nUse `!help` to list all my commands!");
                 return;
             }
