@@ -1,4 +1,5 @@
 let logger = require('winston');
+let reactions = require('./reactions.json');
 
 module.exports = function(message, clientId) {
     let arr = message.content.replace('<@' + clientId + '>', '').split(' ');
@@ -10,10 +11,11 @@ module.exports = function(message, clientId) {
     }
     msg = msg.substring(0, msg.length-1);
 
-    if(msg.toLowerCase() === "thanks" || msg.toLowerCase() === "thx" || msg.toLowerCase() === "thy" || msg.toLowerCase() === "thank you") {
-        message.reply("You're welcome! 😊");
-    }
-    if(msg.toLowerCase() === "good bot" || msg.toLowerCase() === "nice" || msg.toLowerCase() === "awesome!" || msg.toLowerCase() === "awesome !") {
-        message.reply("😁");
+    for(let i = 0; i < reactions.length; i++) {
+        if(reactions[i].triggers.includes(msg.toLowerCase())) {
+            let rnd = Math.floor(Math.random() * reactions[i].responses.length-1) + 1;
+            message.channel.send(reactions[i].responses[rnd]);
+            return;
+        }
     }
 };
