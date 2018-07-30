@@ -7,7 +7,7 @@ module.exports = {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
         }
-        
+
         if (args.length > 1) {
             logger.log("Too many arguments for command '!abandondm'.");
             return;

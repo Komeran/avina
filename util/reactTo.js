@@ -9,10 +9,10 @@ module.exports = function(message, clientId) {
             msg += arr[i] + " ";
         }
     }
-    msg = msg.substring(0, msg.length-1);
+    msg = msg.substring(0, msg.length-1).toLowerCase().replace(' avina ', ' ');
 
     for(let i = 0; i < reactions.length; i++) {
-        if(reactions[i].triggers.includes(msg.toLowerCase())) {
+        if(reactions[i].triggers.includes(msg)) {
             let rnd = Math.floor(Math.random() * reactions[i].responses.length-1) + 1;
             message.channel.send(reactions[i].responses[rnd]);
             return;
