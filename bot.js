@@ -154,6 +154,4 @@ function getTagForRole(role, roles) {
     return undefined;
 }
 
-module.exports = {
-    commands: commands
-};
+module.exports = commands;

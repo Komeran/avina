@@ -1,5 +1,5 @@
 var logger = require('winston');
-var commands = require('../bot.js').commands;
+var commands = require('../bot.js');
 let pkg = require('../package.json');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
 
         let fields = [];
 
-        console.log(commands.cmds());
+        console.log(commands);
 
         for(let cmd in commands.cmds()) {
             fields.push({
