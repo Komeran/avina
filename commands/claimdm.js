@@ -50,7 +50,7 @@ module.exports = {
         message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
             + " to join the game!");
     },
-    help: "Usage: `!claimdm <game>` where <game> can be any text without spaces.\n" +
+    help: "Usage: `!claimdm <game>` where `<game>` can be any text without spaces.\n" +
         "Creates a new game with the provided name if it doesn't exist already. If it does, a claim request will be noted. " +
         "Once the current DM of the game abandons it, you will be the new DM."
 };
