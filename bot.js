@@ -91,7 +91,7 @@ client.on('message', message => {
 	if (message.content.substring(0,1) === '!') {
 		let args = message.content.substring(1).split(' ');
 		let cmd = args[0];
-		if(commands.cmds()[cmd])
+		if(commands.cmds[cmd])
             commands.callCommand(cmd, message, args);
 	}
 	for(let user of message.mentions.users) {
@@ -153,5 +153,3 @@ function getTagForRole(role, roles) {
     }
     return undefined;
 }
-
-module.exports = commands;

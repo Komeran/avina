@@ -22,10 +22,7 @@ let callCommand = new Function('cmd', 'message', 'args', 'cmds', callCommandStri
 logger.info("Loaded " + cmdCount + " commands.");
 
 module.exports = {
-    cmds: function() {
-        console.log(commands);
-        return commands;
-    },
+    cmds: commands,
     callCommand: function(cmd, message, args) {
         return callCommand(cmd, message, args, commands);
     }
