@@ -10,6 +10,12 @@ module.exports = function(message, clientId) {
         }
     }
     msg = msg.substring(0, msg.length-1).toLowerCase().replace(' avina ', ' ');
+    if(msg.indexOf("avina") === 0) {
+        msg = msg.substring(6, msg.length);
+    }
+    if(msg.indexOf("avina") === msg.length - 6) {
+        msg = msg.substring(0, msg.length-5);
+    }
 
     for(let i = 0; i < reactions.length; i++) {
         if(reactions[i].triggers.includes(msg)) {
