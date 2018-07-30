@@ -8,14 +8,14 @@ module.exports = {
             return;
         }
 
-        let commands = require('../bot.js');
+        let commands = require('../util/commands.js');
 
         let fields = [];
 
         for(let cmd in commands.cmds) {
             fields.push({
                 name: "!" + cmd,
-                value: commands.cmds[cmd].help
+                value: (commands.cmds[cmd].help && commands.cmds[cmd].help !== "") ? commands.cmds[cmd].help : "-"
             });
         }
 
@@ -25,7 +25,7 @@ module.exports = {
                 color: 3447003,
                 fields: fields
             }
-        })
+        }).catch(e => logger.warn(e.message));
     },
     help: "Usage: `!help`\n" +
         "Lists all of my commands just like this!"
