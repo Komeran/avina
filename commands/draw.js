@@ -13,7 +13,7 @@ module.exports = {
             logger.info('Someone tried to draw a card of the Deck of Many Things in the wrong channel... This is a D&D only feature!');
         }
 
-        let gid = message.guild.id;
+        let gid = '' + message.guild.id;
 
         if(!games[gid]) {
             message.author.send("Sorry, but that server doesn't have any games running currently!");

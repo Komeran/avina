@@ -23,10 +23,12 @@ module.exports = {
             return;
         }
 
-        let cg = currentGames[message.guild.id];
+        let gid = '' + message.guild.id;
+
+        let cg = currentGames[gid];
 
         if(!cg) {
-            currentGames[message.guild.id] = [];
+            currentGames[gid] = [];
         }
 
         for(let game in cg) {
@@ -47,7 +49,7 @@ module.exports = {
             }
         }
 
-        currentGames[message.guild.id].push({
+        currentGames[gid].push({
             session: args[1].toLowerCase(),
             dm: message.author.id,
             players: [],
@@ -56,7 +58,7 @@ module.exports = {
         });
 
         if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
-            currentGames[message.guild.id][currentGames[message.guild.id].length-1].maxPlayers = Number(args[2]);
+            currentGames[gid][currentGames[gid].length-1].maxPlayers = Number(args[2]);
 
         message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
             + " to join the game!");

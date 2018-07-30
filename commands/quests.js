@@ -23,7 +23,7 @@ module.exports = {
             return;
         }
 
-        let gid = message.guild.id;
+        let gid = '' + message.guild.id;
 
         if(!games[gid]) {
             message.author.send("Sorry, but that server doesn't have any games running currently!");
