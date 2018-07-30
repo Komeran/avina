@@ -11,7 +11,7 @@ module.exports = {
 
         let fields = [];
 
-        console.log(commands.cmds());
+        console.log(commands);
 
         for(let cmd in commands.cmds()) {
             fields.push({
