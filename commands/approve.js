@@ -13,27 +13,12 @@ module.exports = {
             message.mentions.members.array().forEach(function(user) {
                 for(let a in applications) {
                     if(applications[a].user === user.id) {
-                        let newTag = '';
-                        let pos = 0;
                         for(let r in applications[a].roles) {
                             let role = message.guild.roles.find('id', applications[a].roles[r]);
-                            if(role && role.hoist && role.position > pos && getTagForRole(role.id, message.guild.roles)) {
+                            if(role) {
                                 user.addRole(role.id);
-                                newTag = getTagForRole(role.id, message.guild.roles);
-                                pos = role.position;
                             }
                         }
-                        let nickname = user.nickname;
-                        if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
-                            nickname = nickname.substring(5, nickname.length);
-                        }
-                        user.edit({
-                            nick: newTag + ' ' + nickname
-                        }).catch(function(e) {
-                            logger.warn(e.message);
-                        });
-                        applications.splice(Number(a), 1);
-                        break;
                     }
                 }
             });
@@ -50,28 +35,3 @@ module.exports = {
         "Approves all role applications of the mentioned users. " +
         "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };
-
-function getRoleForTag(text, roles) {
-    text = text.toLowerCase();
-    for(let entry of roles) {
-        let role = entry[1];
-        let tagCloserPos = role.name.substring(3,5).indexOf(']');
-        if(role.name.substring(0,1) === '[' && tagCloserPos !== -1) {
-            let roleTag = role.name.substring(0,3).toLowerCase();
-            if(text === roleTag) {
-                return role.id;
-            }
-        }
-    }
-    return undefined;
-}
-
-function getTagForRole(role, roles) {
-    for(let entry of roles) {
-        let r = entry[1];
-        if(r.id === role) {
-            return r.name.substring(0, 4);
-        }
-    }
-    return undefined;
-}

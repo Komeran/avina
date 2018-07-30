@@ -30,30 +30,6 @@ module.exports = {
 
             let user = message.mentions.members.array()[0];
             user.removeRoles(rolesToRevoke, reason);
-
-            let newTag = '';
-            let pos = 0;
-
-            user.roles.array().forEach(function(role) {
-                if(role.hoist && role.position > pos) {
-                    pos = role.position;
-                    newTag = getTagForRole(role.id, message.guild.roles);
-                }
-            });
-
-            let nickname = user.nickname;
-            if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), message.guild.roles)) {
-                nickname = nickname.substring(5, nickname.length);
-            }
-
-            user.edit({
-                nick: newTag + ' ' + nickname
-            }).then(function() {
-                message.author.send("Successfully revoked roles from user " + newTag + " " + nickname);
-                user.send("You have been revoked of your roles by " + message.author.username + "! :(");
-            }).catch(function(e) {
-                logger.warn(e.message);
-            });
         }
         else if(args.length === 2) {
             message.author.send('\'apply\' command invalid: Missing Role Tag parameter(s)!');
