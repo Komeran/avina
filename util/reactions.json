@@ -18,18 +18,7 @@
     "triggers": [
       "good bot",
       "nice",
-      "nice!",
-      "nice !",
-      ", nice",
-      ", nice!",
-      "nice,",
-      "nice, !",
-      "awesome!",
-      "awesome !",
-      "awesome",
-      "awesome,",
-      "awesome, !",
-      ", awesome!"
+      "awesome"
     ],
     "responses": [
       "😁",
@@ -44,30 +33,10 @@
   {
     "triggers": [
       "",
-      "?",
-      "?!",
-      "??",
-      "you there?",
-      "are you there?",
-      ", are you there?",
-      ", you there?",
-      "you there ?",
-      "you there, ?",
-      "are you there ?",
-      "are you there, ?",
       "you there",
-      "you there,",
-      ", you there",
       "are you there",
-      "are you there,",
-      ", are you there",
       "you up",
-      "you up?",
-      ", you up?",
-      "you up ?",
-      "you up, ?",
-      ", you up",
-      "you up,"
+      "are you up"
     ],
     "responses": [
       "Yes, I'm here! 😊",
@@ -75,6 +44,23 @@
       "Up and running! 😁",
       "I'm up and running! 😁",
       "Yes, what do you need? 🙂"
+    ]
+  },
+
+  {
+    "triggers": [
+      "hi",
+      "hey",
+      "hello",
+      "howdy"
+    ],
+    "responses": [
+      "Hi! 😊",
+      "Hey! 😊",
+      "Hello! 😊",
+      "Hi! 😁",
+      "Hey! 😁",
+      "Hello! 😁"
     ]
   }
 ]
