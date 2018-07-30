@@ -10,9 +10,9 @@ module.exports = {
 
         let commands = require('../util/commands.js');
 
-        let command = args[1].replace('!', '');
+        if(args[1]) {
+            let command = args[1].replace('!', '');
 
-        if(command) {
             if(!commands.cmds.includes(command.toLowerCase())) {
                 message.author.send("Sorry, but `" + command + "` is not one of my commands!\nMaybe you misspelled it?\nUse `!help` to list all my commands!");
                 return;
