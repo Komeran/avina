@@ -16,16 +16,24 @@ This section should hopefully explain to you how Avina manages roles, auto-detec
 
 #### 1. Roles with Tags
 So, the first thing you have to understand is, how Avina manages roles and what you have to do to make your roles manageable for Avina.
+
 Avina looks for roles with "tags". These roles look like this:
+
 `[GA] Gamer` or `[ag] Awesome Guys`
+
 As you can see, the tag is a 2 character text (preferrably for your users abbreviating the role name) and it is case insensitive, so it doesn't matter whether they are upper- or lowercase or mixed case. Make sure, they are unique, as Avina uses them as identifying IDs. Also, it is necessary to put them in brackets.
+
 If a role's name doesn't have such a tag infront of it, Avina will ignore it.
 
 #### 2. User Nickname Role Tags
 Avina automatically puts tags infront of User's nicknames if their roles or their nickname change.
+
 Now, she only puts one tag infront of the User's nickname and therefore she uses a little system do decide which tag to choose.
+
 First of all, Avina only puts tags of roles, that have the `Display role members separately from members` setting enabled.
+
 From those roles, she chooses the one that is ranked highest in the roles list of the server.
+
 If the user's nickname already has a tag infront of it's name that has a corresponding role on this server, that tag is replaced by the new one. If not, Avina puts the new tag infront of the user's full current nickname.
 
 ### Commands
