@@ -16,7 +16,7 @@ module.exports = {
         }
 
         if(message.guild.member(message.author).permissions.has("ADMINISTRATOR")) {
-            message.author.send("Sorry, btu I can't manage admins. You have to manage your roles and tags yourself.");
+            message.author.send("Sorry, but I can't manage admins. You have to manage your roles and tags yourself.");
             message.delete();
             return;
         }
