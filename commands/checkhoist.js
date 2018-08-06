@@ -8,7 +8,7 @@ module.exports = {
             return;
         }
 
-        if(!message.guild.member(message.author).permissions.hasPermission("ADMINISTRATOR")) {
+        if(!message.guild.member(message.author).permissions.has("ADMINISTRATOR")) {
             message.author.send("This is an admin only command! And unfortunately you are no admin, sorry!");
             return;
         }
