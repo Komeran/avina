@@ -128,8 +128,13 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
     let nickname = newMember.nickname;
     if(!nickname)
         nickname = oldMember.user.username;
-    if(getRoleForTag(nickname.split(' ')[0].replace('[', '').replace(']', ''), newMember.guild.roles)) {
+    let memberTag = nickname.split(' ')[0].replace('[', '').replace(']', '');
+    if(getRoleForTag(memberTag, newMember.guild.roles)) {
         nickname = nickname.substring(5, nickname.length);
+    }
+
+    if(memberTag === newTag) {
+        return;
     }
 
     newMember.edit({
@@ -162,7 +167,7 @@ function getTagForRole(role, roles) {
         let r = entry[1];
         let tagCloserPos = r.name.substring(3,5).indexOf(']');
         if(r.id === role) {
-            let roleTag = r.name.substring(0, 3+tagCloserPos).toLowerCase();
+            let roleTag = r.name.substring(1, 3+tagCloserPos).toLowerCase();
             return "[" + roleTag + "]";
         }
     }
