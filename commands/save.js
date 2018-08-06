@@ -11,6 +11,8 @@ let path = require('path');
 let events = require('events');
 let isSaving = false;
 let config = require('../config.json');
+let auth = require('../auth.json');
+let connection = require('mysql').createConnection(auth.database);
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -32,8 +34,8 @@ let dataPath = path.join(__dirname, "..", config.saving.path);
 
 const emitter = new events.EventEmitter();
 
-emitter.on("games", function(message, savingMessage) {
-    saveApplications(message, savingMessage);
+emitter.on("games", function(message, savingMessage, json) {
+    saveApplications(message, savingMessage, json);
 });
 emitter.on("applications", function(message, savingMessage) {
     message.channel.send("Saving complete!");
@@ -70,41 +72,83 @@ module.exports = {
         message.channel.send("Saving...").then(function(msg) {
             isSaving = true;
             saveGames(message, msg);
+            return;
+            connection.connect(function(err) {
+                if(err) {
+                    saveGames(message, msg, true);
+                }
+            });
         });
     },
     help: ""
 };
 
-let saveGames = function(message, msg) {
-    let json = JSON.stringify(games);
+let saveGames = function(message, msg, json) {
 
-    if(!fs.existsSync(dataPath)) {
-        fs.mkdirSync(dataPath);
-    }
-
-    fs.writeFile(path.join(dataPath, 'games.json'), json, 'utf8', function(err) {
-        if(err) {
-            message.channel.send("Something went wrong during saving! Please tell your server admin!");
-            logger.warn(err);
+    if(!json) {
+        let gid = message.guild.id;
+        let gameQuery = "INSERT INTO ga_games (ga_name,ga_u_dm,ga_g_guild) VALUES ";
+        if(!games[gid]) {
+            //THERE IS NOTHING TO SAVE FOR THIS GUILD!
+            connection.end();
             return;
         }
-        emitter.emit("games", message, msg);
-    });
+        for (let g of games[gid]) {
+            let game = games[gid][g];
+            gameQuery += "('" + game.session + "'," + game.dm + "," + gid + "),";
+        }
+        gameQuery = gameQuery.substring(0, gameQuery.length-1) + ";";
+        connection.query(gameQuery, null, function (e) {
+            if (e) {
+                logger.error(e.message);
+            }
+        });
+
+        for(let g of games[gid]) {
+            let game = games[gid][g];
+            let gameQuery = "INSERT INTO ga_games (ga_name,ga_u_dm,ga_g_guild) VALUES ";
+        }
+
+
+        emitter.emit("games", message, msg, true);
+    }
+    else {
+        let json = JSON.stringify(games);
+
+        if (!fs.existsSync(dataPath)) {
+            fs.mkdirSync(dataPath);
+        }
+
+        fs.writeFile(path.join(dataPath, 'games.json'), json, 'utf8', function (err) {
+            if (err) {
+                message.channel.send("Something went wrong during saving! Please tell your server admin!");
+                logger.warn(err);
+                return;
+            }
+            emitter.emit("games", message, msg);
+        });
+    }
 };
 
-let saveApplications = function(message, msg) {
-    let json = JSON.stringify(applications);
+let saveApplications = function(message, msg, json) {
+    if(json) {
+        let json = JSON.stringify(applications);
 
-    if(!fs.existsSync(dataPath)) {
-        fs.mkdirSync(dataPath);
-    }
-
-    fs.writeFile(path.join(dataPath, 'applications.json'), json, 'utf8', function(err) {
-        if(err) {
-            message.channel.send("Something went wrong during saving! Please tell your server admin!");
-            logger.warn(err);
-            return;
+        if (!fs.existsSync(dataPath)) {
+            fs.mkdirSync(dataPath);
         }
+
+        fs.writeFile(path.join(dataPath, 'applications.json'), json, 'utf8', function (err) {
+            if (err) {
+                message.channel.send("Something went wrong during saving! Please tell your server admin!");
+                logger.warn(err);
+                return;
+            }
+            emitter.emit("applications", message, msg);
+        });
+    }
+    else {
+        // DATABASE SAVE
         emitter.emit("applications", message, msg);
-    });
+    }
 };

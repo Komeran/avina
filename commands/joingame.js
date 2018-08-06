@@ -25,12 +25,18 @@ module.exports = {
             return;
         }
 
-        for(let g in games[gid]) {
-            if(games[gid][g].session !== args[1].toLowerCase() && games[gid][g].players.indexOf(message.author.id) !== -1) {
-                var oldGame = games[gid][g];
-                break;
+        loop1:
+            for(let g in games[gid]) {
+                if(games[gid][g].session !== args[1].toLowerCase()) {
+                    for(let p in games[gid][g].players) {
+                        if(games[gid][g].players[p].id === message.author.id) {
+                            var oldGame = games[gid][g];
+                            var oldIdx = p;
+                            break loop1;
+                        }
+                    }
+                }
             }
-        }
 
         for(let g in games[gid]) {
             if(games[gid][g].session === args[1].toLowerCase()) {
@@ -43,9 +49,11 @@ module.exports = {
                     return;
                 }
                 let msg = "";
-                games[gid][g].players.push(message.author.id);
+                games[gid][g].players.push({
+                    id: message.author.id
+                });
                 if(oldGame)
-                    oldGame.players.splice(oldGame.players.indexOf(message.author.id), 1);
+                    oldGame.players.splice(oldIdx, 1);
                 if(oldGame)
                     msg = "You left game '" + oldGame.session + "' and joined game '" + games[gid][g].session +"'.";
                 else
