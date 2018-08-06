@@ -13,10 +13,17 @@ module.exports = {
             logger.info('Someone tried to draw a card of the Deck of Many Things in the wrong channel... This is a D&D only feature!');
         }
 
+        let gid = '' + message.guild.id;
+
+        if(!games[gid]) {
+            message.author.send("Sorry, but that server doesn't have any games running currently!");
+            return;
+        }
+
         let game = null;
         let dm = null;
 
-        games.forEach(function(g) {
+        games[gid].forEach(function(g) {
             if(g.players.indexOf(message.author.id) !== -1) {
                 game = g;
                 dm = message.guild.member(''+g.dm);

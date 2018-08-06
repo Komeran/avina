@@ -55,19 +55,23 @@ let gamesPath = path.join(__dirname, config.saving.path,"games.json");
 if(fs.existsSync(gamesPath)) {
     let dataString = fs.readFileSync(gamesPath);
     let data = JSON.parse(dataString);
-    for(let i = 0; i < data.length; i++) {
-        games.push(data[i]);
-	logger.debug("Game " + data[i].session + "loaded");
+    for(let gid in data) {
+        games[gid] = data[gid];
+	    logger.debug("Games of server " + gid + "loaded");
     }
     logger.info("Games save loaded.");
 }
 else {
 	logger.info("No games save found.");
 }
+let applications = require('./util/applications.js');
 let appsPath = path.join(__dirname, config.saving.path,"applications.json")
 if(fs.existsSync(appsPath)) {
     let dataString = fs.readFileSync(appsPath);
-    applications = JSON.parse(dataString);
+    let apps = JSON.parse(dataString);
+    for(let a in apps) {
+        applications[a] = apps[a];
+    }
     logger.info("Applications save loaded.");
 }
 else {

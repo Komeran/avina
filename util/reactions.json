@@ -1,9 +1,16 @@
-[
+﻿[
   {
     "triggers": [
       "thanks",
       "thx",
       "thy",
+      "ty",
+      "tyty",
+      "thnks",
+      "thankyou",
+      "thaanks",
+      "thankss",
+      "thankyouu",
       "thank you"
     ],
     "responses": [
@@ -18,7 +25,13 @@
     "triggers": [
       "good bot",
       "nice",
-      "awesome"
+      "awesome",
+      "great",
+      "good job",
+      "well done",
+      "nice job",
+      "nice bot",
+      "good work"
     ],
     "responses": [
       "😁",
@@ -36,11 +49,16 @@
       "you there",
       "are you there",
       "you up",
-      "are you up"
+      "are you up",
+      "r u there",
+      "r u here"
     ],
     "responses": [
       "Yes, I'm here! 😊",
       "I'm here! 😊",
+      "How can I help? 😊",
+      "What can I do for you? 😊",
+      "Can I help you?",
       "Up and running! 😁",
       "I'm up and running! 😁",
       "Yes, what do you need? 🙂"
@@ -49,14 +67,150 @@
 
   {
     "triggers": [
+      "good morning",
+      "morning"
+    ],
+    "responses": [
+      "Good morning! 😊",
+      "Good morning, what can I do for you today? 😊",
+      "Good morning to you too!",
+      "Good morning to you too! 😁",
+      "Morning! 😁"
+    ]
+  },
+
+  {
+    "triggers": [
+      "good evening",
+      "evening"
+    ],
+    "responses": [
+      "Good evening! 😊",
+      "Good evening, what can I do for you today? 😊",
+      "Good evening to you too!",
+      "Good evening to you too! 😁",
+      "Evening! 😁"
+    ]
+  },
+
+  {
+    "triggers": [
+      "good afternoon",
+      "afternoon"
+    ],
+    "responses": [
+      "Good afternoon! 😊",
+      "Good afternoon, what can I do for you today? 😊",
+      "Good afternoon to you too!",
+      "Good afternoon to you too! 😁"
+    ]
+  },
+
+  {
+    "triggers": [
+      "goodbye",
+      "bye",
+      "byebye",
+      "byee",
+      "see you",
+      "see you later",
+      "cya",
+      "cya later"
+
+    ],
+    "responses": [
+      "Goodbye 😊",
+      "Byebye 😊",
+      "Goodbye, take care 😊",
+      "Goodbye, please come back soon 😁",
+      "Take care! 😁"
+    ]
+  },
+
+  {
+    "triggers": [
+      "you are cute",
+      "youre cute",
+      "you are so cute",
+      "youre so cute",
+      "so cute",
+      "is cute",
+      "you are smart",
+      "youre smart",
+      "you are so smart",
+      "youre so smart",
+      "so smart",
+      "is smart",
+      "you are cool",
+      "youre cool",
+      "you are so cool",
+      "youre so cool",
+      "so cool",
+      "is cool",
+      "you are pretty",
+      "youre pretty",
+      "you are so pretty",
+      "youre so pretty",
+      "so pretty",
+      "is pretty"
+
+    ],
+    "responses": [
+      "Thanks! 😊",
+      "Thank you! 😊",
+      "Thanks! 😁",
+      "Thank you! 😁",
+      "How sweet of you! 😊",
+      "So are you!",
+      "Kind of you to say so 😁",
+      "And you are very nice! 😁"
+    ]
+  },
+
+  {
+    "triggers": [
+      "i love you",
+      "love you",
+      "love ya",
+      "love u",
+      "luv u"
+    ],
+    "responses": [
+      "How sweet of you! 😊",
+      "Awww 😊"
+    ]
+  },
+  {
+    "triggers": [
+      "i hate you",
+      "hate you",
+      "screw you",
+      "fuck you",
+      "you suck",
+      "sucks"
+    ],
+    "responses": [
+      "That is not a nice thing to say.",
+      "You are very inpolite!",
+      "You are quite rude.",
+      "There is no need to be rude.",
+      "Please be polite."
+    ]
+  },
+
+  {
+    "triggers": [
       "hi",
       "hey",
+      "heyy",
+      "hii",
       "hello",
       "howdy",
       "greetings",
       "yo",
       "heyho",
       "hiho"
+
     ],
     "responses": [
       "Hi! 😊",

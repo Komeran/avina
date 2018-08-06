@@ -18,31 +18,46 @@ module.exports = {
             return;
         }
 
-        for(let g in games) {
-            if(games[g].session !== args[1].toLowerCase() && games[g].players.indexOf(message.author.id) !== -1) {
-                var oldGame = games[g];
-                break;
-            }
+        let gid = '' + message.guild.id;
+
+        if(!games[gid]) {
+            message.author.send("Sorry, but that server doesn't have any games running currently!");
+            return;
         }
 
-        for(let g in games) {
-            if(games[g].session === args[1].toLowerCase()) {
-                if(games[g].dm === message.author.id) {
+        loop1:
+            for(let g in games[gid]) {
+                if(games[gid][g].session !== args[1].toLowerCase()) {
+                    for(let p in games[gid][g].players) {
+                        if(games[gid][g].players[p].id === message.author.id) {
+                            var oldGame = games[gid][g];
+                            var oldIdx = p;
+                            break loop1;
+                        }
+                    }
+                }
+            }
+
+        for(let g in games[gid]) {
+            if(games[gid][g].session === args[1].toLowerCase()) {
+                if(games[gid][g].dm === message.author.id) {
                     message.author.send("You are the current DM of the game '" + args[1].toLowerCase() + "'! You can't join it as a player!");
                     return;
                 }
-                if(games[g].maxPlayers === games[g].players.length) {
-                    message.author.send("Game " + games[g].session + " is already full, sorry! :(");
+                if(games[gid][g].maxPlayers === games[gid][g].players.length) {
+                    message.author.send("Game " + games[gid][g].session + " is already full, sorry! :(");
                     return;
                 }
                 let msg = "";
-                games[g].players.push(message.author.id);
+                games[gid][g].players.push({
+                    id: message.author.id
+                });
                 if(oldGame)
-                    oldGame.players.splice(oldGame.players.indexOf(message.author.id), 1);
+                    oldGame.players.splice(oldIdx, 1);
                 if(oldGame)
-                    msg = "You left game '" + oldGame.session + "' and joined game '" + games[g].session +"'.";
+                    msg = "You left game '" + oldGame.session + "' and joined game '" + games[gid][g].session +"'.";
                 else
-                    msg = "Successfully joined game '" + games[g].session + "'!";
+                    msg = "Successfully joined game '" + games[gid][g].session + "'!";
                 message.reply(msg);
                 return;
             }

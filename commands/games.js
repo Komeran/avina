@@ -8,6 +8,13 @@ module.exports = {
             return;
         }
 
+        let gid = '' + message.guild.id;
+
+        if(!games[gid]) {
+            message.author.send("Sorry, but that server doesn't have any games running currently!");
+            return;
+        }
+
         let embed = {
             color: 3447003,
             title: "List of running Games",
@@ -15,14 +22,14 @@ module.exports = {
             fields: []
         };
 
-        games.forEach(function(game) {
+        games[gid].forEach(function(game) {
             embed.fields.push({
                 name: game.session,
                 value: "DM: <@" + game.dm + ">\nPlayers: " + game.players.length + "/" + game.maxPlayers
             });
         }, this);
 
-        if(games.length === 0) {
+        if(games[gid].length === 0) {
             embed.description = "There are no games currently! Be the first to start one using !claimdm <Game> , or have your DM do it!";
         }
 

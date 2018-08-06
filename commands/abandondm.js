@@ -13,19 +13,26 @@ module.exports = {
             return;
         }
 
+        let gid = '' + message.guild.id;
+
+        if(!games[gid]) {
+            message.author.send("Sorry, but that server doesn't have any games running currently!");
+            return;
+        }
+
         for (i = 0; i < games.length; i++) {
-            if (games[i].dm === message.author.id) {
-                if (games[i].claimRequester) {
-                    games[i].dm = games[i].claimRequester;
-                    if (games[i].players.indexOf(games[i].claimRequester) !== -1) {
-                        games[i].players.splice(games[i].players.indexOf(games[i].claimRequester), 1);
+            if (games[gid][i].dm === message.author.id) {
+                if (games[gid][i].claimRequester) {
+                    games[gid][i].dm = games[gid][i].claimRequester;
+                    if (games[gid][i].players.indexOf(games[gid][i].claimRequester) !== -1) {
+                        games[gid][i].players.splice(games[gid][i].players.indexOf(games[gid][i].claimRequester), 1);
                     }
-                    delete games[i].claimRequester;
-                    message.reply("<@" + games[i].dm + "> is now the DM of game '" + games[i].session + "'!");
+                    delete games[gid][i].claimRequester;
+                    message.reply("<@" + games[gid][i].dm + "> is now the DM of game '" + games[gid][i].session + "'!");
                     return;
                 }
-                message.reply("Game '" + games[i].session + "' has been abandoned.");
-                games.splice(i, 1);
+                message.reply("Game '" + games[gid][i].session + "' has been abandoned.");
+                games[gid].splice(i, 1);
                 return;
             }
         }
