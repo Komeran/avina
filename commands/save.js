@@ -14,7 +14,7 @@ let config = require('../config.json');
 let auth = require('../auth.json');
 let guildSettings = require('../util/guildSettings.js');
 if(auth.database)
-    let connection = require('mysql').createConnection(auth.database);
+    var connection = require('mysql').createConnection(auth.database);
 
 // Fall back to default config if there is no config
 if(!config) {
