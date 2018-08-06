@@ -15,6 +15,12 @@ module.exports = {
             return;
         }
 
+        if(message.guild.member(message.author).permissions.has("ADMINISTRATOR")) {
+            message.author.send("Sorry, btu I can't manage admins. You have to manage your roles and tags yourself.");
+            message.delete();
+            return;
+        }
+
         if(args.length == 2) {
 
             var appliedRole = getRoleForTag(args[1], message.guild.roles);
