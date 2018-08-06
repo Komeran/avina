@@ -160,7 +160,7 @@ function getRoleForTag(text, roles) {
 function getTagForRole(role, roles) {
     for(let entry of roles) {
         let r = entry[1];
-        let tagCloserPos = role.name.substring(3,5).indexOf(']');
+        let tagCloserPos = r.name.substring(3,5).indexOf(']');
         if(r.id === role) {
             let roleTag = r.name.substring(0, 3+tagCloserPos).toLowerCase();
             return "[" + roleTag + "]";
