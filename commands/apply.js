@@ -5,6 +5,13 @@ module.exports = {
     execute: function(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
+            message.delete();
+            return;
+        }
+
+        if(!args[1]) {
+            message.author.send("You need to tell me what role you want to apply for! Just put the role's tag after the !apply command like this: `!apply ga`");
+            message.delete();
             return;
         }
 
@@ -16,17 +23,20 @@ module.exports = {
                 return;
             }
             if(appliedRole) {
-                for(let a in applications) {
-                    if(applications[a].user === message.author.id) {
-                        if(applications[a].roles.indexOf(appliedRole) !== -1)
+                let gid = message.guild.id;
+                if(!applications[gid])
+                    applications[gid] = [];
+                for(let a in applications[gid]) {
+                    if(applications[gid][a].user === message.author.id) {
+                        if(applications[gid][a].roles.indexOf(appliedRole) !== -1)
                             message.author.send("You have already applied for this role! Admins will review it, just be patient. :)");
-                        applications[a].roles.push(appliedRole);
+                        applications[gid][a].roles.push(appliedRole);
                         message.reply('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
                         message.delete();
                         return;
                     }
                 }
-                applications.push({
+                applications[gid].push({
                     user: message.author.id,
                     roles: [appliedRole]
                 });

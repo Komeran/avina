@@ -16,10 +16,14 @@ module.exports = {
 
         if(args.length >= 2) {
             message.mentions.members.array().forEach(function(user) {
-                for(let a in applications) {
-                    if(applications[a].user === user.id) {
-                        for(let r in applications[a].roles) {
-                            let role = message.guild.roles.find('id', applications[a].roles[r]);
+                let gid = message.guild.id;
+                if(!applications[gid]) {
+                    applications[gid] = [];
+                }
+                for(let a in applications[gid]) {
+                    if(applications[gid][a].user === user.id) {
+                        for(let r in applications[gid][a].roles) {
+                            let role = message.guild.roles.find('id', applications[gid][a].roles[r]);
                             if(role) {
                                 user.addRole(role.id);
                             }
