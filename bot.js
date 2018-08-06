@@ -52,6 +52,21 @@ for(let f in config.logger.files) {
 
 // Load save data
 logger.info("Loading save data...");
+
+let guildSettingsPath = path.join(__dirname, config.saving.path,"guildSettings.json");
+if(fs.existsSync(guildSettingsPath)) {
+    let dataString = fs.readFileSync(guildSettingsPath);
+    let data = JSON.parse(dataString);
+    for(let gid in data) {
+        guildSettings[gid] = data[gid];
+        logger.debug("Settings of server " + gid + "loaded");
+    }
+    logger.info("Guild Settings save loaded.");
+}
+else {
+    logger.info("No Guild Settings save found.");
+}
+
 let gamesPath = path.join(__dirname, config.saving.path,"games.json");
 if(fs.existsSync(gamesPath)) {
     let dataString = fs.readFileSync(gamesPath);
