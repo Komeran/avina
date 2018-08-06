@@ -145,10 +145,10 @@ client.login(auth.token);
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();
     for(let entry of roles) {
-        var role = entry[1];
-        var tagCloserPos = role.name.substring(3,5).indexOf(']');
+        let role = entry[1];
+        let tagCloserPos = role.name.substring(3,5).indexOf(']');
         if(role.name.substring(0,1) === '[' && tagCloserPos !== -1) {
-            var roleTag = role.name.substring(1,3+tagCloserPos).toLowerCase();
+            let roleTag = role.name.substring(1,3+tagCloserPos).toLowerCase();
             if(text === roleTag) {
                 return role.id;
             }
@@ -160,8 +160,10 @@ function getRoleForTag(text, roles) {
 function getTagForRole(role, roles) {
     for(let entry of roles) {
         let r = entry[1];
+        let tagCloserPos = role.name.substring(3,5).indexOf(']');
         if(r.id === role) {
-            return r.name.substring(0, 4);
+            let roleTag = r.name.substring(0, 3+tagCloserPos).toLowerCase();
+            return "[" + roleTag + "]";
         }
     }
     return undefined;

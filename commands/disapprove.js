@@ -16,10 +16,13 @@ module.exports = {
 
         if(args.length >= 2) {
             message.mentions.members.array().forEach(function(user) {
-                for(let a in applications) {
-                    if(applications[a].user === user.id) {
+                let gid = message.guild.id;
+                if(!applications[gid])
+                    applications[gid] = [];
+                for(let a in applications[gid]) {
+                    if(applications[gid][a].user === user.id) {
                         user.send(message.author.username + " has disapproved your role applications!");
-                        applications.splice(Number(a), 1);
+                        applications[gid].splice(Number(a), 1);
                         return;
                     }
                 }
