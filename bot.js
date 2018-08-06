@@ -138,8 +138,8 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
 
     newMember.roles.array().forEach(function(role) {
         if((!guildSettings[gid] || !guildSettings[gid].checkhoist || role.hoist) && role.position > pos) {
-            pos = role.position;
-            newTag = getTagForRole(role.id, newMember.guild.roles);
+            newTag = getTagForRole(role.id, newMember.guild.roles) || newTag;
+            pos = getTagForRole(role.id, newMember.guild.roles) ? role.position : pos;
         }
     });
 
@@ -147,8 +147,11 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
     if(!nickname)
         nickname = oldMember.user.username;
     let memberTag = nickname.split(' ')[0].replace('[', '').replace(']', '');
+    if(nickname.indexOf('[') !== 0) {
+        memberTag = "";
+    }
     if(getRoleForTag(memberTag, newMember.guild.roles)) {
-        nickname = nickname.substring(memberTag.length+3, nickname.length);
+        nickname = nickname.substring((memberTag === "" ? 0 : (memberTag.length+3)), nickname.length);
     }
 
     if(memberTag === newTag) {
@@ -183,9 +186,9 @@ function getRoleForTag(text, roles) {
 function getTagForRole(role, roles) {
     for(let entry of roles) {
         let r = entry[1];
-        let tagCloserPos = r.name.substring(3,5).indexOf(']');
-        if(r.id === role) {
-            let roleTag = r.name.substring(1, 3+tagCloserPos).toLowerCase();
+        let tagCloserPos = r.name.indexOf(']');
+        if(r.id === role && tagCloserPos && r.name.indexOf('[') === 0) {
+            let roleTag = r.name.substring(1, tagCloserPos).toLowerCase();
             return "[" + roleTag.toUpperCase() + "]";
         }
     }
