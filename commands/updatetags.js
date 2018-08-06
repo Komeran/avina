@@ -35,7 +35,7 @@ module.exports = {
                 nickname = newMember.user.username;
             let memberTag = nickname.split(' ')[0].replace('[', '').replace(']', '');
             if (getRoleForTag(memberTag, newMember.guild.roles)) {
-                nickname = nickname.substring(5, nickname.length);
+                nickname = nickname.substring(memberTag.length+3, nickname.length);
             }
 
             if (memberTag === newTag) {
