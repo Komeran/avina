@@ -26,7 +26,10 @@ module.exports = {
 
         let fields = [];
 
-        applications.forEach(function(app) {
+        let gid = message.guild.id;
+
+        for(let a in applications[gid]) {
+            var app = applications[gid][a];
             let roles = "";
             app.roles.forEach(function(role) {
                 roles += getRoleNameById(role, message.guild.id) + ", ";
@@ -36,7 +39,7 @@ module.exports = {
                 name: message.guild.member(app.user).nickname,
                 value: "Roles: " + roles
             });
-        });
+        }
 
         message.author.send({
             embed: {
