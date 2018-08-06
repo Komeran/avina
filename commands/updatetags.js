@@ -20,7 +20,6 @@ module.exports = {
         let updateCount = 0;
         for(let m in message.guild.members.array()) {
             let newMember = message.guild.members.array()[m];
-            console.log(newMember);
             let newTag = '';
             let pos = 0;
 
