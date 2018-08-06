@@ -18,9 +18,9 @@ module.exports = {
         let gid = message.guild.id;
 
         let updateCount = 0;
-
-        for(let m in message.guild.members) {
-            let newMember = message.guild.members[m];
+        for(let m in message.guild.members.array()) {
+            let newMember = message.guild.members.array()[m];
+            console.log(newMember);
             let newTag = '';
             let pos = 0;
 
@@ -53,14 +53,14 @@ module.exports = {
         }
 
         let addText = "That's a lot. I'm glad I cleaned that mess up!";
-        if(updateCount === 0) {
-            addText = "Seems like everything was already tidied up!";
+        if(updateCount <= 50) {
+            addText = " Quite a few actually!";
         }
         if(updateCount <= 10) {
             addText = "Not too many.";
         }
-        if(updateCount <= 50) {
-            addText = "Quite a few actually!";
+        if(updateCount === 0) {
+            addText = "Seems like everything was already tidied up!";
         }
 
         message.channel.send("Done updating role tags! I had to update " + updateCount + " role tags! " + addText);
