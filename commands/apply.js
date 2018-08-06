@@ -16,13 +16,15 @@ module.exports = {
         }
 
         if(args.length == 2) {
-            var appliedRole = getRoleForTag(args[1], message.guild.roles).id;
-            if(message.guild.member(message.author).roles.has(appliedRole)) {
-                message.author.send("You already have that role! No need to apply for it :)");
-                message.delete();
-                return;
-            }
+
+            var appliedRole = getRoleForTag(args[1], message.guild.roles);
             if(appliedRole) {
+                appliedRole = appliedRole.id;
+                if(message.guild.member(message.author).roles.has(appliedRole)) {
+                    message.author.send("You already have that role! No need to apply for it :)");
+                    message.delete();
+                    return;
+                }
                 let gid = message.guild.id;
                 if(!applications[gid])
                     applications[gid] = [];
