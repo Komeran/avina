@@ -6,6 +6,7 @@ var fs = require("fs");
 var path = require("path");
 var config = require('./config.json');
 let reactTo = require('./util/reactTo.js');
+let guildSettings = require('./util/guildSettings.js');
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -118,8 +119,10 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
     let newTag = '';
     let pos = 0;
 
+    let gid = newMember.guild.id;
+
     newMember.roles.array().forEach(function(role) {
-        if(role.hoist && role.position > pos) {
+        if((!guildSettings[gid] || !guildSettings[gid].checkhoist || role.hoist) && role.position > pos) {
             pos = role.position;
             newTag = getTagForRole(role.id, newMember.guild.roles);
         }

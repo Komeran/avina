@@ -12,6 +12,7 @@ let events = require('events');
 let isSaving = false;
 let config = require('../config.json');
 let auth = require('../auth.json');
+let guildSettings = require('../util/guildSettings.js');
 if(auth.database)
     let connection = require('mysql').createConnection(auth.database);
 
@@ -35,6 +36,9 @@ let dataPath = path.join(__dirname, "..", config.saving.path);
 
 const emitter = new events.EventEmitter();
 
+emitter.on("guildSettings", function(message, savingMessage, json) {
+    saveGames(message, savingMessage, json);
+});
 emitter.on("games", function(message, savingMessage, json) {
     saveApplications(message, savingMessage, json);
 });
@@ -72,7 +76,7 @@ module.exports = {
         // Start saving process...
         message.channel.send("Saving...").then(function(msg) {
             isSaving = true;
-            saveGames(message, msg);
+            saveGuildSettings(message, msg, true);
             return;
             connection.connect(function(err) {
                 if(err) {
@@ -111,45 +115,64 @@ let saveGames = function(message, msg, json) {
         }
 
 
-        emitter.emit("games", message, msg, true);
+        emitter.emit("games", message, msg, json);
     }
     else {
-        let json = JSON.stringify(games);
+        let data = JSON.stringify(games);
 
         if (!fs.existsSync(dataPath)) {
             fs.mkdirSync(dataPath);
         }
 
-        fs.writeFile(path.join(dataPath, 'games.json'), json, 'utf8', function (err) {
+        fs.writeFile(path.join(dataPath, 'games.json'), data, 'utf8', function (err) {
             if (err) {
-                message.channel.send("Something went wrong during saving! Please tell your server admin!");
+                message.channel.send("Something went wrong during saving! Please tell your main server admin!");
                 logger.warn(err);
                 return;
             }
-            emitter.emit("games", message, msg);
+            emitter.emit("games", message, msg, json);
         });
     }
 };
 
 let saveApplications = function(message, msg, json) {
     if(json) {
-        let json = JSON.stringify(applications);
+        let data = JSON.stringify(applications);
 
         if (!fs.existsSync(dataPath)) {
             fs.mkdirSync(dataPath);
         }
 
-        fs.writeFile(path.join(dataPath, 'applications.json'), json, 'utf8', function (err) {
+        fs.writeFile(path.join(dataPath, 'applications.json'), data, 'utf8', function (err) {
             if (err) {
-                message.channel.send("Something went wrong during saving! Please tell your server admin!");
+                message.channel.send("Something went wrong during saving! Please tell your main server admin!");
                 logger.warn(err);
                 return;
             }
-            emitter.emit("applications", message, msg);
+            emitter.emit("applications", message, msg, json);
         });
     }
     else {
         // DATABASE SAVE
-        emitter.emit("applications", message, msg);
+        emitter.emit("applications", message, msg, json);
+    }
+};
+
+let saveGuildSettings = function(message, msg, json) {
+    if(json) {
+        let data = JSON.stringify(guildSettings);
+
+        if (!fs.existsSync(dataPath)) {
+            fs.mkdirSync(dataPath);
+        }
+
+        fs.writeFile(path.join(dataPath, 'guildSettings.json'), data, 'utf8', function (err) {
+            if (err) {
+                message.channel.send("Something went wrong during saving! Please tell your main server admin!");
+                logger.warn(err);
+                return;
+            }
+            emitter.emit("guildSettings", message, msg, json);
+        });
     }
 };
