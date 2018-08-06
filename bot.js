@@ -168,7 +168,7 @@ function getTagForRole(role, roles) {
         let tagCloserPos = r.name.substring(3,5).indexOf(']');
         if(r.id === role) {
             let roleTag = r.name.substring(1, 3+tagCloserPos).toLowerCase();
-            return "[" + roleTag + "]";
+            return "[" + roleTag.toUpperCase() + "]";
         }
     }
     return undefined;
