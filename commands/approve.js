@@ -28,6 +28,7 @@ module.exports = {
                                 user.addRole(role.id);
                             }
                         }
+                        applications[gid].splice(a, 1);
                     }
                 }
             });
