@@ -94,7 +94,9 @@ module.exports = {
             message.delete();
         }
     },
-    help: ""
+    help: "Usage: `!updatetags`\n" +
+        "Updates the tags infront of the nicknames of all users on the server. " +
+        "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };
 
 function getRoleForTag(text, roles) {

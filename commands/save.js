@@ -85,7 +85,7 @@ module.exports = {
             });
         });
     },
-    help: ""
+    help: "Admin only command!"
 };
 
 let saveGames = function(message, msg, json) {

@@ -39,6 +39,6 @@ module.exports = {
             dm.send("", { file:'./ironman/suits/'+result+'.png' });
         }
     },
-    help: "Usage: `!games`\n" +
-        "Lists the current running games including their DMs and Player Numbers"
+    help: "Usage: `!imcallsuit`\n" +
+        "Calls an iron man suit and sends both you and your current dm the stats of said suit. If you are the dm of the game, only you will receive the stats."
 };
