@@ -1,10 +1,12 @@
-# avina
+# Avina
 A Discord Bot which I use for my own Guild (as in Discord server, not some Game Guild)
 Invite Avina to your server: https://discordapp.com/oauth2/authorize?client_id=382288187990736916&scope=bot
 
 ## Credits
 I'd like to thank the following people for contributing! You've made my work here alot easier and provided useful input!
 * **Noémi** for providing lots of command ideas, testing and contributing to Avina's personality! Thank you a lot!
+* **[Project Sentinel](https://projectsentinel.home.blog/)** for using Avina in her early development stages to help me test her and get useful insight in how she performs in action and what needs to be improved!
+***Make sure to check them out if you like playing games and especially if you like playing with lots of awesome people!***
 
 ## Administrative stuff
 Avina is intended to be a bot for a wide variety of tasks to improve users' Discord experience on your server. However, the administrative commands are primarily intended to help you as an admin manage your users, roles and whatnot. Enjoy!
@@ -30,7 +32,7 @@ Avina automatically puts tags infront of User's nicknames if their roles or thei
 
 Now, she only puts one tag infront of the User's nickname and therefore she uses a little system do decide which tag to choose.
 
-First of all, Avina only puts tags of roles, that have the `Display role members separately from members` setting enabled.
+First of all, if you want, you can have Avina only puts tags of roles, that have the `Display role members separately from members` setting enabled and ignore other role tags. You can do that using the `!checkhoist` command.
 
 From those roles, she chooses the one that is ranked highest in the roles list of the server.
 
@@ -59,6 +61,15 @@ Here is a list of the commands that are already implemented.
 * `!save` command for saving the current data. Saved data will be loaded on (re-)start of the bot.
 
   Usage: `!save`
+* `!checkhoist` command to enable or disable checking of the `Display role members separately from members` property of roles when updating tags.
+
+  Usage: `!checkhoist`
+* `!updatetags` command to update all user nickname tags on your server according to their roles.
+
+  Usage: `!updatetags`
+* `!help` command to display a list of all commands.
+
+  Usages: `!help` for a list of all commands, or `!help <command>` for detailed information on the given command.
 
 ## D&D
 Yes, I use this bot for my D&D 5e Campaigns.
@@ -75,7 +86,7 @@ Here is a list of the commands that are already implemented.
   Usage: `!draw`
 * `!rolls` command to roll several dice and return every result.
 
-  Usage example: `!rolls 5d20` Possible output: `You rolled 12, 6, 19, 4, 20!`
+  Usage example: `!rolls 5d20+23` Possible output: `You rolled 35, 29, 42, 27, 43!`
 * `!claimdm` command to claim DM status for a game and create the game if it doesn't already exist. If the game already exists, the
   claim request will be noted and when the current DM abandons the game, the requester will be the new DM of the game. Fails, if the
   user currently is the DM of a game.
@@ -104,3 +115,17 @@ Here is a list of the commands that are already implemented.
 * `!quests` command for listing the quests of a game.
 
   Usage example: `!quests foo` -> Will list all the quests of the game "foo" if it exists.
+
+## Work in progress
+Here is a list of features and commands that are going to be implemented or I'm even working on at the moment.
+
+* `!imcallsuit` This command is going to be used for my 5e based, heavily homebrewed Avengers Campaign. Don't mind it being there. If you want to know how it works, ask me.
+* `!initiative` command for rolling initiative in a D&D game.
+
+  The idea is to have the DM of a game start initiative rounds and then the players can roll initiative by typing `!initiative [advantage | disadvantage] <modifier(s)>`. A DM should be able to roll initiative for NPCs using `!initiative [<npc name>] [advantage | disadvantage] [<modifier(s)>]`. Upon issuing the command to start the initiative round, A direct message containing the current initiative list of players and NPCs will be sent to the DM and that list will be updated everytime a player or the DM rolls initiative. Also, a player should not be able to re-roll his initiative unless the DM either starts a new initiative round or resets the initiative for the player.
+* `!setwelcomemsg` command for admins only to set a welcome message for Avina to send in the channel, the command was used in every time a new user joins the server.
+
+  Usage idea: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.
+* More smalltalk!
+
+  You can actually contribute to Avina's smalltalk capabilities by creating pull requests for the [reactions.json](./util/reactions.json) file. I know, this is cheesy and lazy programming but maybe at one point I will have an actual machine learning based AI do the talking. But currently I don't have the time or the resources needed to implement this.
