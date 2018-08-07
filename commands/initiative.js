@@ -9,7 +9,7 @@ module.exports = {
         }
 
         if(!args[1]) {
-            logger.info('Missing  for !initiative command!');
+            logger.info('Missing modifier argument for !initiative command!');
             return;
         }
 
@@ -28,6 +28,18 @@ module.exports = {
                 addNPC = true;
                 gameIdx = g;
                 break;
+            }
+            if(!games[gid][g].initiative || !games[gid][g].initiative.open) {
+                message.author.send("Sorry, but there is no open initiative round for this game right now!"); //TODO: Add to message how DM can reset initiative
+                message.delete();
+                return;
+            }
+            for(let i in games[gid][g].initiative.inits) {
+                if(games[gid][g].initiative.inits[i].id === message.author.id) {
+                    message.author.send("Sorry, but you already rolled initiative!"); //TODO: Add to message how DM can reset initiative
+                    message.delete();
+                    return;
+                }
             }
         }
 

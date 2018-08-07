@@ -47,5 +47,6 @@ module.exports = {
             }
         }
     },
-    help: ""
+    help: "Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.\n" +
+        ""
 };
