@@ -22,7 +22,7 @@ module.exports = {
         let welcomeMsg = "";
 
         for(let i = 1; i < args.length; i++) {
-            welcomeMsg += args[i];
+            welcomeMsg += args[i] + ' ';
         }
 
         let gid = message.guild.id;
