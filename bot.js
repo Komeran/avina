@@ -166,10 +166,12 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
 });
 
 client.on('guildMemberAdd', function(member) {
+    console.log(member.user.username + " just joined");
     let gid = member.guild.id;
     if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
         for(let cid in guildSettings[gid].welcomeMsgs) {
             member.guild.channels[cid].send('<@' + member.id + '>, ' + guildSettings[gid].welcomeMsgs[cid]);
+            console.log(member.guild.channels[cid]);
         }
     }
 });

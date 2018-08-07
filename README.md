@@ -70,6 +70,9 @@ Here is a list of the commands that are already implemented.
 * `!help` command to display a list of all commands.
 
   Usages: `!help` for a list of all commands, or `!help <command>` for detailed information on the given command.
+* `!setwelcomemsg` command for admins only to set a welcome message for Avina to send in the channel, the command was used in every time a new user joins the server.
+
+  Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.
 
 ## D&D
 Yes, I use this bot for my D&D 5e Campaigns.
@@ -123,9 +126,6 @@ Here is a list of features and commands that are going to be implemented or I'm 
 * `!initiative` command for rolling initiative in a D&D game.
 
   The idea is to have the DM of a game start initiative rounds and then the players can roll initiative by typing `!initiative [advantage | disadvantage] <modifier(s)>`. A DM should be able to roll initiative for NPCs using `!initiative [<npc name>] [advantage | disadvantage] [<modifier(s)>]`. Upon issuing the command to start the initiative round, A direct message containing the current initiative list of players and NPCs will be sent to the DM and that list will be updated everytime a player or the DM rolls initiative. Also, a player should not be able to re-roll his initiative unless the DM either starts a new initiative round or resets the initiative for the player.
-* `!setwelcomemsg` command for admins only to set a welcome message for Avina to send in the channel, the command was used in every time a new user joins the server.
-
-  Usage idea: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.
 * More smalltalk!
 
   You can actually contribute to Avina's smalltalk capabilities by creating pull requests for the [reactions.json](./util/reactions.json) file. I know, this is cheesy and lazy programming but maybe at one point I will have an actual machine learning based AI do the talking. But currently I don't have the time or the resources needed to implement this.
