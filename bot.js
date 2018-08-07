@@ -171,9 +171,8 @@ client.on('guildMemberAdd', function(member) {
     if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
         for(let cid in guildSettings[gid].welcomeMsgs) {
             console.log(cid);
-            console.log(member.guild.channels);
-            member.guild.channels[cid].send('<@' + member.id + '>, ' + guildSettings[gid].welcomeMsgs[cid]);
-            console.log(member.guild.channels[cid]);
+            member.guild.channels.get(cid).send('<@' + member.id + '>, ' + guildSettings[gid].welcomeMsgs[cid]);
+            console.log(member.guild.channels.get(cid));
         }
     }
 });
