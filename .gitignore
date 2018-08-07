@@ -69,3 +69,5 @@ auth.json
 # Avina
 data/*
 config.json
+
+package-lock.json

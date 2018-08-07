@@ -165,6 +165,15 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
     });
 });
 
+client.on('guildMemberAdd', function(member) {
+    let gid = member.guild.id;
+    if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
+        for(let cid in guildSettings[gid].welcomeMsgs) {
+            member.guild.channels[cid].send('<@' + member.id + '>, ' + guildSettings[gid].welcomeMsgs[cid]);
+        }
+    }
+});
+
 client.login(auth.token);
 // End Setup Discord client
 
