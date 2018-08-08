@@ -73,7 +73,9 @@ Here is a list of the commands that are already implemented.
 * `!setwelcomemsg` command for admins only to set a welcome message for Avina to send in the channel, the command was used in every time a new user joins the server.
 
   Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.
+* `!ignore` command for admins only to mark text-channels als "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command. She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.
 
+  Usage: `!ignore`
 ## D&D
 Yes, I use this bot for my D&D 5e Campaigns.
 
@@ -129,4 +131,3 @@ Here is a list of features and commands that are going to be implemented or I'm 
 * More smalltalk!
 
   You can actually contribute to Avina's smalltalk capabilities by creating pull requests for the [reactions.json](./util/reactions.json) file. I know, this is cheesy and lazy programming but maybe at one point I will have an actual machine learning based AI do the talking. But currently I don't have the time or the resources needed to implement this.
-* `!ignore` command for admins only to mark text-channels als "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command. She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.

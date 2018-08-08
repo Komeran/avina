@@ -41,5 +41,7 @@ module.exports = {
             }
         })
     },
-    help: ""
+    help: "Usage: `!ignore`\n" +
+        "Marks/Unmarks a channel as 'ignored', meaning that Avina will ignore all commands and smalltalk attempts except the `!ignore` command. " +
+        "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };
