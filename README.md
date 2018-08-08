@@ -129,3 +129,4 @@ Here is a list of features and commands that are going to be implemented or I'm 
 * More smalltalk!
 
   You can actually contribute to Avina's smalltalk capabilities by creating pull requests for the [reactions.json](./util/reactions.json) file. I know, this is cheesy and lazy programming but maybe at one point I will have an actual machine learning based AI do the talking. But currently I don't have the time or the resources needed to implement this.
+* `!ignore` command for admins only to mark text-channels als "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command. She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.
