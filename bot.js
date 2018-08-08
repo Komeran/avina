@@ -108,10 +108,14 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
+    let isIgnored = message.guild
+        && message.guild.id
+        && guildSettings[message.guild.id].ignoredChannels
+        && guildSettings[message.guild.id].ignoredChannels[message.channel.id];
 	if (message.content.substring(0,1) === '!') {
 		let args = message.content.substring(1).split(' ');
-		let cmd = args[0];
-		if(commands.cmds[cmd])
+		let cmd = args[0].toLowerCase();
+		if(commands.cmds[cmd] && (cmd === "ignore" || !isIgnored))
             commands.callCommand(cmd, message, args);
 		return;
 	}
@@ -119,7 +123,7 @@ client.on('message', message => {
         reactTo(message, client.user.id);
         return;
     }
-    if(message.author.id === client.user.id)
+    if(message.author.id === client.user.id || isIgnored)
         return;
 	for(let user of message.mentions.users) {
 	    if(user[0] === client.user.id) {
