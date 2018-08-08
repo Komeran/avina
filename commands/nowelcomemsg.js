@@ -1,9 +1,8 @@
 /**
  * @author marc.schaefer
- * @date 07.08.2018
+ * @date 08.08.2018
  */
 
-let logger = require('winston');
 let guildSettings = require('../util/guildSettings.js');
 
 module.exports = {
@@ -27,28 +26,19 @@ module.exports = {
 
         let gid = message.guild.id;
 
-        if(!guildSettings[gid]) {
-            guildSettings[gid] = {
-                welcomeMsgs: {}
-            };
-            guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
-        }
-        else {
-            if(!guildSettings[gid].welcomeMsgs) {
-                guildSettings[gid].welcomeMsgs = {}
-            }
+        if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
             if(guildSettings[gid].welcomeMsgs[message.channel.id]) {
-                guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
-                message.channel.send("The welcome message of this channel has been updated!");
+                guildSettings[gid].welcomeMsgs.remove(message.channel.id);
+                message.channel.send("The welcome message of this channel has been removed!");
+                message.delete();
+                return;
             }
-            else {
-                guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
-                message.channel.send("The welcome message of this channel has been set!");
-            }
+            message.author.send("There was no welcome message set up for channel " + message.channel.name + ".");
+            message.delete();
         }
     },
-    help: "Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.\n" +
-        "Sets/updates the welcome message that Avina will send in a channel. " +
+    help: "Usage: `!nowelcomemsg`\n" +
+        "Tells Avina to stop sending any welcome messages in the channel, this command was used in. " +
         "This message will be sent when a user joins the server, along with a preceding mention of said user. " +
         "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };

@@ -73,6 +73,9 @@ Here is a list of the commands that are already implemented.
 * `!setwelcomemsg` command for admins only to set a welcome message for Avina to send in the channel, the command was used in every time a new user joins the server.
 
   Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.
+* `!nowelcomemsg` command for admins only to tell Avina to stop sending welcome messages in the channel, the command was used in.
+
+  Usage: `!nowelcomemsg`
 * `!ignore` command for admins only to mark text-channels als "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command. She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.
 
   Usage: `!ignore`
