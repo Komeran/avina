@@ -26,5 +26,7 @@ module.exports = {
 
         message.author.send("Guild settings updated! `Checkhoist` is now " + (guildSettings[gid].checkhoist? "active" : "inactive") + ". That means, when updating role tags of user nicknames, I will " + (guildSettings[gid].checkhoist? "ignore" : "include") + " all roles that don't have the `Display role members separately from members` setting enabled.");
     },
-    help: ""
+    help: "Usage: `!checkhoist`\n" +
+        "This enables/disables whether I will ignore roles with the `Display role members separately from members` setting disabled when updating role tags. " +
+        "This is an admin only command and will fail if non-admins of a server attempt to use it."
 };

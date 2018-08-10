@@ -9,7 +9,7 @@ module.exports = {
         }
 
         if(!args[1]) {
-            logger.info('Missing  for !initiative command!');
+            logger.info('Missing modifier argument for !initiative command!');
             return;
         }
 
@@ -28,6 +28,18 @@ module.exports = {
                 addNPC = true;
                 gameIdx = g;
                 break;
+            }
+            if(!games[gid][g].initiative || !games[gid][g].initiative.open) {
+                message.author.send("Sorry, but there is no open initiative round for this game right now!"); //TODO: Add to message how DM can reset initiative
+                message.delete();
+                return;
+            }
+            for(let i in games[gid][g].initiative.inits) {
+                if(games[gid][g].initiative.inits[i].id === message.author.id) {
+                    message.author.send("Sorry, but you already rolled initiative!"); //TODO: Add to message how DM can reset initiative
+                    message.delete();
+                    return;
+                }
             }
         }
 
@@ -185,7 +197,7 @@ module.exports = {
 
 
     },
-    help: "Usage: `!initiative <modifier>` where `<modifier>` can be any calculation including dice and modifiers.\n" +
-        "Examples: `!initiative +4-2d4+3+d8 advantage` or `!initiative disadv -3` or `!initiative adv`\n" +
-        "Will roll a d20 and add/subtract the given modifiers. Only addition and subtraction are supported at the moment!"
+    help: "Usage: `!initiative [<npc name>][advantage | disadvantage][<modifier>][advantage | disadvantage]` where `<modifier>` can be any calculation including dice and modifiers and `<npc name>` is the name of the npc you rolled initiative for if you are a DM. Also, only put either advantage or disadvantage once in the command parameters.\n" +
+        "Examples: `!initiative +4-2d4+3+d8 advantage` or `!initiative disadv -3` or `!initiative adv` or `!initiative MrGenericGuy `\n" +
+        "Will roll a d20 and add/subtract the given modifiers. Only addition and subtraction are supported at the moment! If advantage or disadvantage were given, it will roll twice and return the higher/lower result."
 };

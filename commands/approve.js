@@ -28,7 +28,7 @@ module.exports = {
                                 user.addRole(role.id);
                             }
                         }
-                        applications[gid].splice(a, 1);
+                        applications[gid].splice(Number(a), 1);
                     }
                 }
             });
