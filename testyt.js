@@ -1,3 +1,9 @@
+/**
+ * @callback feedCallback
+ * @callback subscribedCallback
+ * @callback unsubscribedCallback
+ */
+
 let pubSubHubbub = require("pubsubhubbub");
 let pubSubSubscriber = pubSubHubbub.createServer({callbackUrl: "http://68.66.241.33:8080"});
 let config = require("./config.json").googleapi.subscribe;
@@ -19,35 +25,54 @@ pubSubSubscriber.on("feed", function(data) {
             console.log("INVALID FEED XML");
             return
         }
-        //TODO: CALL RIGHT CALLBACKS IN feedCallbacks
-        console.log("entry", result.feed.entry);
+        if(feedCallbacks[data.feed.entry["yt:channelId"]]) {
+            for(let cb of feedCallbacks[data.feed.entry["yt:channelId"]]) {
+                cb(data.feed.entry);
+            }
+        }
     });
 });
 
 pubSubSubscriber.listen(config.port);
 
 module.exports = {
-    subscribeToYtChannel: function(channel_id, callback) {
-        pubSubSubscriber.subscribe(config.topic + "?channel_id=" + channel_id, config.hub, function(err){
-            if(err){
-                console.log(err);
-            }
-            //TODO: ADD callback TO feedCallbacks
-        });
+    /**
+     *
+     * @param ytChannelId {string} The ID of the YouTube Channel
+     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+     * @param feedCallback {feedCallback} The callback that should be called whenever a feed notification comes in.
+     * @param [subscribedCallback] {subscribedCallback} The callback that should be called when the subscription process is done.
+     */
+    subscribeToYtChannel: function(ytChannelId, discordChannelId, feedCallback, subscribedCallback) {
 
-
+        if(!feedCallbacks[ytChannelId]) {
+            pubSubSubscriber.subscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, function (err) {
+                if (!err) {
+                    feedCallbacks[ytChannelId] = {};
+                    feedCallbacks[ytChannelId][discordChannelId] = feedCallback;
+                }
+                if (subscribedCallback)
+                    subscribedCallback(err);
+            });
+        }
+        else {
+            feedCallbacks[ytChannelId][discordChannelId] = feedCallback;
+            subscribedCallback();
+        }
     },
-    unsubscribe: function(channel_id, callback) {
-        pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + channel_id, config.hub, function(err){
-            if(err){
-                console.log(err);
+    /**
+     *
+     * @param ytChannelId {string} The ID of the YouTube Channel
+     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+     * @param [callback] {unsubscribedCallback} The callback that should be called when the unsubscribing process is done.
+     */
+    unsubscribe: function(ytChannelId, discordChannelId, callback) {
+        if(feedCallbacks[ytChannelId] && feedCallbacks[ytChannelId][discordChannelId]) {
+            delete feedCallbacks[ytChannelId][discordChannelId];
+            if(feedCallbacks[ytChannelId].keyArray().length === 0) {
+                delete feedCallbacks[ytChannelId];
+                pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, callback);
             }
-            //TODO: REMOVE ALL CALLBACKS FOR channel_id FROM feedCallbacks AND CALL callback WHEN DONE
-        });
+        }
     }
 };
-
-// ------------------------------------------------------TEST-----------------------------------------------------------
-require('./testyt.js').subscribeToYtChannel("UCzBuFb39m4DW_vSZhTHhiXQ", function() {
-    require('./testyt.js').unsubscribe("UCzBuFb39m4DW_vSZhTHhiXQ");
-});
