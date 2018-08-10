@@ -194,8 +194,6 @@ module.exports = {
                 color: 3447003
             }
         });
-
-
     },
     help: "Usage: `!initiative [<npc name>][advantage | disadvantage][<modifier>][advantage | disadvantage]` where `<modifier>` can be any calculation including dice and modifiers and `<npc name>` is the name of the npc you rolled initiative for if you are a DM. Also, only put either advantage or disadvantage once in the command parameters.\n" +
         "Examples: `!initiative +4-2d4+3+d8 advantage` or `!initiative disadv -3` or `!initiative adv` or `!initiative MrGenericGuy `\n" +

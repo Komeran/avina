@@ -101,6 +101,6 @@ module.exports = {
             }
         });
     },
-    help: "Usage: `!rolls <dice>` where `<dice>` are the dice you want to roll (no calculations or mods).\n" +
-        "rolls the dice and "
+    help: "Usage: `!rolls <dice>[<modifier(s)>]` where `<dice>` are the dice you want to roll and `<modifier(s)>` are yn modifiers that apply to each of the rolls.\n" +
+        "Rolls the dice separately, adding given modifiers, if any, to each roll and replies with all totals."
 };
