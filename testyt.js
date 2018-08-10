@@ -73,6 +73,10 @@ module.exports = {
                 delete feedCallbacks[ytChannelId];
                 pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, callback);
             }
+            else {
+                if(callback)
+                    callback();
+            }
         }
     }
 };
