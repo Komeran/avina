@@ -69,7 +69,7 @@ module.exports = {
     unsubscribe: function(ytChannelId, discordChannelId, callback) {
         if(feedCallbacks[ytChannelId] && feedCallbacks[ytChannelId][discordChannelId]) {
             delete feedCallbacks[ytChannelId][discordChannelId];
-            if(feedCallbacks[ytChannelId].keys().length === 0) {
+            if(Object.keys(feedCallbacks[ytChannelId]).length === 0) {
                 delete feedCallbacks[ytChannelId];
                 pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, callback);
             }
