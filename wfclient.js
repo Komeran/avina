@@ -245,6 +245,8 @@ function _recursiveAlertUpdater() {
                                 }
                                 for(let alert of ws.alerts) {
                                     if(!_alertMessages[channels[i]][alert.id]) {
+                                        console.log("guilds", _discordClient.guilds);
+                                        console.log("channels", _discordClient[gid].channels);
                                         _discordClient.guilds[gid].channels[channels[i]].send({
                                             embed: {
                                                 title: "ALERT",
