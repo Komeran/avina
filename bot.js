@@ -7,7 +7,6 @@ var path = require("path");
 var config = require('./config.json');
 let reactTo = require('./util/reactTo.js');
 let guildSettings = require('./util/guildSettings.js');
-let wfClient = require("../wfclient.js")();
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -24,6 +23,10 @@ if(!config) {
         }
     }
 }
+
+// Setup Discord client
+var client = new Discord.Client();
+let wfClient = require("./wfclient.js")(client);
 
 // Configure logger settings
 logger.clear();
@@ -100,9 +103,6 @@ logger.info("Done loading save data.");
 //Load commands
 var commands = require('./util/commands.js');
 // End Load commands
-
-// Setup Discord client
-var client = new Discord.Client();
 
 client.on('ready', () => {
 	logger.info('I am ready!');
