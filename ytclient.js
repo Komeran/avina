@@ -78,5 +78,20 @@ module.exports = {
                     callback();
             }
         }
+    },
+    unsubscribeAll(ytChannelId, callback) {
+        if(feedCallbacks[ytChannelId]) {
+            for(let dcid in feedCallbacks[ytChannelId]) {
+                delete feedCallbacks[ytChannelId][dcid];
+                if(Object.keys(feedCallbacks[ytChannelId]).length === 0) {
+                    delete feedCallbacks[ytChannelId];
+                    pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + ytChannelId, config.hub);
+                }
+                else {
+                    if(callback)
+                        callback();
+                }
+            }
+        }
     }
 };
