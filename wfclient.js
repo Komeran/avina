@@ -79,7 +79,7 @@ class WarframeClient {
     constructor(discordClient) {
         _discordClient = discordClient;
         _alertMessages = {};
-        this._recursiveAlertUpdater();
+        _recursiveAlertUpdater();
     }
 
     /**
@@ -177,111 +177,112 @@ class WarframeClient {
             guildSettings[guildId].warframe.versionUpdateChannels.remove(discordChannelId);
         }
     }
+}
 
-    /**
-     *
-     * @private
-     */
-    _recursiveAlertUpdater() {
-        require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
-            let ws = new WorldState(worldStateData);
 
-            logger.debug("Polled Alerts:", ws.alerts);
+/**
+ *
+ * @private
+ */
+function _recursiveAlertUpdater() {
+    require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
+        let ws = new WorldState(worldStateData);
 
-            for(let gid in guildSettings) {
-                if(guildSettings[gid].warframe && guildSettings[gid].warframe.alertChannels){
-                    let channels = guildSettings[gid].warframe.alertChannels;
-                    for(let i = 0; i < channels.length; i++) {
-                        if(_discordClient.guilds[gid]) {
-                            if(_discordClient.guilds[gid].channels[channels[i]]) {
-                                if(_alertMessages[channels[i]]) {
-                                    let curAlerts = [];
-                                    for(let alert of ws.alerts) {
-                                        curAlerts.push(alert.id);
+        logger.debug("Polled Alerts:", ws.alerts);
+
+        for(let gid in guildSettings) {
+            if(guildSettings[gid].warframe && guildSettings[gid].warframe.alertChannels){
+                let channels = guildSettings[gid].warframe.alertChannels;
+                for(let i = 0; i < channels.length; i++) {
+                    if(_discordClient.guilds[gid]) {
+                        if(_discordClient.guilds[gid].channels[channels[i]]) {
+                            if(_alertMessages[channels[i]]) {
+                                let curAlerts = [];
+                                for(let alert of ws.alerts) {
+                                    curAlerts.push(alert.id);
+                                }
+                                for(let id in _alertMessages[channels[i]]) {
+                                    if(curAlerts.indexOf(id) === -1) {
+                                        _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
+                                            .then(message => message.delete())
+                                            .catch(logger.error);
+                                        delete _alertMessages[channels[i]][id];
                                     }
-                                    for(let id in _alertMessages[channels[i]]) {
-                                        if(curAlerts.indexOf(id) === -1) {
-                                            _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
-                                                .then(message => message.delete())
-                                                .catch(logger.error);
-                                            delete _alertMessages[channels[i]][id];
-                                        }
-                                        else {
-                                            for(let alert of ws.alerts) {
-                                                if(alert.id === id) {
-                                                    _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
-                                                        .then(message => message.edit({
-                                                            embed: {
-                                                                title: "ALERT",
-                                                                description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
-                                                                color: 3447003,
-                                                                fields: [
-                                                                    {
-                                                                        name: "Enemy Level:",
-                                                                        value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
-                                                                    },
-                                                                    {
-                                                                        name: "Faction:",
-                                                                        value: alert.mission.faction
-                                                                    },
-                                                                    {
-                                                                        name: "Reward:",
-                                                                        value: alert.mission.reward.asString
-                                                                    },
-                                                                    {
-                                                                        name: "Waves:",
-                                                                        value: alert.mission.maxWaveNum
-                                                                    }
-                                                                ]
-                                                            }
-                                                        }))
-                                                        .catch(logger.error);
-                                                    break;
-                                                }
+                                    else {
+                                        for(let alert of ws.alerts) {
+                                            if(alert.id === id) {
+                                                _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
+                                                    .then(message => message.edit({
+                                                        embed: {
+                                                            title: "ALERT",
+                                                            description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
+                                                            color: 3447003,
+                                                            fields: [
+                                                                {
+                                                                    name: "Enemy Level:",
+                                                                    value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
+                                                                },
+                                                                {
+                                                                    name: "Faction:",
+                                                                    value: alert.mission.faction
+                                                                },
+                                                                {
+                                                                    name: "Reward:",
+                                                                    value: alert.mission.reward.asString
+                                                                },
+                                                                {
+                                                                    name: "Waves:",
+                                                                    value: alert.mission.maxWaveNum
+                                                                }
+                                                            ]
+                                                        }
+                                                    }))
+                                                    .catch(logger.error);
+                                                break;
                                             }
                                         }
                                     }
-                                    for(let alert of ws.alerts) {
-                                        if(!_alertMessages[channels[i]][alert.id]) {
-                                            _discordClient.guilds[gid].channels[channels[i]].send({
-                                                embed: {
-                                                    title: "ALERT",
-                                                    description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
-                                                    color: 3447003,
-                                                    fields: [
-                                                        {
-                                                            name: "Enemy Level:",
-                                                            value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
-                                                        },
-                                                        {
-                                                            name: "Faction:",
-                                                            value: alert.mission.faction
-                                                        },
-                                                        {
-                                                            name: "Reward:",
-                                                            value: alert.mission.reward.asString
-                                                        },
-                                                        {
-                                                            name: "Waves:",
-                                                            value: alert.mission.maxWaveNum
-                                                        }
-                                                    ]
-                                                }
-                                            })
-                                                .then(message => _alertMessages[channels[i]][alert.id] = message.id);
-                                        }
+                                }
+                                for(let alert of ws.alerts) {
+                                    if(!_alertMessages[channels[i]][alert.id]) {
+                                        _discordClient.guilds[gid].channels[channels[i]].send({
+                                            embed: {
+                                                title: "ALERT",
+                                                description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
+                                                color: 3447003,
+                                                fields: [
+                                                    {
+                                                        name: "Enemy Level:",
+                                                        value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
+                                                    },
+                                                    {
+                                                        name: "Faction:",
+                                                        value: alert.mission.faction
+                                                    },
+                                                    {
+                                                        name: "Reward:",
+                                                        value: alert.mission.reward.asString
+                                                    },
+                                                    {
+                                                        name: "Waves:",
+                                                        value: alert.mission.maxWaveNum
+                                                    }
+                                                ]
+                                            }
+                                        })
+                                            .then(message => _alertMessages[channels[i]][alert.id] = message.id);
                                     }
                                 }
                             }
-                            else
-                                guildSettings[gid].warframe.alertChannels.remove(channels[i]);
                         }
                         else
-                            delete guildSettings[gid];
+                            guildSettings[gid].warframe.alertChannels.remove(channels[i]);
                     }
+                    else
+                        delete guildSettings[gid];
                 }
             }
-            setTimeout(this._recursiveAlertUpdater, config && config.warframe && config.warframe.alertUpdateRate ? config.warframe.alertUpdateRate : 60000);
-        }.bind(this));
-    }
+        }
+        setTimeout(_recursiveAlertUpdater, config && config.warframe && config.warframe.alertUpdateRate ? config.warframe.alertUpdateRate : 60000);
+    });
 }
