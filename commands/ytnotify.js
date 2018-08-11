@@ -270,7 +270,7 @@ function getChannel(auth, query, callback) {
     var service = google.youtube('v3');
     service.channels.list({
         auth: auth,
-        part: 'snippet,contentDetails,statistics',
+        part: 'snippet',
         id: query
     }, function(err, response) {
         if (err) {
@@ -281,7 +281,7 @@ function getChannel(auth, query, callback) {
         if (channels.length === 0) {
             service.channels.list({
                 auth: auth,
-                part: 'snippet,contentDetails,statistics',
+                part: 'snippet',
                 forUsername: query
             }, function(err, response) {
                 if (err) {
