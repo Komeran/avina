@@ -279,6 +279,7 @@ function getChannel(auth, query, callback) {
         }
         var channels = response.data.items;
         if (channels.length === 0) {
+            console.log(query);
             service.channels.list({
                 auth: auth,
                 part: 'snippet,contentDetails,statistics',
