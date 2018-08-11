@@ -270,7 +270,7 @@ function getChannel(auth, query, callback) {
     var service = google.youtube('v3');
     service.channels.list({
         auth: auth,
-        part: 'snippet',
+        part: 'id',
         id: query
     }, function(err, response) {
         if (err) {
@@ -281,7 +281,7 @@ function getChannel(auth, query, callback) {
         if (channels.length === 0) {
             service.channels.list({
                 auth: auth,
-                part: 'snippet',
+                part: 'id',
                 forUsername: query
             }, function(err, response) {
                 if (err) {
@@ -290,14 +290,14 @@ function getChannel(auth, query, callback) {
                 }
                 var channels = response.data.items;
                 if(channels[0])
-                    console.log(channels[0].snippet.id);
+                    console.log(channels[0].id);
                 if(channels[0])
-                    callback(channels[0].snippet.id);
+                    callback(channels[0].id);
                 else
                     callback();
             });
         } else {
-            callback(channels[0].snippet.id);
+            callback(channels[0].id);
         }
     });
 }
