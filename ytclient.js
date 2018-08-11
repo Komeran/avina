@@ -25,9 +25,9 @@ pubSubSubscriber.on("feed", function(data) {
             console.log("INVALID FEED XML");
             return
         }
-        if(feedCallbacks[result.entry["yt:channelId"]]) {
-            for(let cb of feedCallbacks[result.entry["yt:channelId"]]) {
-                cb(result.entry);
+        if(feedCallbacks[result.feed.entry["yt:channelId"]]) {
+            for(let cb of feedCallbacks[result.feed.entry["yt:channelId"]]) {
+                cb(result.feed.entry);
             }
         }
     });
