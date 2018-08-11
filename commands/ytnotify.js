@@ -279,7 +279,6 @@ function getChannel(auth, query, callback) {
         }
         var channels = response.data.items;
         if (channels.length === 0) {
-            console.log(query);
             service.channels.list({
                 auth: auth,
                 part: 'snippet,contentDetails,statistics',
@@ -290,7 +289,8 @@ function getChannel(auth, query, callback) {
                     return;
                 }
                 var channels = response.data.items;
-                callback(channels[0].snippet.id);
+                if(channels[0])
+                    callback(channels[0].snippet.id);
             });
         } else {
             callback(channels[0].snippet.id);
