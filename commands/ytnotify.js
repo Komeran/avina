@@ -25,7 +25,7 @@ module.exports = {
         let is = false;
         let not = false;
 
-        for(let i = 2; i < args.length; i++) {
+        for(let i = 1; i < args.length; i++) {
             if(args[i] === "--stop") {
                 stop = true;
                 continue;
@@ -52,12 +52,12 @@ module.exports = {
                 continue;
             }
 
-            for(; i < args.length; i++) {
-                if(args[i].substring(0, 2) === "--") {
+            for(let j = 0; i < args.length; i++) {
+                if(args[i] === "--stop" || args[i] === "--title") {
                     i--;
                     break;
                 }
-                channel = (channel || ' ') + args[i];
+                channel = (channel ? channel : ' ') + args[i];
             }
             channel = channel.substring(1, channel.length);
         }
@@ -86,8 +86,8 @@ module.exports = {
                     });
                 }
             }
-            if(!channel) {
-                message.author.send("Missing channel or --stop argument!");
+            if(!ytChannelId) {
+                message.author.send("Missing channel or --stop argument! Channel: " + channel);
                 message.delete();
                 return;
             }
