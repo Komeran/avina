@@ -290,6 +290,8 @@ function getChannel(auth, query, callback) {
                 }
                 var channels = response.data.items;
                 if(channels[0])
+                    console.log(channels[0].snippet.id);
+                if(channels[0])
                     callback(channels[0].snippet.id);
                 else
                     callback();
