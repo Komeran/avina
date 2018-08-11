@@ -18,8 +18,8 @@ module.exports = {
             return;
         }
 
-        if(wfclient.isSubbedToWfUpdates(message.guild.id, message.channel.id)) {
-            wfclient.unsubWfUpdates(message.guild.id, message.channel.id);
+        if(wfclient.isSubbedToAlerts(message.guild.id, message.channel.id)) {
+            wfclient.unsubAlerts(message.guild.id, message.channel.id);
             message.channel.send({
                 embed: {
                     title: "I will no longer let this channel know when new Warframe versions are out!",
@@ -29,7 +29,7 @@ module.exports = {
             message.delete();
         }
         else {
-            wfclient.subToWfUpdates(message.guild.id, message.channel.id);
+            wfclient.subToAlerts(message.guild.id, message.channel.id);
             message.channel.send({
                 embed: {
                     title: "I will now let this channel know when new Warframe versions are out!",

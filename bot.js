@@ -7,6 +7,7 @@ var path = require("path");
 var config = require('./config.json');
 let reactTo = require('./util/reactTo.js');
 let guildSettings = require('./util/guildSettings.js');
+let wfClient = require("../wfclient.js")();
 
 // Fall back to default config if there is no config
 if(!config) {
