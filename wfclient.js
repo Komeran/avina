@@ -193,7 +193,10 @@ function _recursiveAlertUpdater() {
         for(let gid in guildSettings) {
             if(guildSettings[gid].warframe && guildSettings[gid].warframe.alertChannels){
                 let channels = guildSettings[gid].warframe.alertChannels;
+                console.log(channels);
                 for(let i = 0; i < channels.length; i++) {
+                    console.log("client", _discordClient);
+                    console.log("guilds", _discordClient.guilds);
                     if(_discordClient.guilds[gid]) {
                         if(_discordClient.guilds[gid].channels[channels[i]]) {
                             if(_alertMessages[channels[i]]) {
