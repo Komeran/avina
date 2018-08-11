@@ -183,7 +183,7 @@ class WarframeClient {
      * @private
      */
     _recursiveAlertUpdater() {
-        let worldStateData = await (require('request-promise'))('http://content.warframe.com/dynamic/worldState.php');
+        let worldStateData = require('request-promise')('http://content.warframe.com/dynamic/worldState.php');
 
         let ws = new WorldState(worldStateData);
 
