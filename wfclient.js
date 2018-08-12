@@ -48,8 +48,6 @@ warframeVersion.on("update", update => {
                     else
                         guildSettings[gid].warframe.versionUpdateChannels.remove(channels[i]);
                 }
-                else
-                    delete guildSettings[gid];
             }
         }
     }
