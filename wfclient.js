@@ -262,42 +262,40 @@ function _recursiveAlertUpdater() {
                                     }
                                 }
                             }
-                            else {
-                                for(let alert of ws.alerts) {
-                                    if(!_alertMessages[channels[i]])
-                                        _alertMessages[channels[i]] = {};
-                                    logger.debug("Is new Alert: " + !_alertMessages[channels[i]][alert.id]);
-                                    if(!_alertMessages[channels[i]][alert.id]) {
-                                        channel.send({
-                                            embed: {
-                                                title: "ALERT",
-                                                description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
-                                                color: 3447003,
-                                                fields: [
-                                                    {
-                                                        name: "Enemy Level:",
-                                                        value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
-                                                    },
-                                                    {
-                                                        name: "Faction:",
-                                                        value: alert.mission.faction
-                                                    },
-                                                    {
-                                                        name: "Reward:",
-                                                        value: alert.mission.reward.asString
-                                                    },
-                                                    {
-                                                        name: "Time left:",
-                                                        value: alert.eta || 'N/A'
-                                                    }
-                                                ]
-                                            }
+                            for(let alert of ws.alerts) {
+                                if(!_alertMessages[channels[i]])
+                                    _alertMessages[channels[i]] = {};
+                                logger.debug("Is new Alert: " + !_alertMessages[channels[i]][alert.id]);
+                                if(!_alertMessages[channels[i]][alert.id]) {
+                                    channel.send({
+                                        embed: {
+                                            title: "ALERT",
+                                            description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
+                                            color: 3447003,
+                                            fields: [
+                                                {
+                                                    name: "Enemy Level:",
+                                                    value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
+                                                },
+                                                {
+                                                    name: "Faction:",
+                                                    value: alert.mission.faction
+                                                },
+                                                {
+                                                    name: "Reward:",
+                                                    value: alert.mission.reward.asString
+                                                },
+                                                {
+                                                    name: "Time left:",
+                                                    value: alert.eta || 'N/A'
+                                                }
+                                            ]
+                                        }
+                                    })
+                                        .then(function(message) {
+                                            _alertMessages[channels[i]][alert.id] = message.id
                                         })
-                                            .then(function(message) {
-                                                _alertMessages[channels[i]][alert.id] = message.id
-                                            })
-                                            .catch(logger.error);
-                                    }
+                                        .catch(logger.error);
                                 }
                             }
                         }
