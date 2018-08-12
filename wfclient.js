@@ -25,9 +25,9 @@ warframeVersion.on("update", update => {
         if(guildSettings[gid].warframe && guildSettings[gid].warframe.versionUpdateChannels){
             let channels = guildSettings[gid].warframe.versionUpdateChannels;
             for(let i = 0; i < channels.length; i++) {
-                if(_discordClient.guilds[gid]) {
-                    if(_discordClient.guilds[gid].channels[channels[i]]) {
-                        _discordClient.guilds[gid].channels[channels[i]].send({
+                if(_discordClient.guilds.get(gid)) {
+                    if(_discordClient.guilds.get(gid).channels.get(channels[i])) {
+                        _discordClient.guilds.get(gid).channels.get(channels[i]).send({
                             embed: {
                                 title: "New Warframe Version is out!",
                                 description: '***"' + update.title + '"***',
@@ -173,8 +173,8 @@ class WarframeClient {
      * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
      */
     unsubAlerts(guildId, discordChannelId) {
-        if(this.isSubbedToWfUpdates(guildId, discordChannelId)) {
-            guildSettings[guildId].warframe.versionUpdateChannels.remove(discordChannelId);
+        if(this.isSubbedToAlerts(guildId, discordChannelId)) {
+            guildSettings[guildId].warframe.alertChannels.remove(discordChannelId);
         }
     }
 }
@@ -185,28 +185,40 @@ class WarframeClient {
  * @private
  */
 function _recursiveAlertUpdater() {
+    logger.debug("Fetching Warframe State...");
     require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
         let ws = new WorldState(worldStateData);
 
-        logger.debug("Polled Alerts:", ws.alerts);
+        logger.debug("Polled Alerts: " + ws.alerts.length);
+        logger.debug("Guild Settings: " + Object.keys(guildSettings).length);
 
         for(let gid in guildSettings) {
+            logger.debug("Guild: " + gid);
+            logger.debug("Guild has Warframe Setting: " + !!guildSettings[gid].warframe);
+            logger.debug("Guild has Alert Channels: " + (!!guildSettings[gid].warframe && !!guildSettings[gid].warframe.alertChannels));
             if(guildSettings[gid].warframe && guildSettings[gid].warframe.alertChannels){
                 let channels = guildSettings[gid].warframe.alertChannels;
-                console.log(channels);
+                logger.debug("Alert Channels: " + channels.length);
                 for(let i = 0; i < channels.length; i++) {
-                    console.log("client", _discordClient);
-                    console.log("guilds", _discordClient.guilds);
-                    if(_discordClient.guilds[gid]) {
-                        if(_discordClient.guilds[gid].channels[channels[i]]) {
+                    logger.debug("Alert Channel: " + channels[i]);
+                    logger.debug("Client Guilds: " + _discordClient.guilds.array().length);
+                    let guild = _discordClient.guilds.get(gid);
+                    logger.debug("Client has Guild: " + !!guild);
+                    if(guild) {
+                        let channel = guild.channels.get(channels[i]);
+                        logger.debug("Guild has Channel: " + !!channel);
+                        if(channel) {
+                            logger.debug("Alert Message Channels: " + Object.keys(_alertMessages).length);
+                            logger.debug("Channel has Alert Messages: " + !!_alertMessages[channels[i]]);
                             if(_alertMessages[channels[i]]) {
+                                logger.debug("Channel Alert Messages: " + Object.keys(_alertMessages[channels[i]]).length);
                                 let curAlerts = [];
                                 for(let alert of ws.alerts) {
                                     curAlerts.push(alert.id);
                                 }
                                 for(let id in _alertMessages[channels[i]]) {
                                     if(curAlerts.indexOf(id) === -1) {
-                                        _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
+                                        channel.fetchMessage(_alertMessages[channels[i]][id])
                                             .then(message => message.delete())
                                             .catch(logger.error);
                                         delete _alertMessages[channels[i]][id];
@@ -214,7 +226,7 @@ function _recursiveAlertUpdater() {
                                     else {
                                         for(let alert of ws.alerts) {
                                             if(alert.id === id) {
-                                                _discordClient.guilds[gid].channels[channels[i]].fetchMessage(_alertMessages[channels[i]][id])
+                                                channel.fetchMessage(_alertMessages[channels[i]][id])
                                                     .then(message => message.edit({
                                                         embed: {
                                                             title: "ALERT",
@@ -234,23 +246,29 @@ function _recursiveAlertUpdater() {
                                                                     value: alert.mission.reward.asString
                                                                 },
                                                                 {
-                                                                    name: "Waves:",
-                                                                    value: alert.mission.maxWaveNum
+                                                                    name: "Time left:",
+                                                                    value: alert.eta || 'N/A'
                                                                 }
                                                             ]
                                                         }
                                                     }))
-                                                    .catch(logger.error);
+                                                    .catch(function(err) {
+                                                        logger.error(err);
+                                                        delete _alertMessages[channels[i]][id];
+                                                    });
                                                 break;
                                             }
                                         }
                                     }
                                 }
+                            }
+                            else {
                                 for(let alert of ws.alerts) {
+                                    if(!_alertMessages[channels[i]])
+                                        _alertMessages[channels[i]] = {};
+                                    logger.debug("Is new Alert: " + !_alertMessages[channels[i]][alert.id]);
                                     if(!_alertMessages[channels[i]][alert.id]) {
-                                        console.log("guilds", _discordClient.guilds);
-                                        console.log("channels", _discordClient[gid].channels);
-                                        _discordClient.guilds[gid].channels[channels[i]].send({
+                                        channel.send({
                                             embed: {
                                                 title: "ALERT",
                                                 description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
@@ -269,25 +287,29 @@ function _recursiveAlertUpdater() {
                                                         value: alert.mission.reward.asString
                                                     },
                                                     {
-                                                        name: "Waves:",
-                                                        value: alert.mission.maxWaveNum
+                                                        name: "Time left:",
+                                                        value: alert.eta || 'N/A'
                                                     }
                                                 ]
                                             }
                                         })
-                                            .then(message => _alertMessages[channels[i]][alert.id] = message.id);
+                                            .then(function(message) {
+                                                _alertMessages[channels[i]][alert.id] = message.id
+                                            })
+                                            .catch(logger.error);
                                     }
                                 }
                             }
                         }
-                        else
+                        else {
                             guildSettings[gid].warframe.alertChannels.remove(channels[i]);
+                        }
                     }
                     else
                         delete guildSettings[gid];
                 }
             }
         }
-        setTimeout(_recursiveAlertUpdater, config && config.warframe && config.warframe.alertUpdateRate ? config.warframe.alertUpdateRate : 60000);
+        setTimeout(_recursiveAlertUpdater, (config && config.warframe && config.warframe.alertUpdateRate) ? config.warframe.alertUpdateRate : 30000);
     });
 }
