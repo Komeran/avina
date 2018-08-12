@@ -301,8 +301,6 @@ function _recursiveAlertUpdater() {
                             guildSettings[gid].warframe.alertChannels.remove(channels[i]);
                         }
                     }
-                    else
-                        delete guildSettings[gid];
                 }
             }
         }
