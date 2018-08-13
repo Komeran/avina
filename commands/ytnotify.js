@@ -3,7 +3,7 @@
  * @date 11.08.2018
  */
 
-let ytclient = require('../ytclient.js');
+let ytclient = require('../ytclient.js')();
 
 module.exports = {
     execute: function (args, message) {
@@ -25,9 +25,12 @@ module.exports = {
         let is = false;
         let not = false;
 
+        let query = null;
+
         for(let i = 1; i < args.length; i++) {
             if(args[i] === "--stop") {
                 stop = true;
+                query = ytclient.getStopQuery();
                 continue;
             }
 
@@ -49,6 +52,7 @@ module.exports = {
                     message.delete();
                     return;
                 }
+                query = ytclient.getTitleQuery(null, title, !is, is, not);
                 continue;
             }
 
@@ -63,20 +67,23 @@ module.exports = {
         }
 
         let done = function(ytChannelId) {
+            query.ytChannelId = ytChannelId;
             if(stop) {
-                if (ytChannelId) {
-                    ytclient.unsubscribe(channel, message.channel.id, function () {
-                        message.channel.send({
-                            embed: {
-                                title: 'I will no longer let this channel know when ' + channelName + ' uploads videos!',
-                                color: 3447003
-                            }
-                        });
-                        message.delete();
+                if (query.ytChannelId) {
+                    ytclient.unsubYtChannel(query.ytChannelId, message.guild.id, message.channel.id, function (err) {
+                        if(!err) {
+                            message.channel.send({
+                                embed: {
+                                    title: 'I will no longer let this channel know when this channel uploads videos!',
+                                    color: 3447003
+                                }
+                            });
+                            message.delete();
+                        }
                     });
                 }
                 else {
-                    ytclient.unsubscribeAll(message.channel.id, function () {
+                    ytclient.unsubAllYtChannels(message.guild.id, message.channel.id, function () {
                         message.channel.send({
                             embed: {
                                 title: "I will no longer let this channel know when anyone uploads YouTube videos!",
@@ -86,53 +93,12 @@ module.exports = {
                     });
                 }
             }
-            if(!ytChannelId) {
+            if(!query.ytChannelId) {
                 message.author.send("Missing channel or --stop argument! Channel: " + channel);
                 message.delete();
                 return;
             }
-            let notify = function(entry) {
-                message.channel.send({
-                    embed: {
-                        title: entry.author.name + " uploaded " + entry.title + "!",
-                        description: "Go watch it here: " + entry.link.href,
-                        color: 3447003
-                    }
-                });
-            };
-            let cb = notify;
-            if(title) {
-                cb = function(entry) {
-                    if(entry.title.toLowerCase().indexOf(title.toLowerCase()) !== -1) {
-                        notify(entry);
-                    }
-                };
-                if(is) {
-                    cb = function(entry) {
-                        if(entry.title.toLowerCase() === title.toLowerCase()) {
-                            notify(entry);
-                        }
-                    };
-                    if(not) {
-                        cb = function(entry) {
-                            if(entry.title.toLowerCase() !== title.toLowerCase()) {
-                                notify(entry);
-                            }
-                        };
-                    }
-                }
-                else if(not) {
-                    cb = function(entry) {
-                        if(entry.title.toLowerCase().indexOf(title.toLowerCase()) === -1) {
-                            notify(entry);
-                        }
-                    };
-                }
-            }
-            else {
-                cb = notify;
-            }
-            ytclient.subscribeToYtChannel(channel, message.channel.id, cb, function(err) {
+            ytclient.subscribeToYtChannel(message.guild.id, message.channel.id, query, function(err) {
                 if(err) {
                     message.author.send("Could not subscribe to the YouTube Channel. Error: " + err);
                     message.delete();

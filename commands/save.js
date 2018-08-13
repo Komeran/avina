@@ -13,6 +13,7 @@ let isSaving = false;
 let config = require('../config.json');
 let auth = require('../auth.json');
 let guildSettings = require('../util/guildSettings.js');
+let wfclient = require('../wfclient.js')();
 if(auth.database)
     var connection = require('mysql').createConnection(auth.database);
 
@@ -40,6 +41,9 @@ emitter.on("guildSettings", function(message, savingMessage, json) {
     saveGames(message, savingMessage, json);
 });
 emitter.on("games", function(message, savingMessage, json) {
+    saveWfAlertMessages(message, savingMessage, json);
+});
+emitter.on("wfAlertMessages", function(message, savingMessage, json) {
     saveApplications(message, savingMessage, json);
 });
 emitter.on("applications", function(message, savingMessage) {
@@ -77,12 +81,6 @@ module.exports = {
         message.channel.send("Saving...").then(function(msg) {
             isSaving = true;
             saveGuildSettings(message, msg, true);
-            return;
-            connection.connect(function(err) {
-                if(err) {
-                    saveGames(message, msg, true);
-                }
-            });
         });
     },
     help: "Admin only command!"
@@ -173,6 +171,31 @@ let saveGuildSettings = function(message, msg, json) {
                 return;
             }
             emitter.emit("guildSettings", message, msg, json);
+        });
+    }
+};
+
+let saveWfAlertMessages = function(message, msg, json) {
+    if(json) {
+        let data = JSON.stringify(wfclient.getAlertMessages());
+
+        if (!fs.existsSync(dataPath)) {
+            fs.mkdirSync(dataPath);
+        }
+
+        let wfPath = path.join(dataPath, 'warframe');
+
+        if (!fs.existsSync(wfPath)) {
+            fs.mkdirSync(wfPath);
+        }
+
+        fs.writeFile(path.join(wfPath, 'alertMessages.json'), data, 'utf8', function (err) {
+            if (err) {
+                message.channel.send("Something went wrong during saving! Please tell your main server admin!");
+                logger.warn(err);
+                return;
+            }
+            emitter.emit("wfAlertMessages", message, msg, json);
         });
     }
 };

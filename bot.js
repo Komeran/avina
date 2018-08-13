@@ -26,7 +26,6 @@ if(!config) {
 
 // Setup Discord client
 var client = new Discord.Client();
-let wfClient = require("./wfclient.js")(client);
 
 // Configure logger settings
 logger.clear();
@@ -85,7 +84,7 @@ else {
 	logger.info("No games save found.");
 }
 let applications = require('./util/applications.js');
-let appsPath = path.join(__dirname, config.saving.path,"applications.json")
+let appsPath = path.join(__dirname, config.saving.path,"applications.json");
 if(fs.existsSync(appsPath)) {
     let dataString = fs.readFileSync(appsPath);
     let apps = JSON.parse(dataString);
@@ -97,6 +96,18 @@ if(fs.existsSync(appsPath)) {
 else {
     logger.info("No applications save found.");
 }
+let alertMessages = null;
+let wfPath = path.join(__dirname, config.saving.path,"warframe");
+let alertMessagesPath = path.join(wfPath, "alertMessages.json");
+if(fs.existsSync(alertMessagesPath)) {
+    let dataString = fs.readFileSync(alertMessagesPath);
+    alertMessages = JSON.parse(dataString);
+    logger.info("Applications save loaded.");
+}
+else {
+    logger.info("No applications save found.");
+}
+let wfClient = require("./wfclient.js")(client, alertMessages);
 logger.info("Done loading save data.");
 // End Load save data
 

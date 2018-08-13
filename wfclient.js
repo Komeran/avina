@@ -73,10 +73,11 @@ class WarframeClient {
     /**
      *
      * @param discordClient {Object}
+     * @param [alertMessages] {Object}
      */
-    constructor(discordClient) {
+    constructor(discordClient, alertMessages) {
         _discordClient = discordClient;
-        _alertMessages = {};
+        _alertMessages = alertMessages;
         _recursiveAlertUpdater();
     }
 
@@ -175,6 +176,10 @@ class WarframeClient {
             guildSettings[guildId].warframe.alertChannels.remove(discordChannelId);
         }
     }
+
+    getAlertMessages() {
+        return _alertMessages;
+    }
 }
 
 
@@ -228,16 +233,12 @@ function _recursiveAlertUpdater() {
                                                     .then(message => message.edit({
                                                         embed: {
                                                             title: "ALERT",
-                                                            description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
+                                                            description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                                             color: 3447003,
                                                             fields: [
                                                                 {
-                                                                    name: "Enemy Level:",
-                                                                    value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
-                                                                },
-                                                                {
-                                                                    name: "Faction:",
-                                                                    value: alert.mission.faction
+                                                                    name: "Enemy:",
+                                                                    value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
                                                                 },
                                                                 {
                                                                     name: "Reward:",
@@ -268,16 +269,12 @@ function _recursiveAlertUpdater() {
                                     channel.send({
                                         embed: {
                                             title: "ALERT",
-                                            description: '**' + alert.mission.node + ' (' + alert.mission.type + ')**',
+                                            description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                             color: 3447003,
                                             fields: [
                                                 {
-                                                    name: "Enemy Level:",
-                                                    value: alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel
-                                                },
-                                                {
-                                                    name: "Faction:",
-                                                    value: alert.mission.faction
+                                                    name: "Enemy:",
+                                                    value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
                                                 },
                                                 {
                                                     name: "Reward:",
