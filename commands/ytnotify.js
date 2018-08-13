@@ -154,6 +154,15 @@ var TOKEN_PATH = TOKEN_DIR + 'youtube-nodejs-quickstart.json';
 function getChannelId(query, callback) {
 
     // Authorize a client with the loaded credentials, then call the YouTube API.
+
+    // We have a link here!
+    if(query.indexOf('/') !== -1) {
+        if(query.indexOf('/channel/') !== -1)
+            query = query.split('/channel/')[1].split('?')[0];
+        else
+            query = query.split('/user/')[1].split('?')[0];
+    }
+
     authorize(cs, getChannel, query, callback);
 }
 
