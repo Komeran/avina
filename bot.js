@@ -123,6 +123,7 @@ client.on('ready', () => {
 client.on('message', message => {
     let isIgnored = message.guild
         && message.guild.id
+        && guildSettings[message.guild.id]
         && guildSettings[message.guild.id].ignoredChannels
         && guildSettings[message.guild.id].ignoredChannels[message.channel.id];
 	if (message.content.substring(0,1) === '!') {
