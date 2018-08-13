@@ -35,15 +35,22 @@ module.exports = {
             }
 
             if(args[i] === "--title") {
-                title = args.slice(i+3, args.length).join(' ');
+                let offset = 3;
+                if(channel) {
+                    offset += channel.split(' ').length;
+                }
                 if(args[i+1] === "contains") {
+                    offset++;
                     if(args[i+2] === "not") {
+                        offset++;
                         not = true;
                     }
                 }
                 else if(args[i+1] === "is") {
+                    offset++;
                     is = true;
                     if(args[i+2] === "not") {
+                        offset ++;
                         not = true;
                     }
                 }
@@ -52,6 +59,7 @@ module.exports = {
                     message.delete();
                     return;
                 }
+                title = args.slice(i+offset, args.length).join(' ');
                 query = ytclient.getTitleQuery(null, title, !is, is, not);
                 continue;
             }
@@ -63,7 +71,7 @@ module.exports = {
                 }
                 channel = (channel ? channel : ' ') + args[i];
             }
-            channel = channel.substring(1, channel.length);
+            //channel = channel.substring(0, channel.length-1);
         }
 
         let done = function(ytChannelId) {
