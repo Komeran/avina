@@ -39,5 +39,7 @@ module.exports = {
             message.delete();
         }
     },
-    help: ""
+    help: "Usage: `!wfalerts`\n" +
+        "Marks/Unmarks the text channel the command was used in for updates on Warframe Alert Missions. " +
+        "Avina will send and update messages with infos on current Alert Missions every 30 seconds."
 };

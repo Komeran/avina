@@ -39,5 +39,7 @@ module.exports = {
             message.delete();
         }
     },
-    help: ""
+    help: "Usage: `!wfupdates`\n" +
+        "Marks/Unmarks the text channel the command was used in for updates on new Warframe Versions. " +
+        "Avina will send notifications to this channel when new Versions are out."
 };
