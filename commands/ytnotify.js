@@ -35,7 +35,7 @@ module.exports = {
             }
 
             if(args[i] === "--title") {
-                title = args.subarray(i+3, args.length).join(' ');
+                title = args.slice(i+3, args.length).join(' ');
                 if(args[i+1] === "contains") {
                     if(args[i+2] === "not") {
                         not = true;
