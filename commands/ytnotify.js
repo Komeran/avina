@@ -75,7 +75,10 @@ module.exports = {
         }
 
         let done = function(ytChannelId) {
-            query.ytChannelId = ytChannelId;
+            if(!query)
+                query = ytclient.getQuery(ytChannelId);
+            else
+                query.ytChannelId = ytChannelId;
             if(stop) {
                 if (query.ytChannelId) {
                     ytclient.unsubYtChannel(query.ytChannelId, message.guild.id, message.channel.id, function (err) {
