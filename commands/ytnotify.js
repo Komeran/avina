@@ -61,7 +61,7 @@ module.exports = {
                 }
                 title = args.slice(i+offset, args.length).join(' ');
                 query = ytclient.getTitleQuery(null, title, !is, is, not);
-                continue;
+                break;
             }
 
             for(let j = 0; i < args.length; i++) {
