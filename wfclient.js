@@ -19,6 +19,8 @@ let guildSettings = require('./util/guildSettings.js');
 let _discordClient = null;
 let _alertMessages = null;
 
+let _iconLinks = {};
+
 warframeVersion.on("update", update => {
     logger.info("New Warframe Version: " + update.version + "\n" + update.title);
     for(let gid in guildSettings) {
