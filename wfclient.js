@@ -211,9 +211,9 @@ function _recursiveAlertUpdater() {
                         let channel = guild.channels.get(channels[i]);
                         logger.debug("Guild has Channel: " + !!channel);
                         if(channel) {
-                            logger.debug("Alert Message Channels: " + Object.keys(_alertMessages).length);
-                            logger.debug("Channel has Alert Messages: " + !!_alertMessages[channels[i]]);
-                            if(_alertMessages[channels[i]]) {
+                            logger.debug("Alert Message Channels: " + (_alertMessages? Object.keys(_alertMessages).length : 0));
+                            logger.debug("Channel has Alert Messages: " + (!!_alertMessages && !!_alertMessages[channels[i]]));
+                            if(_alertMessages && _alertMessages[channels[i]]) {
                                 logger.debug("Channel Alert Messages: " + Object.keys(_alertMessages[channels[i]]).length);
                                 let curAlerts = [];
                                 for(let alert of ws.alerts) {
@@ -261,6 +261,8 @@ function _recursiveAlertUpdater() {
                                     }
                                 }
                             }
+                            if(!_alertMessages)
+                                _alertMessages = {};
                             for(let alert of ws.alerts) {
                                 if(!_alertMessages[channels[i]])
                                     _alertMessages[channels[i]] = {};
