@@ -30,7 +30,7 @@ require('request-promise')("http://content.warframe.com/MobileExport/Manifest/Ex
 
 let Discord = require('discord.js');
 
-let cient = new Discord.Client();
+let client = new Discord.Client();
 let auth = require('./auth.json');
 
 client.login(auth.token);
