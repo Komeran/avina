@@ -12,6 +12,7 @@
     "mysql": "^2.16.0",
     "pubsubhubbub": "^0.4.1",
     "request-promise": "^4.2.2",
+    "warframe-items": "^1.29.0",
     "warframe-worldstate-parser": "^2.0.2",
     "winston": "^3.0.0",
     "xml2js": "^0.4.19",
