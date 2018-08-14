@@ -40,7 +40,9 @@ client.on("ready", function() {
         embed: {
             title: "DOMT 1" ,
             color: 0xF96221,
-            thumbnail: "attachment://domt1.png"
+            thumbnail: {
+                url: "attachment://domt1.png"
+            }
         },
         files: [
             {
