@@ -3,52 +3,127 @@
  * @date 13.08.2018
  */
 
-/*
 let path = require('path');
-let itemIconLinks = {};
 let parsedItems = {};
-//region
-let query = "Cr";
-let creditsImage = "https://vignette.wikia.nocookie.net/warframe/images/0/01/CreditsLarge.png";
-require('request-promise')("http://content.warframe.com/MobileExport/Manifest/ExportManifest.json").then(function(data) {
-    let Items = require('warframe-items');
-    let items = new Items();
-    parsedItems = {};
-    items.forEach(function(item) {
-        parsedItems[item.name] = item;
-        console.log(item.name);
-    });
-    data = JSON.parse(data)["Manifest"];
-    for(let i in data) {
-        data[i].textureLocation = path.join("http://content.warframe.com/MobileExport", data[i].textureLocation);
-        if(parsedItems[query] && data[i].uniqueName === parsedItems[query].uniqueName) {
-            console.log(data[i].textureLocation);
+
+let imageCachePath = "imgCache";
+let resizedImageCachePath = "imgCache/resized";
+let fs = require('fs'),
+    request = require('request'),
+    sharp = require('sharp');
+
+let download = function(uri, filename, callback){
+    request.head(uri, function(err, res, body){
+        if(err) {
+            console.error(err);
+            return;
         }
-    }
-});
-//endregion*/
+        console.log('content-type:', res.headers['content-type']);
+        console.log('content-length:', res.headers['content-length']);
+
+        if(!fs.existsSync(__dirname + '/' + imageCachePath)) {
+            fs.mkdirSync(__dirname + '/' + imageCachePath);
+        }
+
+        request(uri).pipe(fs.createWriteStream(path.join(imageCachePath, filename))).on('close', callback);
+    });
+};
+
+//region Stuff
 
 let Discord = require('discord.js');
 
 let client = new Discord.Client();
 let auth = require('./auth.json');
+let manifest = null;
 
 client.login(auth.token);
 
 client.on("ready", function() {
-    client.guilds.get("246407562461708289").channels.get("477920496567189519").send({
-        embed: {
-            title: "DOMT 1" ,
-            color: 0xF96221,
-            thumbnail: {
-                url: "attachment://domt1.png"
-            }
-        },
+    require('request-promise')("http://content.warframe.com/MobileExport/Manifest/ExportManifest.json").then(function (data) {
+        manifest = JSON.parse(data)["Manifest"];
+    });
+});
+
+client.on("message", function(message) {
+    if(message.author.id !== client.user.id) {
+        sendImage(message.content, message.channel);
+    }
+});
+
+let query = "Cr";
+let creditsImage = "https://vignette.wikia.nocookie.net/warframe/images/0/01/CreditsLarge.png";
+
+function attachThumbnailToEmbed(embed, thumbnail) {
+    embed.thumbnail = {
+        url: "attachment://" + thumbnail
+    };
+    return embed;
+}
+
+function sendImageMessage(thumbnail, itemName, channel) {
+    let embed = {
+        title: itemName
+    };
+    channel.send({
+        embed: attachThumbnailToEmbed(embed, thumbnail),
         files: [
             {
-                attachment: './domt/1.png',
-                name: 'domt1.png'
+                attachment: path.join(resizedImageCachePath, thumbnail),
+                name: thumbnail
             }
         ]
     });
-});
+}
+
+function sendImage(item, channel) {
+    let query = item;
+    let Items = require('warframe-items');
+    let items = new Items();
+    parsedItems = {};
+    items.forEach(function (item) {
+        parsedItems[item.name] = item;
+    });
+    console.log(parsedItems["Rubedo"]);
+    for (let i in manifest) {
+        manifest[i].textureLocation = "http://" + path.join("content.warframe.com/MobileExport", manifest[i].textureLocation);
+        let imgfile = manifest[i].uniqueName.split('/')[manifest[i].uniqueName.split('/').length - 1] + '.png';
+        if(!Object.values(parsedItems).find(element => element.uniqueName === manifest[i].uniqueName))
+            continue;
+        let itemName = Object.values(parsedItems).find(element => element.uniqueName === manifest[i].uniqueName).name;
+        if(itemName.toLowerCase() !== query.toLowerCase())
+            continue;
+        if (!fs.existsSync(__dirname + '/' + resizedImageCachePath + '/' + imgfile)) {
+            download(manifest[i].textureLocation, imgfile, function () {
+                if (!fs.existsSync(__dirname + '/' + resizedImageCachePath)) {
+                    fs.mkdirSync(__dirname + '/' + resizedImageCachePath);
+                }
+                sharp(path.join(imageCachePath, imgfile))
+                    .resize(512, 342, {
+                        kernel: sharp.kernel.nearest
+                    })
+                    .ignoreAspectRatio()
+                    .toFile(path.join(resizedImageCachePath, imgfile), function (err) {
+                        if(err) {
+                            console.error(err);
+                            return;
+                        }
+                        sendImageMessage(imgfile, itemName, channel);
+                        fs.rmdir(path.join(imageCachePath, imgfile), function(err) {
+                            if(err) {
+                                console.log(err);
+                                return;
+                            }
+                            console.log("DoNe");
+                        });
+                    });
+            });
+        }
+        else {
+            sendImageMessage(imgfile, itemName, channel);
+        }
+        break;
+    }
+    console.log("DONE");
+}
+//endregion
