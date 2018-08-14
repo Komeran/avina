@@ -44,7 +44,7 @@ client.on("ready", function() {
         },
         files: [
             {
-                attachment: 'domt/1.png',
+                attachment: './domt/1.png',
                 name: 'domt1'
             }
         ]
