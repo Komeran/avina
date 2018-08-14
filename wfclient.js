@@ -235,7 +235,9 @@ function _recursiveAlertUpdater() {
                                                             title: "ALERT",
                                                             description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                                             color: 3447003,
-                                                            thumbnail: alert.mission.reward.thumbnail,
+                                                            thumbnail: {
+                                                                url: alert.mission.reward.thumbnail
+                                                            },
                                                             fields: [
                                                                 {
                                                                     name: "Enemy:",
@@ -274,7 +276,9 @@ function _recursiveAlertUpdater() {
                                             title: "ALERT",
                                             description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                             color: 3447003,
-                                            thumbnail: alert.mission.reward.thumbnail,
+                                            thumbnail: {
+                                                url: alert.mission.reward.thumbnail
+                                            },
                                             fields: [
                                                 {
                                                     name: "Enemy:",
