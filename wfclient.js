@@ -19,8 +19,6 @@ let guildSettings = require('./util/guildSettings.js');
 let _discordClient = null;
 let _alertMessages = null;
 
-let _iconLinks = {};
-
 warframeVersion.on("update", update => {
     logger.info("New Warframe Version: " + update.version + "\n" + update.title);
     for(let gid in guildSettings) {
@@ -237,6 +235,7 @@ function _recursiveAlertUpdater() {
                                                             title: "ALERT",
                                                             description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                                             color: 3447003,
+                                                            thumbnail: alert.mission.reward.thumbnail,
                                                             fields: [
                                                                 {
                                                                     name: "Enemy:",
@@ -275,6 +274,7 @@ function _recursiveAlertUpdater() {
                                             title: "ALERT",
                                             description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
                                             color: 3447003,
+                                            thumbnail: alert.mission.reward.thumbnail,
                                             fields: [
                                                 {
                                                     name: "Enemy:",
