@@ -32,8 +32,13 @@ pubSubSubscriber.on("feed", function(data) {
             console.log(">>> Feed Object:", result.feed);
             if (!result.feed.entry || !result.feed.entry[0])
                 return;
-            let ytChannelId = result.feed.entry[0]["yt:channelId"];
+            let entry = result.feed.entry[0];
+            let ytChannelId = entry["yt:channelId"][0];
             console.log(">>> Channel ID:", ytChannelId);
+            let videoLink = entry["link"][0];
+            console.log(">>> Link:", videoLink);
+            let videoTitle = entry["title"];
+            console.log(">>> Title:", videoTitle);
         }
         pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + args[0], config.hub, function(err) {
             if(!err) {
