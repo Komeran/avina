@@ -11,7 +11,50 @@ let resizedImageCachePath = "imgCache/resized";
 let fs = require('fs'),
     request = require('request'),
     sharp = require('sharp');
+let args = process.argv.slice(2);
 
+let pubSubHubbub = require("pubsubhubbub");
+let pubSubSubscriber = pubSubHubbub.createServer({callbackUrl: "http://68.66.241.33:8080"});
+let config = require("./config.json").googleapi.subscribe;
+let parseString = require('xml2js').parseString;
+
+pubSubSubscriber.on("listen", function(){
+    console.log("Listening on port %s", pubSubSubscriber.port);
+});
+
+pubSubSubscriber.on("feed", function(data) {
+    console.log(">>> XML:", data.feed.toString());
+    parseString(data.feed.toString(), function(err, result) {
+        if(err) {
+            console.log(">>>>> INVALID FEED XML <<<<<");
+            return
+        }
+        console.log(">>> Feed Object:", result.feed);
+        let ytChannelId = result.feed.entry["yt:channelId"];
+        console.log(">>> Channel ID:", ytChannelId);
+    });
+    pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + args[0], config.hub, function(err) {
+        if(!err) {
+            console.log("Successfully unsubscribed from " + args[0]);
+        }
+        else {
+            console.log(err);
+        }
+    });
+});
+
+pubSubSubscriber.listen(config.port);
+
+pubSubSubscriber.subscribe(config.topic + "?channel_id=" + args[0], config.hub, function (err) {
+    if (!err) {
+        console.log("Successfully subscribed to " + args[0]);
+    }
+    else {
+        console.log(err);
+    }
+});
+
+/*
 let download = function(uri, filename, callback){
     request.head(uri, function(err, res, body){
         if(err) {
@@ -126,4 +169,4 @@ function sendImage(item, channel) {
     }
     console.log("DONE");
 }
-//endregion
+//endregion*/
