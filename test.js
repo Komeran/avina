@@ -14,7 +14,7 @@ let fs = require('fs'),
 let args = process.argv.slice(2);
 
 let pubSubHubbub = require("pubsubhubbub");
-let pubSubSubscriber = pubSubHubbub.createServer({callbackUrl: "http://68.66.241.33:8080"});
+let pubSubSubscriber = pubSubHubbub.createServer({callbackUrl: "http://68.66.241.33:8081"});
 let config = require("./config.json").googleapi.subscribe;
 let parseString = require('xml2js').parseString;
 
