@@ -35,9 +35,11 @@ pubSubSubscriber.on("feed", function(data) {
             let entry = result.feed.entry[0];
             let ytChannelId = entry["yt:channelId"][0];
             console.log(">>> Channel ID:", ytChannelId);
+            let author = entry["author"][0];
+            console.log(">>> Author:", author);
             let videoLink = entry["link"][0];
             console.log(">>> Link:", videoLink);
-            let videoTitle = entry["title"];
+            let videoTitle = entry["title"][0];
             console.log(">>> Title:", videoTitle);
         }
         pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + args[0], config.hub, function(err) {
