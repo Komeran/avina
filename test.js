@@ -35,9 +35,9 @@ pubSubSubscriber.on("feed", function(data) {
             let entry = result.feed.entry[0];
             let ytChannelId = entry["yt:channelId"][0];
             console.log(">>> Channel ID:", ytChannelId);
-            let author = entry["author"][0];
+            let author = entry["author"][0].name[0];
             console.log(">>> Author:", author);
-            let videoLink = entry["link"][0];
+            let videoLink = entry["link"][0].$.href;
             console.log(">>> Link:", videoLink);
             let videoTitle = entry["title"][0];
             console.log(">>> Title:", videoTitle);
