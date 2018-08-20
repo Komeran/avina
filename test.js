@@ -17,6 +17,18 @@ let pubSubHubbub = require("pubsubhubbub");
 let pubSubSubscriber = pubSubHubbub.createServer({callbackUrl: "http://68.66.241.33:8081"});
 let config = require("./config.json").googleapi.subscribe;
 let parseString = require('xml2js').parseString;
+/*
+pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + args[0], config.hub, function(err) {
+    if(!err) {
+        console.log("Successfully unsubscribed from " + args[0]);
+    }
+    else {
+        console.log(err);
+    }
+});
+
+return;*/
+
 
 pubSubSubscriber.on("listen", function(){
     console.log("Listening on port %s", pubSubSubscriber.port);
@@ -30,6 +42,8 @@ pubSubSubscriber.on("feed", function(data) {
             return
         }
         console.log(">>> Feed Object:", result.feed);
+        if(!result.feed.entry)
+            return;
         let ytChannelId = result.feed.entry["yt:channelId"];
         console.log(">>> Channel ID:", ytChannelId);
     });
