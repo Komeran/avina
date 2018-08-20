@@ -30,9 +30,9 @@ pubSubSubscriber.on("feed", function(data) {
         }
         else {
             console.log(">>> Feed Object:", result.feed);
-            if (!result.feed.entry)
+            if (!result.feed.entry || !result.feed.entry[0])
                 return;
-            let ytChannelId = result.feed.entry["'yt:channelId'"];
+            let ytChannelId = result.feed.entry[0]["yt:channelId"];
             console.log(">>> Channel ID:", ytChannelId);
         }
         pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + args[0], config.hub, function(err) {
@@ -42,8 +42,8 @@ pubSubSubscriber.on("feed", function(data) {
             else {
                 console.log(err);
             }
+            //pubSubSubscriber.stop();
         });
-        pubSubSubscriber.close();
     });
 });
 
