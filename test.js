@@ -43,7 +43,7 @@ pubSubSubscriber.on("feed", function(data) {
     });
 });
 
-pubSubSubscriber.listen(config.port);
+pubSubSubscriber.listen(8081);
 
 pubSubSubscriber.subscribe(config.topic + "?channel_id=" + args[0], config.hub, function (err) {
     if (!err) {
