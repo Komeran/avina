@@ -9,7 +9,6 @@ let logger = require('winston');
 let config = require("./config.json").googleapi.subscribe;
 let parseString = require('xml2js').parseString;
 let guildSettings = require('./util/guildSettings.js');
-let feedCallbacks = {}; // TODO: DELETE
 let notifyChannels = {};
 let _discordClient = null;
 
@@ -18,14 +17,18 @@ pubSubSubscriber.on("listen", function(){
 });
 
 pubSubSubscriber.on("feed", function(data) {
-    logger.debug("Received YouTube Notification Feed");
     parseString(data.feed.toString(), function(err, result) {
         if(err) {
             console.log("INVALID FEED XML");
             return
         }
-        let ytChannelId = result.feed.entry["yt:channelId"];
-        logger.debug("YouTube Channel ID: " + ytChannelId);
+        if (!result.feed.entry || !result.feed.entry[0])
+            return;
+        let entry = result.feed.entry[0];
+        let ytChannelId = entry["yt:channelId"][0];
+        let author = entry["author"][0].name[0];
+        let videoLink = entry["link"][0].$.href;
+        let videoTitle = entry["title"][0];
     });
 });
 
@@ -64,23 +67,24 @@ class YouTubeClient {
      * @param [subscribedCallback] {subscribedCallback} The callback that should be called when the subscription process is done.
      */
     subscribeToYtChannel(guildId, discordChannelId, query, subscribedCallback) {
+        if(!this.isSubscribedToYtChannel(ytChannelId))
         subscribe(guildId, discordChannelId, query.ytChannelId, query, subscribedCallback);
     }
     /**
-     *
+     * Checks whether the YouTubeClient instance has already subscribed to the given YouTube Channel
      * @param ytChannelId {string} The ID of the YouTube Channel
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
      * @returns {boolean}
      */
-    isSubscribedToYtChannel(ytChannelId, guildId, discordChannelId) {
-        guildId = '' + guildId;
-        discordChannelId = '' + discordChannelId;
-        return !!guildSettings[guildId]
-            && !!guildSettings[guildId].youtube
-            && !!guildSettings[guildId].youtube.subscribeChannels
-            && !!guildSettings[guildId].youtube.subscribeChannels[discordChannelId]
-            && !!guildSettings[guildId].youtube.subscribeChannels[discordChannelId][ytChannelId];
+    isSubscribedToYtChannel(ytChannelId) {
+        for(let gid in guildSettings) {
+            if(!guildSettings[gid].youtube || !guildSettings[gid].youtube.subscribeChannels)
+                continue;
+            for(let dcid in guildSettings[gid].youtube.subscribeChannels) {
+                if(guildSettings[gid].youtube.subscribeChannels[ytChannelId])
+                    return true;
+            }
+        }
+        return false;
     }
     /**
      *
@@ -182,42 +186,49 @@ class StopQuery extends Query {
 }
 
 /**
- *
+ * Subscribes to a YouTube Channel.
  * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
  * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
  * @param ytChannelId {string} The ID of the YouTube Channel
  * @param query {Query}
  * @param [callback] {subscribedCallback} The callback that should be called when the subscription process is done.
  */
-function subscribe(guildId, discordChannelId, ytChannelId, query, callback) {
-    if(!guildSettings[guildId])
-        guildSettings[guildId] = {};
-    if(!guildSettings[guildId].youtube)
-        guildSettings[guildId].youtube = {};
-    if(!guildSettings[guildId].youtube.subscribeChannels)
-        guildSettings[guildId].youtube.subscribeChannels = {};
-    if(!guildSettings[guildId].youtube.subscribeChannels[discordChannelId])
-        guildSettings[guildId].youtube.subscribeChannels[discordChannelId] = {};
-
-    pubSubSubscriber.subscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, function (err) {
-        if (!err) {
-            guildSettings[guildId].youtube.subscribeChannels[discordChannelId][ytChannelId] = query;
+function subscribe(ytChannelId, callback) {
+    for(let gid in guildSettings) {
+        if(!guildSettings[gid].youtube || !guildSettings[gid].youtube.subscribeChannels)
+            continue;
+        for(let dcid in guildSettings[gid].youtube.subscribeChannels) {
+            if(guildSettings[gid].youtube.subscribeChannels[dcid][ytChannelId]) {
+                if(callback) {
+                    callback(new Error("Already subscribed to " + ytChannelId + "!"));
+                }
+                return;
+            }
         }
+    }
+    pubSubSubscriber.subscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, function (err) {
         if (callback)
             callback(err);
     });
 }
 /**
- *
- * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
- * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+ * Unsubscribes from a YouTube Channel and drops all saved notification queries for said channel.
  * @param ytChannelId {string} The ID of the YouTube Channel
  * @param [callback] {unsubscribedCallback} The callback that should be called when the unsubscribe process is done.
  */
-function unsubscribe(guildId, discordChannelId, ytChannelId, callback) {
+function unsubscribe(ytChannelId, callback) {
     pubSubSubscriber.unsubscribe(config.topic + "?channel_id=" + ytChannelId, config.hub, function (err) {
+        // In case we successfully unsubscribed, make sure we delete all notification instances! This is to reduce cluttering.
         if (!err && guildSettings[guildId] && guildSettings[guildId].youtube && guildSettings[guildId].youtube.subscribeChannels && guildSettings[guildId].youtube.subscribeChannels[discordChannelId] && guildSettings[guildId].youtube.subscribeChannels[discordChannelId][ytChannelId]) {
-            delete guildSettings[guildId].youtube.subscribeChannels[discordChannelId][ytChannelId];
+            for(let gid in guildSettings) {
+                if(!guildSettings[gid].youtube || !guildSettings[gid].youtube.subscribeChannels)
+                    continue;
+                for(let dcid in guildSettings[gid].youtube.subscribeChannels) {
+                    if(guildSettings[gid].youtube.subscribeChannels[dcid][ytChannelId]) {
+                        delete guildSettings[gid].youtube.subscribeChannels[dcid][ytChannelId];
+                    }
+                }
+            }
         }
         if(callback)
             callback(err);

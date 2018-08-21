@@ -49,7 +49,6 @@ pubSubSubscriber.on("feed", function(data) {
             else {
                 console.log(err);
             }
-            //pubSubSubscriber.stop();
         });
     });
 });
