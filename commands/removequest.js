@@ -3,8 +3,8 @@
  * @date 27.07.2018
  */
 
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -30,31 +30,38 @@ module.exports = {
             return;
         }
 
-        let gid = '' + message.guild.id;
+        let gid = message.guild.id;
+        let dmId = message.author.id;
 
-        if(!games[gid]) {
-            message.author.send("Sorry, but that server doesn't have any games running currently!");
+        let game = dbClient.getDnDGameByDM(gid, dmId);
+
+        if(!game) {
+            message.author.send("Sorry, but you are currently not the DM of a game. Quests can only be removed by DMs!");
             return;
         }
 
-        for(let g in games[gid]) {
-            if(games[gid][g].dm === message.author.id) {
-                if(!games[gid][g].quests || games[gid][g].quests.length < id) {
-                    message.author.send("There is no quest with ID " + id + " in the game " + games[gid][g].session);
-                    return;
-                }
-                message.channel.send({
-                    embed: {
-                        title: "Quest has been removed from game " + games[gid][g].session,
-                        description: "[" + id + "] " + games[gid][g].quests[id-1].description,
-                        color: 3447003
-                    }
-                });
-                games[gid][g].quests.splice(id-1, 1);
-                return;
-            }
+        let quest = dbClient.getDnDQuest(gid, game.id, id);
+
+        if(!quest) {
+            message.author.send("There is no quest with ID " + id + " in the game " + game.name);
+            return;
         }
-        message.author.send("Sorry, but you are currently not the DM of a game. Quests can only be removed by DMs!");
+
+        dbClient.deleteDnDQuests(quest);
+
+        quest = dbClient.getDnDQuest(gid, game.id, id);
+
+        if(!quest) {
+            message.channel.send({
+                embed: {
+                    title: "Quest has been removed from game " + game.name,
+                    description: "[" + quest.id + "] " + quest.description,
+                    color: 3447003
+                }
+            });
+            return;
+        }
+        message.author.send("Sorry, but something went wrong. The Quest was not deleted. If this keeps happening, please tell your admin!");
     },
     help: "Usage: `!removequest <ID>` where `<ID>` is the ID number of the quest you'd like to remove.\n" +
         "Removes the quest with the provided ID number from the game you are currently DMing. Only DMs may use this command."

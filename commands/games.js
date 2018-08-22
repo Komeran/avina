@@ -1,5 +1,4 @@
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -8,10 +7,12 @@ module.exports = {
             return;
         }
 
-        let gid = '' + message.guild.id;
+        let gid = message.guild.id;
 
-        if(!games[gid]) {
-            message.author.send("Sorry, but that server doesn't have any games running currently!");
+        let games = dbClient.getDnDGames(gid);
+
+        if(!games) {
+            message.author.send("There are no games currently! Be the first to start one using `!claimdm <Game>` , or have your DM do it!");
             return;
         }
 
@@ -22,16 +23,15 @@ module.exports = {
             fields: []
         };
 
-        games[gid].forEach(function(game) {
+
+        games.forEach(function(game) {
+            let players = dbClient.getDnDGamePlayers(gid, game.id);
+            let playerCount = players? players.length : 0;
             embed.fields.push({
-                name: game.session,
-                value: "DM: <@" + game.dm + ">\nPlayers: " + game.players.length + "/" + game.maxPlayers
+                name: game.name,
+                value: "DM: <@" + game.dungeonMasterSnowflake + ">\nPlayers: " + playerCount + "/" + game.playerMax
             });
         }, this);
-
-        if(games[gid].length === 0) {
-            embed.description = "There are no games currently! Be the first to start one using !claimdm <Game> , or have your DM do it!";
-        }
 
         message.channel.send({'embed': embed});
     },

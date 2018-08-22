@@ -1,5 +1,4 @@
-var logger = require('winston');
-var applications = require('../util/applications.js');
+let applications = require('../util/applications.js');
 
 let rolesCache = {};
 
@@ -29,7 +28,7 @@ module.exports = {
         let gid = message.guild.id;
 
         for(let a in applications[gid]) {
-            var app = applications[gid][a];
+            let app = applications[gid][a];
             let roles = "";
             app.roles.forEach(function(role) {
                 roles += getRoleNameById(role, message.guild.id) + ", ";

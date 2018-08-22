@@ -3,8 +3,8 @@
  * @date 27.07.2018
  */
 
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -23,43 +23,47 @@ module.exports = {
             return;
         }
 
-        let gid = '' + message.guild.id;
+        let gid = message.guild.id;
 
-        if(!games[gid]) {
-            message.author.send("Sorry, but that server doesn't have any games running currently!");
+        let gameId = Number(args[1]);
+
+        if(isNaN(gameId)) {
+            message.author.send("Sorry, but '" + args[1] + "' is not a valid Game ID!");
             return;
         }
 
-        for(let g in games[gid]) {
-            if(games[gid][g].session === args[1].toLowerCase()) {
-                let fields = [];
-                if(!games[gid][g].quests || games[gid][g].quests.length === 0) {
-                    message.channel.send({
-                        embed: {
-                            title: "Quest List of game " + games[gid][g].session,
-                            description: "There are no Quests!",
-                            color: 3447003
-                        }
-                    });
-                    return;
-                }
-                for(let q in games[gid][g].quests) {
-                    fields.push({
-                        name: "[" + (Number(q)+1) + "] " + games[gid][g].quests[q].description,
-                        value: "Status: " + (games[gid][g].quests[q].completed ? "Completed" : "Open")
-                    });
-                }
-                message.channel.send({
-                    embed: {
-                        title: "Quest List of game " + games[gid][g].session,
-                        color: 3447003,
-                        fields: fields
-                    }
-                });
-                return;
-            }
+        let game = dbClient.getDnDGame(gid, gameId);
+
+        if(!game) {
+            message.author.send("Sorry, but there is no game with the ID '" + args[1] + "'!");
+            return;
         }
-        message.author.send("Sorry, but the game '" + args[1].toLowerCase() + "' doesn't exist yet.");
+
+        let quests = dbClient.getDnDQuests(gid, gameId);
+
+        if(!quests) {
+            message.channel.send({
+                embed: {
+                    title: "Quest List of game " + game.name,
+                    description: "There are no Quests!",
+                    color: 3447003
+                }
+            });
+            return;
+        }
+        for(let q in quests) {
+            fields.push({
+                name: "[" + (quests[q].id) + "] " + quests[q].description,
+                value: "Status: " + (quests[q].completed ? "Completed" : "Open")
+            });
+        }
+        message.channel.send({
+            embed: {
+                title: "Quest List of game " + game.name,
+                color: 3447003,
+                fields: fields
+            }
+        });
     },
     help: "Usage: `!quests <game>` where `<game>` is the name of the game of which you'd like to list the quests.\n" +
         "Lists all quests of the provided game if the game exists."
