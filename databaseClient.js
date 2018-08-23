@@ -36,6 +36,15 @@ export const Guild = function(snowflake, checkhoist) {
     this.snowflake = snowflake;
     this.checkhoist = checkhoist;
 };
+/**
+ *
+ * @static
+ * @param snowflake {string} The Snowflake ID of the Discord Guild
+ * @return {Guild} A Guild Object with default values for non-key parameters
+ */
+Guild.getDefault = function(snowflake) {
+    return new Guild(snowflake, false);
+};
 
 /**
  * Text Channel DAO Object
@@ -54,6 +63,16 @@ export const TextChannel = function(snowflake, welcomeMessage, ignoreCommands, u
     this.updateWarframeVersion = updateWarframeVersion;
     this.notifyWarframeAlerts = notifyWarframeAlerts;
     this.guildSnowflake = guildSnowflake;
+};
+/**
+ *
+ * @static
+ * @param snowflake {string} The Snowflake ID of the Discord Text Channel
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
+ * @return {TextChannel} A TextChannel Object with default values for non-key parameters
+ */
+TextChannel.getDefault = function(snowflake, guildSnowflake) {
+    return new TextChannel(snowflake, null, false, false, false, guildSnowflake);
 };
 
 /**
@@ -81,6 +100,16 @@ export const Message = function(snowflake, wfAlertMessage, textChannelSnowflake)
     this.wfAlertMessage = wfAlertMessage;
     this.textChannelSnowflake = textChannelSnowflake;
 };
+/**
+ *
+ * @static
+ * @param snowflake {string} The Snowflake ID of the Discord Message
+ * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
+ * @return {Message} A Message Object with default values for non-key parameters
+ */
+Message.getDefault = function(snowflake, textChannelSnowflake) {
+    return new Message(snowflake, false, textChannelSnowflake);
+};
 
 /**
  * Notification DAO Object
@@ -93,6 +122,16 @@ export const Notification = function(channelId, textChannelSnowflake, filterLogi
     this.channelId = channelId;
     this.textChannelSnowflake = textChannelSnowflake;
     this.filterLogic = filterLogic || null;
+};
+/**
+ *
+ * @static
+ * @param channelId {string} The ID of the YouTube Channel
+ * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
+ * @return {Notification} A Notification Object with default values for non-key parameters
+ */
+Notification.getDefault = function(channelId, textChannelSnowflake) {
+    return new Notification(channelId, textChannelSnowflake, null);
 };
 
 /**
@@ -209,7 +248,7 @@ module.exports = {
      * @return {Message}
      */
     getMessage: async function(snowflake) {
-        let result = await query("SELECT * FROM m_messages where m_snowflake = '" + snowflake + "';");
+        let result = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_snowflake = '" + snowflake + "';");
         if(result)
             return new Message(result[0].m_snowflake, tinyIntToBool(result[0].m_wfalertmessage), result[0].m_t_textchannel);
         return null;
@@ -400,7 +439,7 @@ module.exports = {
 
     //endregion
 
-    //region ADD NEW ENTRIES / UPDATE ENTRIES IF THEY EXIST
+    //region ADD NEW ENTRIES / UPDATE ENTRIES IF THEY EXIST / ADD NEW ENTRIES IF THEY DON'T EXIST
 
     /**
      * Adds one or several users to the database if not already there.
@@ -418,15 +457,16 @@ module.exports = {
     /**
      * Adds one or several guilds to the database if not already there.
      * @param guilds {...Guild} The Guild object(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addGuilds: async function(...guilds) {
+    addGuilds: async function(ifNotExists, ...guilds) {
         let valuesString = "";
         guilds.forEach(function(guild) {
             valuesString += "('" + guild.snowflake + "', " + boolToTinyint(guild.checkhoist) + "),"
         });
         valuesString = valuesString.substring(0, valuesString.length-1);
-        return await query("INSERT INTO g_guilds (g_snowflake, g_checkhoist) VALUES " + valuesString + " ON DUPLICATE KEY UPDATE g_checkhoist = VALUES(`g_checkhoist`);");
+        return await query("INSERT INTO g_guilds (g_snowflake, g_checkhoist) VALUES " + valuesString + (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE g_checkhoist = VALUES(`g_checkhoist`);"));
     },
     /**
      * Adds one or several roles to the database if not already there.
@@ -448,7 +488,9 @@ module.exports = {
      */
     addTextChannels: async function(...textChannels) {
         let valuesString = "";
+        let guilds = [];
         textChannels.forEach(function(textChannel) {
+            guilds.push(Guild.getDefault(textChannel.guildSnowflake));
             valuesString += "('" + textChannel.snowflake + "'," +
                 (textChannel.welcomeMessage? " '" : " ") + textChannel.welcomeMessage + (textChannel.welcomeMessage? "'," : ",") +
                 " " + boolToTinyint(textChannel.ignoreCommands) + "," +
@@ -456,6 +498,7 @@ module.exports = {
                 " " + boolToTinyint(textChannel.notifyWarframeAlerts) + "," +
                 " '" + textChannel.guildSnowflake + "'),"
         });
+        addGuilds(true, guilds);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO t_textchannels (t_snowflake, t_welcomemessage, t_ignorecommands, t_updatewarframeversion, t_notifywarframealerts, t_g_guild) VALUES " + valuesString +
             " ON DUPLICATE KEY UPDATE t_weclomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);");
@@ -467,11 +510,20 @@ module.exports = {
      */
     addApplications: async function(...applications) {
         let valuesString = "";
+        let guilds = [];
+        let users = [];
+        let roles = [];
         applications.forEach(function(app) {
+            guilds.push(Guild.getDefault(app.guildSnowflake));
+            users.push(app.userSnowflake);
+            roles.push(app.roleSnowflake);
             valuesString += "('" + app.guildSnowflake + "'," +
                 " '" + app.userSnowflake + "'," +
                 " '" + app.roleSnowflake + "'),"
         });
+        addGuilds(true, guilds);
+        addUsers(users);
+        addRoles(roles);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO a_applications (a_g_guild, a_u_user, a_r_role) VALUES " + valuesString + ";");
     },
@@ -482,7 +534,9 @@ module.exports = {
      */
     addMessages: async function(...messages) {
         let valuesString = "";
+        let textChannels = [];
         messages.forEach(function(message) {
+            textChannels.push(TextChannel.getDefault(snowflake, ))
             valuesString += "('" + message.snowflake + "'," +
                 " " + boolToTinyint(message.wfAlertMessage) + "," +
                 " '" + message.textChannelSnowflake + "'),"
@@ -786,13 +840,12 @@ module.exports = {
  */
 let query = function(queryString) {
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
-        if(error) {
-            resolve(error);
-            return;
-        }
         if(result[0]) {
             resolve(result);
             return;
+        }
+        if(error) {
+            console.log("AHHHH");
         }
         resolve();
     }));
@@ -813,5 +866,5 @@ let boolToTinyint = function(bool) {
  * @returns {boolean} true if tinyInt is 1, false otherwise
  */
 let tinyIntToBool = function(tinyInt) {
-    return tinyInt === 1;
+    return !!tinyInt;
 };

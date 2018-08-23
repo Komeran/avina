@@ -3,8 +3,9 @@
  * @date 07.08.2018
  */
 
-let logger = require('winston');
 let guildSettings = require('../util/guildSettings.js');
+let dbClient = require('../databaseClient.js');
+import {Guild, TextChannel} from '../databaseClient.js';
 
 module.exports = {
     execute: function(args, message) {
@@ -27,25 +28,31 @@ module.exports = {
 
         let gid = message.guild.id;
 
-        if(!guildSettings[gid]) {
-            guildSettings[gid] = {
-                welcomeMsgs: {}
-            };
-            guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
+        dbClient.addGuilds(true, new Guild(gid, false));
+
+        let cid = message.channel.id;
+
+        let textChannel = dbClient.getTextChannel(cid);
+
+        let isUpdate = false;
+
+        if(!textChannel) {
+            textChannel = new TextChannel(cid, welcomeMsg, false, false, false, gid);
         }
         else {
-            if(!guildSettings[gid].welcomeMsgs) {
-                guildSettings[gid].welcomeMsgs = {}
-            }
-            if(guildSettings[gid].welcomeMsgs[message.channel.id]) {
-                guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
-                message.channel.send("The welcome message of this channel has been updated!");
-            }
-            else {
-                guildSettings[gid].welcomeMsgs[message.channel.id] = welcomeMsg;
-                message.channel.send("The welcome message of this channel has been set!");
-            }
+            textChannel.welcomeMessage = welcomeMsg;
+            isUpdate = true;
         }
+
+        dbClient.addTextChannels(textChannel);
+
+        let newTextChannel = dbClient.getTextChannel(cid);
+
+        if(!newTextChannel || newTextChannel.welcomeMessage !== welcomeMsg) {
+            message.author.send("Sorry, but something went wrong. The Text Channel settings were not updated. If this keeps happening, please tell your admin!");
+            return;
+        }
+        message.channel.send("The welcome message of this channel has been " + (isUpdate? "updated" : "set") + "!");
     },
     help: "Usage: `!setwelcomemsg <message>` where `<message>` can be really any text including mentions, emojis and Discord markup formatting.\n" +
         "Sets/updates the welcome message that Avina will send in a channel. " +

@@ -4,6 +4,7 @@
  */
 
 let guildSettings = require('../util/guildSettings.js');
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -25,6 +26,10 @@ module.exports = {
         }
 
         let gid = message.guild.id;
+
+        let guild = dbClient.getGuild(gid);
+
+        let
 
         if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
             if(guildSettings[gid].welcomeMsgs[message.channel.id]) {
