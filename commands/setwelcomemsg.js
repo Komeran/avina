@@ -3,7 +3,6 @@
  * @date 07.08.2018
  */
 
-let guildSettings = require('../util/guildSettings.js');
 let dbClient = require('../databaseClient.js');
 import {Guild, TextChannel} from '../databaseClient.js';
 

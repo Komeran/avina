@@ -1,6 +1,4 @@
-let applications = require('../util/applications.js');
-
-let rolesCache = {};
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -14,28 +12,29 @@ module.exports = {
             return;
         }
 
-        if(!rolesCache[message.guild.id]) {
-            rolesCache[message.guild.id] = message.guild.roles;
-        }
-
-        if(args.length > 1) {
-            sendApplicationsOfUsers(message);
-            return;
-        }
-
         let fields = [];
 
         let gid = message.guild.id;
 
-        for(let a in applications[gid]) {
-            let app = applications[gid][a];
+        let apps = dbClient.getApplicationsByGuild(gid);
+
+        let appsPerUser = {};
+        apps.forEach(function(app) {
+            if(message.mentions.length > 0 && !message.mentions.users.has(app.userSnowflake))
+                return;
+            if(!appsPerUser[app.userSnowflake]) {
+                appsPerUser[app.userSnowflake] = [];
+            }
+            appsPerUser[app.userSnowflake].push(app.roleSnowflake);
+        });
+        for(let user in appsPerUser) {
             let roles = "";
-            app.roles.forEach(function(role) {
+            appsPerUser[user].forEach(function(role) {
                 roles += getRoleNameById(role, message.guild.id) + ", ";
             });
             roles = roles.substring(0, roles.length-2);
             fields.push({
-                name: message.guild.member(app.user).nickname,
+                name: message.guild.member(user).nickname,
                 value: "Roles: " + roles
             });
         }
@@ -47,6 +46,7 @@ module.exports = {
                 color: 3447003
             }
         });
+        message.delete();
     },
     help: "Usage: `!apps`\n" +
         "Lists all current applications for roles on this server. " +
@@ -54,41 +54,9 @@ module.exports = {
 };
 
 let getRoleNameById = function(roleId, guildId) {
-    if(!rolesCache[guildId]) {
-        return undefined;
-    }
-    for(let role in rolesCache[guildId].array()) {
-        if(rolesCache[guildId].array()[role].id === '' + roleId)
-            return rolesCache[guildId].array()[role].name
+    for(let role in message.guild.roles[guildId].array()) {
+        if(message.guild.roles[guildId].array()[role].id === '' + roleId)
+            return message.guild.roles[guildId].array()[role].name
     }
     return undefined;
-};
-
-let sendApplicationsOfUsers = function(message) {
-    let fields = [];
-
-    let users = message.mentions.users;
-
-    applications.forEach(function(app) {
-        if(users.has(app.user)) {
-            let roles = "";
-            app.roles.forEach(function (role) {
-                roles += getRoleNameById(role, message.guild.id) + ", ";
-            });
-            roles = roles.substring(0, roles.length - 2);
-            fields.push({
-                name: message.guild.member(app.user).nickname,
-                value: "Roles: " + roles
-            });
-        }
-    });
-
-    message.author.send({
-        embed: {
-            title: "List of current role applications",
-            description: "Filtered for mentioned users",
-            fields: fields,
-            color: 3447003
-        }
-    });
 };

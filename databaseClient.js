@@ -93,22 +93,25 @@ export const Application = function(guildSnowflake, userSnowflake, roleSnowflake
  * @param snowflake {string} The Snowflake ID of the Discord Message
  * @param wfAlertMessage {boolean}
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Message = function(snowflake, wfAlertMessage, textChannelSnowflake) {
+export const Message = function(snowflake, wfAlertMessage, textChannelSnowflake,guildSnowflake) {
     this.snowflake = snowflake;
     this.wfAlertMessage = wfAlertMessage;
     this.textChannelSnowflake = textChannelSnowflake;
+    this.guildSnowflake = guildSnowflake;
 };
 /**
  *
  * @static
  * @param snowflake {string} The Snowflake ID of the Discord Message
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @return {Message} A Message Object with default values for non-key parameters
  */
-Message.getDefault = function(snowflake, textChannelSnowflake) {
-    return new Message(snowflake, false, textChannelSnowflake);
+Message.getDefault = function(snowflake, textChannelSnowflake, guildSnowflake) {
+    return new Message(snowflake, false, textChannelSnowflake, guildSnowflake);
 };
 
 /**
@@ -116,22 +119,25 @@ Message.getDefault = function(snowflake, textChannelSnowflake) {
  * @param channelId {string} The ID of the YouTube Channel
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
  * @param [filterLogic] {string} The Filter Logic presented as string
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Notification = function(channelId, textChannelSnowflake, filterLogic) {
+export const Notification = function(channelId, textChannelSnowflake, filterLogic, guildSnowflake) {
     this.channelId = channelId;
     this.textChannelSnowflake = textChannelSnowflake;
     this.filterLogic = filterLogic || null;
+    this.guildSnowflake = guildSnowflake;
 };
 /**
  *
  * @static
  * @param channelId {string} The ID of the YouTube Channel
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @return {Notification} A Notification Object with default values for non-key parameters
  */
-Notification.getDefault = function(channelId, textChannelSnowflake) {
-    return new Notification(channelId, textChannelSnowflake, null);
+Notification.getDefault = function(channelId, textChannelSnowflake, guildSnowflake) {
+    return new Notification(channelId, textChannelSnowflake, null, guildSnowflake);
 };
 
 /**
@@ -141,14 +147,16 @@ Notification.getDefault = function(channelId, textChannelSnowflake) {
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
  * @param attribute {string} The attribute to filter
  * @param value {string} The value to filter for
+ * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Filter = function(id, channelId, textChannelSnowflake, attribute, value) {
+export const Filter = function(id, channelId, textChannelSnowflake, attribute, value, guildSnowflake) {
     this.id = id;
     this.channelId = channelId;
     this.textChannelSnowflake = textChannelSnowflake;
     this.attribute = attribute;
     this.value = value;
+    this.guildSnowflake = guildSnowflake;
 };
 
 /**
@@ -203,7 +211,6 @@ export const DnDQuest = function(id, gameId, guildSnowflake, description, comple
 //endregion
 
 module.exports = {
-
     //region GET ENTRIES
 
     /**
@@ -250,7 +257,7 @@ module.exports = {
     getMessage: async function(snowflake) {
         let result = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_snowflake = '" + snowflake + "';");
         if(result)
-            return new Message(result[0].m_snowflake, tinyIntToBool(result[0].m_wfalertmessage), result[0].m_t_textchannel);
+            return new Message(result[0].m_snowflake, tinyIntToBool(result[0].m_wfalertmessage), result[0].m_t_textchannel, result[0].t_g_guild);
         return null;
     },
     /**
@@ -262,6 +269,23 @@ module.exports = {
      */
     getApplications: async function(userSnowflake, guildSnowflake) {
         let result = await query("SELECT * FROM a_applications where a_g_guild = '" + guildSnowflake + "' and a_u_user = '" + userSnowflake + "';");
+        if(result) {
+            let apps = [];
+            result.forEach(function(app) {
+                apps.push(new Application(app.a_g_guild, app.a_u_user, app.a_r_role));
+            });
+            return apps;
+        }
+        return null;
+    },
+    /**
+     * Retrieves saved role applications of a user in a guild
+     * @param guildSnowflake {string} The snowflake ID of the guild
+     * @async
+     * @return {[Application]}
+     */
+    getApplicationsByGuild: async function(guildSnowflake) {
+        let result = await query("SELECT * FROM a_applications WHERE a_g_guild = '" + guildSnowflake + "';");
         if(result) {
             let apps = [];
             result.forEach(function(app) {
@@ -408,11 +432,11 @@ module.exports = {
      * @return {[Notification]}
      */
     getYoutubeChannelNotifications: async function(channelId) {
-        let result = await query("SELECT * FROM n_notifications WHERE n_y_youtubesubscription = '" + channelId + "';");
+        let result = await query("SELECT n_notifications.*, t_textchannels.t_g_guild FROM n_notifications LEFT JOIN t_textchannels ON t_snowflake = n_t_textchannel WHERE n_y_youtubesubscription = '" + channelId + "';");
         if(result) {
             let notifications = [];
             result.forEach(function(not) {
-                notifications.push(new Notification(not.n_y_youtubesubscription, not.n_t_textchannel, not.n_filterlogic));
+                notifications.push(new Notification(not.n_y_youtubesubscription, not.n_t_textchannel, not.n_filterlogic, not.t_g_guild));
             });
             return notifications;
         }
@@ -426,11 +450,11 @@ module.exports = {
      * @return {[Filter]}
      */
     getNotificationFilters: async function(channelId, textChannelSnowflake) {
-        let result = await query("SELECT * FROM f_filters WHERE f_n_y_youtubesubscription = '" + channelId + "' AND f_n_t_textchannel = '" + textChannelSnowflake + "';");
+        let result = await query("SELECT f_filters.*, t_textchannels.t_g_guild FROM f_filters LEFT JOIN t_textchannels ON f_n_t_textchannel = t_snowflake WHERE f_n_y_youtubesubscription = '" + channelId + "' AND f_n_t_textchannel = '" + textChannelSnowflake + "';");
         if(result) {
             let filters = [];
             result.forEach(function(filter) {
-                filters.push(new Filter(filter.f_id, filter.f_n_y_youtubesubscription, filter.f_n_t_textchannel, filter.f_attribute, filter.f_filtervalue));
+                filters.push(new Filter(filter.f_id, filter.f_n_y_youtubesubscription, filter.f_n_t_textchannel, filter.f_attribute, filter.f_filtervalue, filter.t_g_guild));
             });
             return filters;
         }
@@ -484,9 +508,10 @@ module.exports = {
     /**
      * Adds one or several text channels to the database if not already there.
      * @param textChannels {...TextChannel} The Snowflake ID(s) of the Role(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addTextChannels: async function(...textChannels) {
+    addTextChannels: async function(ifNotExists, ...textChannels) {
         let valuesString = "";
         let guilds = [];
         textChannels.forEach(function(textChannel) {
@@ -498,14 +523,14 @@ module.exports = {
                 " " + boolToTinyint(textChannel.notifyWarframeAlerts) + "," +
                 " '" + textChannel.guildSnowflake + "'),"
         });
-        addGuilds(true, guilds);
+        this.addGuilds(true, ...guilds);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO t_textchannels (t_snowflake, t_welcomemessage, t_ignorecommands, t_updatewarframeversion, t_notifywarframealerts, t_g_guild) VALUES " + valuesString +
-            " ON DUPLICATE KEY UPDATE t_weclomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);");
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE t_weclomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);"));
     },
     /**
      * Adds one or several applications to the database if not already there.
-     * @param applications {...Application} The Application(s)
+     * @param applications {...(Application|Array<Application>)} The Application(s)
      * @async
      */
     addApplications: async function(...applications) {
@@ -513,6 +538,9 @@ module.exports = {
         let guilds = [];
         let users = [];
         let roles = [];
+        if(Array.isArray(applications[0])) {
+            applications = applications[0];
+        }
         applications.forEach(function(app) {
             guilds.push(Guild.getDefault(app.guildSnowflake));
             users.push(app.userSnowflake);
@@ -521,9 +549,9 @@ module.exports = {
                 " '" + app.userSnowflake + "'," +
                 " '" + app.roleSnowflake + "'),"
         });
-        addGuilds(true, guilds);
-        addUsers(users);
-        addRoles(roles);
+        this.addGuilds(true, ...guilds);
+        this.addUsers(...users);
+        this.addRoles(...roles);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO a_applications (a_g_guild, a_u_user, a_r_role) VALUES " + valuesString + ";");
     },
@@ -536,11 +564,12 @@ module.exports = {
         let valuesString = "";
         let textChannels = [];
         messages.forEach(function(message) {
-            textChannels.push(TextChannel.getDefault(snowflake, ))
+            textChannels.push(TextChannel.getDefault(message.textChannelSnowflake, message.guildSnowflake));
             valuesString += "('" + message.snowflake + "'," +
                 " " + boolToTinyint(message.wfAlertMessage) + "," +
                 " '" + message.textChannelSnowflake + "'),"
         });
+        this.addTextChannels(true, ...textChannels);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO m_messages (m_snowflake, m_wfalertmessage, m_t_textchannel) VALUES " + valuesString +
             " ON DUPLICATE KEY UPDATE m_wfalertmessage = VALUES(`m_wfalertmessage`);");
@@ -561,54 +590,72 @@ module.exports = {
     /**
      * Adds one or several notifications to the database if not already there.
      * @param notifications {...Notification} The Notification(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addNotifications: async function(...notifications) {
+    addNotifications: async function(ifNotExists, ...notifications) {
         let valuesString = "";
+        let subscriptions = [];
+        let textChannels = [];
         notifications.forEach(function(notification) {
+            subscriptions.push(notification.channelId);
+            textChannels.push(TextChannel.getDefault(notification.textChannelSnowflake, notification.guildSnowflake));
             valuesString += "('" + notification.channelId + "'," +
                 " '" + notification.textChannelSnowflake + "'," +
                 (notification.filterLogic? " '" : " ") + notification.filterLogic + (notification.filterLogic? "')," : "),");
         });
+        this.addYouTubeSubscriptions(...subscriptions);
+        this.addTextChannels(true, ...textChannels);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO n_notifications (n_y_youtubesubscription, n_t_textchannel, n_filterlogic) VALUES " + valuesString +
-            " ON DUPLICATE KEY UPDATE n_filterlogic = VALUES(`n_filterlogic`);");
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE n_filterlogic = VALUES(`n_filterlogic`);"));
     },
     /**
      * Adds one or several filters to the database if not already there.
      * @param filters {...Filter} The Filter(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addFilters: async function(...filters) {
+    addFilters: async function(ifNotExists, ...filters) {
         let valuesString = "";
+        let notifications = [];
         filters.forEach(function(filter) {
+            notifications.push(Notification.getDefault(filter.channelId, filter.textChannelSnowflake, filter.guildSnowflake));
             valuesString += "(" + filter.id + "," +
                 " '" + filter.channelId + "'," +
                 " '" + filter.textChannelSnowflake + "'," +
                 " '" + filter.attribute + "'," +
                 " '" + filter.value + "'),"
         });
+        this.addNotifications(true, ...notifications);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO f_filters (f_id, f_n_y_youtubesubscription, f_n_t_textchannel, f_attribute, f_filtervalue) VALUES " + valuesString +
-            " ON DUPLICATE KEY UPDATE f_attribute = VALUES(`f_attribute`), f_filtervalue = VALUES(`f_filtervalue`);");
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE f_attribute = VALUES(`f_attribute`), f_filtervalue = VALUES(`f_filtervalue`);"));
     },
     /**
      * Adds one or several DnD games to the database if not already there.
      * @param dndGames {...DnDGame} The DnDGame(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addDnDGames: async function(...dndGames) {
+    addDnDGames: async function(ifNotExists, ...dndGames) {
         let valuesString = "";
+        let guilds = [];
+        let players = [];
         dndGames.forEach(function(game) {
+            guilds.push(Guild.getDefault(game.guildSnowflake));
+            players.push(game.dungeonMasterSnowflake);
             valuesString += "(" + game.id + "," +
                 " '" + game.guildSnowflake + "'," +
                 " '" + game.name + "'," +
                 " '" + game.playerMax + "'," +
                 " '" + game.dungeonMasterSnowflake + "'),"
         });
+        this.addGuilds(true,...guilds);
+        this.addDnDPlayers(...players);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO d_dndgames (d_id, d_g_guild, d_name, d_playermax, d_dp_u_dungeonmaster) VALUES " + valuesString +
-            " ON DUPLICATE KEY UPDATE d_name = VALUES(`d_name`), d_playermax = VALUES(`d_playermax`), d_dp_u_dungeonmaster = VALUES(`d_dp_u_dungeonmaster`);");
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE d_name = VALUES(`d_name`), d_playermax = VALUES(`d_playermax`), d_dp_u_dungeonmaster = VALUES(`d_dp_u_dungeonmaster`);"));
     },
     /**
      * Adds one or several DnD players to the database if not already there.
@@ -617,28 +664,35 @@ module.exports = {
      */
     addDnDPlayers: async function(...snowflakes) {
         let valuesString = "";
+        let users = [];
         snowflakes.forEach(function(snowflake) {
+            users.push(snowflake);
             valuesString += "('" + snowflake + "'),"
         });
+        this.addUsers(...users);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO dp_dndplayers (dp_u_user) VALUES " + valuesString + ";");
     },
     /**
      * Adds one or several DnD players of a game to the database if not already there.
      * @param players {...DnDGamePlayer} The Player(s)
+     * @param ifNotExists {boolean}
      * @async
      */
-    addDnDGamePlayers: async function(...players) {
+    addDnDGamePlayers: async function(ifNotExists, ...players) {
         let valuesString = "";
+        let dndPlayers = [];
         players.forEach(function(player) {
+            dndPlayers.push(player.playerSnowflake);
             valuesString += "('" + player.playerSnowflake + "'," +
                 " " + player.gameId + "," +
                 " '" + player.guildSnowflake + "'," +
                 " " + boolToTinyint(player.active) + "),"
         });
+        this.addDnDPlayers(...dndPlayers);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO dpl_dndgameplayers (dpl_dp_dndplayer, dpl_d_dndgame, dpl_d_g_guild, dpl_active) VALUES " + valuesString +
-            " ON DUPLICATE KEY UPDATE dpl_active = VALUES(`dpl_active`);");
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE dpl_active = VALUES(`dpl_active`);"));
     },
     /**
      * Adds one or several DnD quests of a game to the database if not already there.
@@ -836,7 +890,7 @@ module.exports = {
 /**
  *
  * @param queryString {string}
- * @returns {Promise<any>}
+ * @returns {Promise}
  */
 let query = function(queryString) {
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {

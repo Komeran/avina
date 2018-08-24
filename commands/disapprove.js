@@ -1,5 +1,7 @@
 var logger = require('winston');
 var applications = require('../util/applications.js');
+let dbClient = require('../databaseClient.js');
+import {Application} from "../databaseClient";
 
 module.exports = {
     execute: function(args, message) {
@@ -14,19 +16,18 @@ module.exports = {
             return;
         }
 
+        let gid = message.guild.id;
+
         if(args.length >= 2) {
+            let appsToDelete = [];
             message.mentions.members.array().forEach(function(user) {
-                let gid = message.guild.id;
-                if(!applications[gid])
-                    applications[gid] = [];
-                for(let a in applications[gid]) {
-                    if(applications[gid][a].user === user.id) {
-                        user.send(message.author.username + " has disapproved your role applications!");
-                        applications[gid].splice(Number(a), 1);
-                        return;
-                    }
+                let userApps = dbClient.getApplications(user.id, gid);
+                if(userApps) {
+                    appsToDelete.concat(userApps);
+                    user.send(message.author.username + " has disapproved your role applications!");
                 }
             });
+            dbClient.deleteApplications(...appsToDelete);
         }
         else if(args.length === 1) {
             message.author.send('\'disapprove\' command invalid: Missing user parameter!');

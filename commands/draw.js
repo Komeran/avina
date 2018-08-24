@@ -20,7 +20,7 @@ module.exports = {
             return;
         }
 
-        let game = null;
+        let activeGame = null;
         let dm = null;
 
         games[gid].forEach(function(g) {
@@ -41,7 +41,7 @@ module.exports = {
                 count = 1;
             }
             if(count < 1 || count > 10) {
-                logger.info('Someone tried to draw '+diceSides+' cards from the Deck of Many Things.');
+                logger.info('Someone tried to draw '+count+' cards from the Deck of Many Things.');
                 logger.info('How funny...');
                 return;
             }
@@ -49,7 +49,7 @@ module.exports = {
                 logger.info('Someone tried to draw a number of cards from the Deck of Many Things that is NaN!');
                 return;
             }
-            logger.info('Someone drew '+count+(count==1?' card!':' cards!'));
+            logger.info('Someone drew '+count+(count===1?' card!':' cards!'));
 
             var result = Math.floor(Math.random() * 22) + 1;
             message.author.send("", { file:'./domt/'+result+'.png' });

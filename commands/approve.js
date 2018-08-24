@@ -1,5 +1,4 @@
-var logger = require('winston');
-var applications = require('../util/applications.js');
+let dbClient = require('../databaseClient.js');
 
 module.exports = {
     execute: function(args, message) {
@@ -17,20 +16,15 @@ module.exports = {
         if(args.length >= 2) {
             message.mentions.members.array().forEach(function(user) {
                 let gid = message.guild.id;
-                if(!applications[gid]) {
-                    applications[gid] = [];
-                }
-                for(let a in applications[gid]) {
-                    if(applications[gid][a].user === user.id) {
-                        for(let r in applications[gid][a].roles) {
-                            let role = message.guild.roles.find('id', applications[gid][a].roles[r]);
-                            if(role) {
-                                user.addRole(role.id);
-                            }
-                        }
-                        applications[gid].splice(Number(a), 1);
+                let apps = dbClient.getApplications(user.id, gid);
+                apps.forEach(function(app) {
+                    let role = message.guild.roles.find('id', app.roleSnowflake);
+                    if(role) {
+                        user.addRole(role.id);
                     }
-                }
+                });
+                dbClient.deleteApplications(...apps);
+                message.author.send("Applications of member " + user.nickname + " have been approved!");
             });
         }
         else if(args.length === 1) {
