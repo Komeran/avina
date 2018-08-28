@@ -1,8 +1,15 @@
-var logger = require('winston');
-let pkg = require('../package.json');
+import {BaseCommand} from "../util/BaseCommand";
+import {Message} from "discord.js";
 
-module.exports = {
-    execute: function(args, message) {
+let logger = require('winston');
+
+export class Help extends BaseCommand {
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(args.length > 2) {
             logger.log("Too many arguments for !help command.");
             return;
@@ -40,7 +47,12 @@ module.exports = {
                 description: description
             }
         }).catch(e => logger.warn(e.message));
-    },
-    help: "Usage: `!help [<command>]` where `<command>` is one of my commands.\n" +
+    }
+
+    /**
+     * @override
+     * @type {string}
+     */
+    help = "Usage: `!help [<command>]` where `<command>` is one of my commands.\n" +
         "Lists all of my commands just like this if no command parameter was provided, or the usage description of the command if a valid one was provided."
-};
+}
