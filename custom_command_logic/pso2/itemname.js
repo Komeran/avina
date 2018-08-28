@@ -17,22 +17,28 @@ export class itemname extends BaseCommand {
      * @param message {Message}
      */
     execute(args, message) {
+        let embed = {
+            color: 3447003,
+            title: "Search results:",
+            fields: []
+        }
         let replyFunction;
-        if(typeof message.channel === DmChannel) {
+        if(message.guild) {
             replyFunction = function(m) {message.reply(m);};
         } else {
             replyFunction = function(m) {message.channel.send(m);};
         }
         if(args[2]) {
-            let resultstring="Search results: ";
             let searchstring = Utility.addStringArguments(2,args.length,args);
             let js = pso2.getItem(searchstring);
             for(let i = 0; i < js.length;i++) {
-                resultstring += js[i].JpName + " | " + js[i].EnName + "\n";
+                embed.fields.push({
+                    name: "Result " + (i+1),
+                    value: js[i].JpName + " | " + js[i].EnName
+                });
             }
-            replyFunction(resultstring);
+            replyFunction({embed: embed});
         }
-        message.reply("Test");
     }
 
     /**
