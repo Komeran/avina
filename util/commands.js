@@ -55,7 +55,7 @@ fs.watch(normalizedPath, { recursive:true }, function(eventType,fileName) {
     if(!fileName) {
         return;
     }
-    let commandString = file.substring(0, file.length-3);
+    let commandString = fileName.substring(0, fileName.length-3);
     if(eventType === 'change' || fs.existsSync(path.join(normalizedPath, fileName))) {
         let commandClass = import(path.join(normalizedPath, fileName));
         if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
