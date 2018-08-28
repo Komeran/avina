@@ -1,4 +1,5 @@
 import {Message} from "discord.js";
+import {BaseCommand} from "./BaseCommand";
 
 // noinspection JSUnresolvedFunction
 let fs = require('fs');
@@ -38,22 +39,34 @@ initDirectory();
 function initDirectory() {
     fs.readdirSync(normalizedPath).forEach(function(file) {
         let commandString = file.substring(0, file.length-3);
-        commands[commandString] = require(path.join(normalizedPath, file));
-        logger.debug("Loaded command [!" + commandString + "]");
-        cmdCount++;
+        let commandClass = import(path.join(normalizedPath, file));
+        if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
+            commands[commandString] = new commandClass();
+            logger.debug("Loaded command [!" + commandString + "]");
+            cmdCount++;
+            return;
+        }
+        logger.warn(file + " is not a valid command file!");
     });
     logger.info("Loaded " + cmdCount + " commands.");
 }
 
 fs.watch(normalizedPath, { recursive:true }, function(eventType,fileName) {
     if(!fileName) {
-        deleteCommand(fileName);
         return;
     }
+    let commandString = file.substring(0, file.length-3);
     if(eventType === 'change' || fs.existsSync(path.join(normalizedPath, fileName))) {
-        commands[fileName] = require(path.join(normalizedPath, fileName));
+        let commandClass = import(path.join(normalizedPath, fileName));
+        if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
+            commands[commandString] = new commandClass();
+            logger.debug("Loaded command [!" + commandString + "]");
+            cmdCount++;
+            return;
+        }
+        logger.warn(file + " is not a valid command file!");
     } else {
-        deleteCommand(fileName);
+        deleteCommand(commandString);
     }
 }.bind(this));
 
