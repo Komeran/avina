@@ -13,11 +13,7 @@ export class pso2 extends ParentCommand {
 
     /**
      * @override
-<<<<<<< HEAD
      * @return {string} Help Text return statement
-=======
-     * @type {function}
->>>>>>> 0236328352c0387501256e6803dac99356591cd2
      */
     help = function(args, message) {
         if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
