@@ -13,7 +13,7 @@ export class pso2 extends ParentCommand {
 
     /**
      * @override
-     * @type {string}
+     * @return {string} Help Text return statement
      */
     help = function(args, message) {
         if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
@@ -24,12 +24,22 @@ export class pso2 extends ParentCommand {
         }
     }
 
+    /**
+     *
+     * @param inp {string} Input string name of the item either in English or Japanese
+     * @returns {Promise} The js object
+     */
     static async getItem(inp) {
         let itemn = inp;
         let res= await pso2.returnJson(itemn);
         return res;
     }
 
+    /**
+     *
+     * @param itemname {string} Name of the item from pso2
+     * @returns {Promise} The js object of the item, from all JSON Objects with a similar name
+     */
     static returnJson(itemname) {
         return new Promise(function(resolve) {
             request(`http://db.kakia.org/item/search?name=${encodeURIComponent(itemname)}`, function(e,r,dom) {

@@ -11,7 +11,7 @@ let logger = require('winston');
 export class shop extends BaseCommand {
     /**
      * @override
-     * @param args {string[]}
+     * @param args {string[]} arguments from the parent Command
      * @param message {Message}
      */
     execute(args, message) {
@@ -43,6 +43,7 @@ export class shop extends BaseCommand {
     /**
      * @override
      * @type {string}
+     * Help Text of this command.
      */
     help = "Use `!pso2 shop <itemname>` in order to find the cheapest shop prices of a certain item for all ships.";
 }

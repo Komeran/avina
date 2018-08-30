@@ -20,12 +20,7 @@ export class itemname extends BaseCommand {
             title: "Search results:",
             fields: []
         }
-        let replyFunction;
-        if(message.guild) {
-            replyFunction = function(m) {message.reply(m);};
-        } else {
-            replyFunction = function(m) {message.channel.send(m);};
-        }
+        let replyFunction = function(m) {message.channel.send(m);};
         if(args[2]) {
             let searchstring = Utility.addStringArguments(2,args.length,args);
             let js = pso2.getItem(searchstring);

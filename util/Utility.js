@@ -14,6 +14,7 @@ export class Utility {
      * @param fromCh {number} Where the string chaining should start
      * @param toCh {number} Where the string chaining should end
      * @param args {array} String array to chain
+     * @return resultString {string} The chained string from fromCh to toCh
      */
     static addStringArguments(fromCh,toCh,args) {
         if(fromCh === undefined || fromCh === null) {
