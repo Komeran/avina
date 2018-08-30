@@ -1,16 +1,14 @@
 import {BaseCommand} from "../util/BaseCommand";
 import {Message} from "discord.js";
-import  {DMChannel} from "discord.js";
-import {TextChannel} from "discord.js";
 import {Utility} from "../../util/Utility";
 
 let logger = require('winston');
 
 /**
  * @author nico.faderbauer
- * @date 28.08.2018
+ * @date 30.08.2018
  */
-export class itemname extends BaseCommand {
+export class shop extends BaseCommand {
     /**
      * @override
      * @param args {string[]}
@@ -31,10 +29,11 @@ export class itemname extends BaseCommand {
         if(args[2]) {
             let searchstring = Utility.addStringArguments(2,args.length,args);
             let js = pso2.getItem(searchstring);
-            for(let i = 0; i < js.length;i++) {
+            embed.fields.push({name:"Item:", value:js[0].EnName + " | " + js[0].JpName});
+            for(let j = 0; j < js[0].PriceInfo.length; j++) {
                 embed.fields.push({
-                    name: "Result " + (i+1),
-                    value: js[i].JpName + " | " + js[i].EnName
+                    name:"Ship " + js[0].PriceInfo[j].Ship,
+                    value: "Price: "+ js[0].PriceInfo[j].Price+" Meseta  |  Last Update:" + js[0].PriceInfo[j].LastUpdated
                 });
             }
             replyFunction({embed: embed});
@@ -45,7 +44,5 @@ export class itemname extends BaseCommand {
      * @override
      * @type {string}
      */
-    help = "Use `!pso2 itemname <itemname>` in order to get the japanese or english name for everything including this one.";
-
-
+    help = "Use `!pso2 shop <itemname>` in order to find the cheapest shop prices of a certain item for all ships.";
 }

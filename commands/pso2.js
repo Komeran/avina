@@ -16,8 +16,14 @@ export class pso2 extends ParentCommand {
      * @override
      * @type {string}
      */
-    help = "`!pso2 [item|itemname|shop] (<arguments>)` in order to receive the corresponding command for the game pso2.\n"+
-    "use `pso2 [item|itemname|shop] (<arguments>)` in order to receive help for the corresponding command.";
+    help = function(args, message) {
+        if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
+            return this.subCommands.help;
+        } else {
+            return "`!pso2 [itemname|shop] (<arguments>)` in order to execute the corresponding command for the game pso2.\n"+
+                "use `!help pso2 [itemname|shop] (<arguments>)` in order to receive help for the corresponding command.";
+        }
+    }
 
     static async getItem(inp) {
         let itemn = inp;
