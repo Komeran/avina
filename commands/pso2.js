@@ -1,5 +1,4 @@
 import {ParentCommand} from "../util/ParentCommand";
-import {Message} from "discord.js";
 
 let logger = require('winston');
 
@@ -18,7 +17,7 @@ export class pso2 extends ParentCommand {
      */
     help = function(args, message) {
         if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
-            return this.subCommands.help;
+            return this.subCommands[args[2]].help;
         } else {
             return "`!pso2 [itemname|shop] (<arguments>)` in order to execute the corresponding command for the game pso2.\n"+
                 "use `!help pso2 [itemname|shop] (<arguments>)` in order to receive help for the corresponding command.";

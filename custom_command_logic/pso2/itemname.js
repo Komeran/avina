@@ -1,7 +1,5 @@
 import {BaseCommand} from "../util/BaseCommand";
 import {Message} from "discord.js";
-import  {DMChannel} from "discord.js";
-import {TextChannel} from "discord.js";
 import {Utility} from "../../util/Utility";
 
 let logger = require('winston');
