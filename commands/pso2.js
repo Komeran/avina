@@ -13,7 +13,7 @@ export class pso2 extends ParentCommand {
 
     /**
      * @override
-     * @type {string}
+     * @type {function}
      */
     help = function(args, message) {
         if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
