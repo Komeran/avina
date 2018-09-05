@@ -113,7 +113,7 @@ logger.info("Done loading save data.");
 // End Load save data
 
 //Load commands
-var commands = require('./util/commands.js');
+import {default as commands} from './util/commands';
 // End Load commands
 
 client.on('ready', () => {

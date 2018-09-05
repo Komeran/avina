@@ -1,4 +1,4 @@
-import {Message} from "discord.js";
+const Message = require("discord.js").Message;
 import {BaseCommand} from "./BaseCommand";
 
 // noinspection JSUnresolvedFunction
@@ -70,7 +70,7 @@ fs.watch(normalizedPath, { recursive:true }, function(eventType,fileName) {
     }
 }.bind(this));
 
-module.exports = {
+export default {
     cmds: commands,
     callCommand: function(cmd, message, args) {
         return callCommand(cmd, message, args);
