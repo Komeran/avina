@@ -7,6 +7,7 @@ I'd like to thank the following people for contributing! You've made my work her
 * **Noémi** for providing lots of command ideas, testing and contributing to Avina's personality! Thank you a lot!
 * **[Project Sentinel](https://projectsentinel.home.blog/)** for using Avina in her early development stages to help me test her and get useful insight in how she performs in action and what needs to be improved!
 ***Make sure to check them out if you like playing games and especially if you like playing with lots of awesome people!***
+* **[Shinico](https://github.com/Shinico)** for contributing a lot and keeping my motivation up to implement layered architecture!
 
 ## Administrative stuff
 Avina is intended to be a bot for a wide variety of tasks to improve users' Discord experience on your server. However, the administrative commands are primarily intended to help you as an admin manage your users, roles and whatnot. Enjoy!
