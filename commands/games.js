@@ -23,7 +23,6 @@ module.exports = {
             fields: []
         };
 
-
         games.forEach(function(game) {
             let players = dbClient.getDnDGamePlayers(gid, game.id);
             let playerCount = players? players.length : 0;

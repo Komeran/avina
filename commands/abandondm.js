@@ -1,8 +1,16 @@
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+import {BaseCommand} from "../util/BaseCommand";
 
-module.exports = {
-    execute: function (args, message) {
+let logger = require('winston');
+let games = require('../dnd_util/games.js');
+
+
+export class AbandonDM extends BaseCommand {
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -20,7 +28,7 @@ module.exports = {
             return;
         }
 
-        for (i = 0; i < games.length; i++) {
+        for (let i = 0; i < games.length; i++) {
             if (games[gid][i].dm === message.author.id) {
                 if (games[gid][i].claimRequester) {
                     games[gid][i].dm = games[gid][i].claimRequester;
@@ -38,7 +46,12 @@ module.exports = {
         }
 
         message.author.send("Nice try, but you are no DM of a game right now.");
-    },
-    help: "Usage: `!abandondm`\n" +
+    }
+
+    /**
+     * @override
+     * @type {string}
+     */
+    help = "Usage: `!abandondm`\n" +
         "If you are DM of a running game, this will make someone else the DM of it if someone applied, or delete the game session if not."
-};
+}

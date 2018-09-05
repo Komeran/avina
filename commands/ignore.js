@@ -2,11 +2,13 @@
  * @author marc.schaefer
  * @date 08.08.2018
  */
+import {BaseCommand} from "../util/BaseCommand";
 
 let guildSettings = require('../util/guildSettings.js');
+let dbClient = require('../databaseClient.js');
 
-module.exports = {
-    execute: function (args, message) {
+export class Ignore extends BaseCommand {
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("This command doesn't work in direct messages!");
             message.delete();
@@ -40,8 +42,8 @@ module.exports = {
                 color: 3447003
             }
         })
-    },
-    help: "Usage: `!ignore`\n" +
+    }
+    help = "Usage: `!ignore`\n" +
         "Marks/Unmarks a channel as 'ignored', meaning that Avina will ignore all commands and smalltalk attempts except the `!ignore` command. " +
         "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+}

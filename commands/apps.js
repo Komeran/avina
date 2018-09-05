@@ -1,7 +1,14 @@
+import {BaseCommand} from "../util/BaseCommand";
+
 let dbClient = require('../databaseClient.js');
 
-module.exports = {
-    execute: function(args, message) {
+export class Apps extends BaseCommand {
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -47,11 +54,16 @@ module.exports = {
             }
         });
         message.delete();
-    },
-    help: "Usage: `!apps`\n" +
+    }
+
+    /**
+     * @override
+     * @type {string}
+     */
+    help = "Usage: `!apps`\n" +
         "Lists all current applications for roles on this server. " +
         "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+}
 
 let getRoleNameById = function(roleId, guildId) {
     for(let role in message.guild.roles[guildId].array()) {

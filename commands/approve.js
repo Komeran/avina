@@ -1,7 +1,14 @@
+import {BaseCommand} from "../util/BaseCommand";
+
 let dbClient = require('../databaseClient.js');
 
-module.exports = {
-    execute: function(args, message) {
+class Approve extends BaseCommand {
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -34,8 +41,13 @@ module.exports = {
             message.author.send('\'apply\' command invalid: Too many parameters!');
         }
         message.delete();
-    },
-    help: "Usage: `!approve <mention(s)>` where `<mention(s)>` is one or several user mentions, e.g. `@AwesomeGuy @SuperDude`\n" +
+    }
+
+    /**
+     * @override
+     * @type {string}
+     */
+    help = "Usage: `!approve <mention(s)>` where `<mention(s)>` is one or several user mentions, e.g. `@AwesomeGuy @SuperDude`\n" +
         "Approves all role applications of the mentioned users. " +
         "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+}
