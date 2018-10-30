@@ -1,6 +1,7 @@
 const ParentCommand = require("../util/ParentCommand");
 
 let logger = require('winston');
+let request = require("request");
 
 /**
  * @author nico.faderbauer
