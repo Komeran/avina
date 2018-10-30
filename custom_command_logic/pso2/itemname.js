@@ -20,6 +20,7 @@ class itemname extends BaseCommand {
             title: "Search results:",
             fields: []
         };
+        console.log("itemname was called!");
         let replyFunction = function(m) {message.channel.send(m);};
         if(args[2]) {
             let searchstring = Utility.addStringArguments(2,args.length,args);

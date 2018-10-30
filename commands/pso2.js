@@ -9,7 +9,7 @@ let logger = require('winston');
 class pso2 extends ParentCommand {
 
     constructor() {
-        super();
+        super("custom_command_logic/pso2");
         this.help = function(args, message) {
             if(args[2] !== null && args[2] !== undefined && this.subCommands[args[2]] !== undefined && this.subCommands[args[2]] !== null) {
                 return this.subCommands[args[2]].help;
@@ -46,7 +46,5 @@ class pso2 extends ParentCommand {
         });
     }
 }
-
-pso2.subCommandDirectory = "custom_command_logic/pso2";
 
 module.exports = pso2;

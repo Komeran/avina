@@ -10,16 +10,10 @@ let logger = require('winston');
  */
 class ParentCommand extends BaseCommand {
 
-    constructor() {
+    constructor(subCommandDirectory) {
         super();
         this.fs = require('fs');
-
-        /**
-         * @abstract
-         * @type {string}
-         */
-        this.subCommandDirectory="";
-        this.normalizedPath = path.join(__dirname, "..", this.subCommandDirectory);
+        this.normalizedPath = path.join(__dirname, "..", subCommandDirectory);
         this.subCommands={};
         this.fs.watch(this.normalizedPath, { recursive:true }, function(eventType,fileName) {
             if(!fileName) {
