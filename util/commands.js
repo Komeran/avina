@@ -39,7 +39,7 @@ initDirectory();
 function initDirectory() {
     fs.readdirSync(normalizedPath).forEach(function(file) {
         let commandString = file.substring(0, file.length-3);
-        let commandClass = import(path.join(normalizedPath, file));
+        let commandClass = require(path.join(normalizedPath, file));
         if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
             commands[commandString] = new commandClass();
             logger.debug("Loaded command [!" + commandString + "]");
@@ -57,7 +57,7 @@ fs.watch(normalizedPath, { recursive:true }, function(eventType,fileName) {
     }
     let commandString = fileName.substring(0, fileName.length-3);
     if(eventType === 'change' || fs.existsSync(path.join(normalizedPath, fileName))) {
-        let commandClass = import(path.join(normalizedPath, fileName));
+        let commandClass = require(path.join(normalizedPath, fileName));
         if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
             commands[commandString] = new commandClass();
             logger.debug("Loaded command [!" + commandString + "]");
