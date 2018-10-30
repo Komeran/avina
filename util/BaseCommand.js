@@ -15,11 +15,4 @@ class BaseCommand {
     execute(args, message) {
 
     }
-
-    /**
-     * Help String to be displayed when using the !help command
-     * @type {string}
-     * @abstract
-     */
-    help
 }
