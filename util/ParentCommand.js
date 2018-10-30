@@ -56,7 +56,7 @@ class ParentCommand extends BaseCommand {
                 return;
             }
             logger.warn(file + " is not a valid command file!");
-        });
+        }.bind(this));
         logger.info("Loaded " + cmdCount + " subcommands.");
     }
 
