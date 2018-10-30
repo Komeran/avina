@@ -37,8 +37,9 @@ class pso2 extends ParentCommand {
      */
     static returnJson(itemname) {
         return new Promise(function(resolve) {
-            request(`http://db.kakia.org/item/search?name=${encodeURIComponent(itemname)}`, function(e,r,dom) {
+            request('http://db.kakia.org/item/search?name='+encodeURIComponent(itemname), function(e,r,dom) {
                 if(!e && r.statusCode === 200) {
+                    console.log(dom);
                     let result = JSON.parse(dom);
                     resolve(result);
                 } else resolve(false);
