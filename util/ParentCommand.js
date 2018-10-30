@@ -8,17 +8,18 @@ let logger = require('winston');
  * @date 28.08.2018
  */
 class ParentCommand extends BaseCommand {
-    fs = require('fs');
-    /**
-     * @abstract
-     * @type {string}
-     */
-    subCommandDirectory="";
-    normalizedPath = path.join(__dirname, "..", this.subCommandDirectory);
-    subCommands={};
 
     constructor() {
         super();
+        this.fs = require('fs');
+
+        /**
+         * @abstract
+         * @type {string}
+         */
+        this.subCommandDirectory="";
+        this.normalizedPath = path.join(__dirname, "..", this.subCommandDirectory);
+        this.subCommands={};
         this.fs.watch(this.normalizedPath, { recursive:true }, function(eventType,fileName) {
             if(!fileName) {
                 return;
