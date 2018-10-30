@@ -1,6 +1,7 @@
 const BaseCommand = require("../../util/BaseCommand");
 const Message = require("discord.js").Message;
 const Utility = require("../../util/Utility");
+const pso2 = require("../../commands/pso2");
 
 let logger = require('winston');
 
@@ -24,14 +25,15 @@ class itemname extends BaseCommand {
         let replyFunction = function(m) {message.channel.send(m);};
         if(args[2]) {
             let searchstring = Utility.addStringArguments(2,args.length,args);
-            let js = pso2.getItem(searchstring);
-            for(let i = 0; i < js.length;i++) {
-                embed.fields.push({
-                    name: "Result " + (i+1),
-                    value: js[i].JpName + " | " + js[i].EnName
-                });
-            }
-            replyFunction({embed: embed});
+            pso2.getItem(searchstring).then(function(js) {
+                for(let i = 0; i < js.length;i++) {
+                    embed.fields.push({
+                        name: "Result " + (i+1),
+                        value: js[i].JpName + " | " + js[i].EnName
+                    });
+                }
+                replyFunction({embed: embed});
+            });
         }
     }
 }

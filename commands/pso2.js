@@ -25,8 +25,7 @@ class pso2 extends ParentCommand {
      * @returns {Promise} The js object
      */
     static async getItem(inp) {
-        let itemn = inp;
-        let res= await pso2.returnJson(itemn);
+        let res = await pso2.returnJson(inp);
         return res;
     }
 
