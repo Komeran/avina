@@ -34,6 +34,11 @@ class ParentCommand extends BaseCommand {
                 delete this.subCommands[commandString];
             }
         }.bind(this));
+        /**
+         * @override
+         * @type {string}
+         */
+        this.help =this._generateHelpString();
     }
 
 
@@ -51,12 +56,6 @@ class ParentCommand extends BaseCommand {
         }
     }
 
-    /**
-     * @override
-     * @type {string}
-     */
-    help =this._generateHelpString();
-
 
     _generateHelpString() {
         let helpStr=this.name + " help:";
@@ -68,3 +67,5 @@ class ParentCommand extends BaseCommand {
         return helpStr;
     }
 }
+
+module.exports = ParentCommand;
