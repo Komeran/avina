@@ -1,5 +1,5 @@
-import {Message} from "discord.js";
-import {BaseCommand} from "./BaseCommand";
+const Message = require("discord.js").Message;
+const BaseCommand = require("./BaseCommand").BaseCommand;
 
 // noinspection JSUnresolvedFunction
 let fs = require('fs');
