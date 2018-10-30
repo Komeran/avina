@@ -13,21 +13,17 @@ class Utility {
      * @return {string} The chained string from fromCh to toCh
      */
     static addStringArguments(fromCh,toCh,args) {
-        if(fromCh === undefined || fromCh === null) {
-            fromCh=0;
-        }
-        if(args[fromCh] === null || args[fromCh]=== undefined) {
+        fromCh = fromCh || 0;
+        if(!args[fromCh]) {
             return "Invalid";
         }
-        if(toCh === undefined || toCh === null) {
-            toCh=args.length;
-        }
-        if(args[toCh] === null || args[toCh]=== undefined) {
+        toCh = toCh || args.length;
+        if(!args[toCh]) {
             return "Invalid";
         }
-        let resultString = "";
-        for(let i = fromCh; i < toCh; i++) {
-            resultString += args[i];
+        let resultString = args[fromCh];
+        for(let i = fromCh+1; i < toCh; i++) {
+            resultString += " " + args[i];
         }
         return resultString;
     }
