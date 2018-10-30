@@ -103,6 +103,7 @@ let saveGames = function(message, msg, json) {
         gameQuery = gameQuery.substring(0, gameQuery.length-1) + ";";
         connection.query(gameQuery, null, function (e) {
             if (e) {
+                console.log("YE");
                 logger.error(e.message);
             }
         });

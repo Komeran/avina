@@ -223,7 +223,10 @@ function _recursiveAlertUpdater() {
                                     if(curAlerts.indexOf(id) === -1) {
                                         channel.fetchMessage(_alertMessages[channels[i]][id])
                                             .then(message => message.delete())
-                                            .catch(logger.error);
+                                            .catch(function(e) {
+                                                console.log("WEE");
+                                                logger.error(e);
+                                            });
                                         delete _alertMessages[channels[i]][id];
                                     }
                                     else {
@@ -255,6 +258,7 @@ function _recursiveAlertUpdater() {
                                                         }
                                                     }))
                                                     .catch(function(err) {
+                                                        console.log("MOO");
                                                         logger.error(err);
                                                         delete _alertMessages[channels[i]][id];
                                                     });
@@ -298,7 +302,10 @@ function _recursiveAlertUpdater() {
                                         .then(function(message) {
                                             _alertMessages[channels[i]][alert.id] = message.id
                                         })
-                                        .catch(logger.error);
+                                        .catch(function(e) {
+                                            console.log("LEL");
+                                            logger.error(e);
+                                        });
                                 }
                             }
                         }
