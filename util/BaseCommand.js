@@ -15,13 +15,6 @@ class BaseCommand {
     execute(args, message) {
 
     }
-
-    /**
-     * Help String to be displayed when using the !help command
-     * @type {String|function(String[],Message):String}
-     * @abstract
-     */
-    static help = "";
 }
 
 module.exports = BaseCommand;
