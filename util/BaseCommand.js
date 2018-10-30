@@ -21,7 +21,7 @@ class BaseCommand {
      * @type {String|function(String[],Message):String}
      * @abstract
      */
-    static help;
+    static help : String|function
 }
 
 module.exports = BaseCommand;
