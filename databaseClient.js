@@ -297,9 +297,7 @@ module.exports = {
      * @return {[Application]}
      */
     getApplicationsByGuild: async function(guildSnowflake) {
-        console.log("I happen!");
         let result = await query("SELECT * FROM a_applications WHERE a_g_guild = '" + guildSnowflake + "';");
-        console.log("Result:", result);
         if(result) {
             let apps = [];
             result.forEach(function(app) {
@@ -908,11 +906,7 @@ module.exports = {
  * @returns {Promise}
  */
 let query = function(queryString) {
-    console.log("New Query:", queryString);
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
-        console.log("error:", error);
-        console.log("result:", result);
-        console.log("fields:", fields);
         if(result[0]) {
             resolve(result);
             return;

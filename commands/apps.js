@@ -32,6 +32,15 @@ class Apps extends BaseCommand {
         let gid = message.guild.id;
 
         dbClient.getApplicationsByGuild(gid).then(function(apps) {
+            if(!apps) {
+                message.author.send({
+                    embed: {
+                        title: "List of current role applications",
+                        description: "The are currently no applications!",
+                        color: 3447003
+                    }
+                });
+            }
             let appsPerUser = {};
             apps.forEach(function(app) {
                 if(message.mentions.length > 0 && !message.mentions.users.has(app.userSnowflake))
