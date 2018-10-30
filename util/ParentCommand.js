@@ -46,7 +46,7 @@ class ParentCommand extends BaseCommand {
         directory = directory || this.subCommandDirectory;
         let normalizedPath = path.join(__dirname, "..", directory);
         let cmdCount = 0;
-        fs.readdirSync(normalizedPath).forEach(function(file) {
+        this.fs.readdirSync(normalizedPath).forEach(function(file) {
             let commandString = file.substring(0, file.length-3);
             let commandClass = require(path.join(normalizedPath, file));
             if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
