@@ -7,7 +7,6 @@ let logger = require('winston');
  * @date 28.08.2018
  */
 class pso2 extends ParentCommand {
-    static subCommandDirectory : String;
 
     /**
      *
@@ -35,7 +34,6 @@ class pso2 extends ParentCommand {
             });
         });
     }
-
 }
 
 pso2.subCommandDirectory = "custom_command_logic/pso2";
