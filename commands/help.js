@@ -4,6 +4,14 @@ const Message = require("discord.js").Message;
 let logger = require('winston');
 
 class Help extends BaseCommand {
+
+    /**
+     * @override
+     * @type {string}
+     */
+    static help = "Usage: `!help [<command>]` where `<command>` is one of my commands.\n" +
+        "Lists all of my commands just like this if no command parameter was provided, or the usage description of the command if a valid one was provided.";
+
     /**
      * @override
      * @param args {string[]}
@@ -49,12 +57,5 @@ class Help extends BaseCommand {
         }).catch(e => logger.warn(e.message));
     }
 }
-
-/**
- * @override
- * @type {string}
- */
-Help.help = "Usage: `!help [<command>]` where `<command>` is one of my commands.\n" +
-    "Lists all of my commands just like this if no command parameter was provided, or the usage description of the command if a valid one was provided."
 
 module.exports = Help;
