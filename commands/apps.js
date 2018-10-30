@@ -1,7 +1,21 @@
 let dbClient = require('../databaseClient.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class Apps extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!apps`\n" +
+            "Lists all current applications for roles on this server. " +
+            "This is an admin only command and will fail if non-admins of a server attempt to use it.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -47,11 +61,10 @@ module.exports = {
             }
         });
         message.delete();
-    },
-    help: "Usage: `!apps`\n" +
-        "Lists all current applications for roles on this server. " +
-        "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+    }
+}
+
+module.exports = Apps;
 
 let getRoleNameById = function(roleId, guildId) {
     for(let role in message.guild.roles[guildId].array()) {

@@ -108,7 +108,7 @@ else {
     logger.info("No applications save found.");
 }
 let wfClient = require("./wfclient.js")(client, alertMessages);
-let ytClient = require("./ytclient.js")(client);
+//let ytClient = require("./ytclient.js")(client);
 logger.info("Done loading save data.");
 // End Load save data
 

@@ -211,6 +211,18 @@ const DnDQuest = function(id, gameId, guildSnowflake, description, completed) {
 //endregion
 
 module.exports = {
+    //region Classes
+    Application: Application,
+    Guild: Guild,
+    TextChannel: TextChannel,
+    Message: Message,
+    Notification: Notification,
+    Filter: Filter,
+    DnDGame: DnDGame,
+    DnDGamePlayer: DnDGamePlayer,
+    DnDQuest: DnDQuest,
+    //endregion
+
     //region GET ENTRIES
 
     /**
@@ -922,3 +934,7 @@ let boolToTinyint = function(bool) {
 let tinyIntToBool = function(tinyInt) {
     return !!tinyInt;
 };
+
+module.exports = {
+
+}

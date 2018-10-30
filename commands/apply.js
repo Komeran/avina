@@ -1,8 +1,21 @@
 let dbClient = require('../databaseClient.js');
 const Application = require('../databaseClient.js').Application;
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class Apply extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!apply <Tag>` where `<Tag>` can be the tag of any role, e.g. `ga` for the role `[GA] Gamer`\n" +
+            "Notes an application for a role on this server, if you don't already have the role.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             message.delete();
@@ -46,10 +59,10 @@ module.exports = {
             message.author.send('\'apply\' command invalid: Too many parameters!');
         }
         message.delete();
-    },
-    help: "Usage: `!apply <Tag>` where `<Tag>` can be the tag of any role, e.g. `ga` for the role `[GA] Gamer`\n" +
-        "Notes an application for a role on this server, if you don't already have the role."
-};
+    }
+}
+
+module.exports = Apply;
 
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();
