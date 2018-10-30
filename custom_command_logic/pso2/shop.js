@@ -1,6 +1,6 @@
-const BaseCommand = require("../../util/BaseCommand.js").BaseCommand;
+const BaseCommand = require("../../util/BaseCommand.js");
 const Message = require("discord.js").Message;
-const Utility = require("../../util/Utility").Utility;
+const Utility = require("../../util/Utility");
 
 let logger = require('winston');
 

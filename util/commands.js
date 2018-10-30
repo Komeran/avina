@@ -1,5 +1,5 @@
 const Message = require("discord.js").Message;
-const BaseCommand = require("./BaseCommand").BaseCommand;
+const BaseCommand = require("./BaseCommand");
 
 // noinspection JSUnresolvedFunction
 let fs = require('fs');
