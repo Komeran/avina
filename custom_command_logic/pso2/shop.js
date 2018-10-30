@@ -39,13 +39,13 @@ class shop extends BaseCommand {
             replyFunction({embed: embed});
         }
     }
-
-    /**
-     * @override
-     * @type {string}
-     * Help Text of this command.
-     */
-    help = "Use `!pso2 shop <itemname>` in order to find the cheapest shop prices of a certain item for all ships.";
 }
+
+/**
+ * @override
+ * @type {string}
+ * Help Text of this command.
+ */
+shop.help = "Use `!pso2 shop <itemname>` in order to find the cheapest shop prices of a certain item for all ships.";
 
 module.exports = shop;

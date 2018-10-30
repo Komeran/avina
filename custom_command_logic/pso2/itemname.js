@@ -33,14 +33,12 @@ class itemname extends BaseCommand {
             replyFunction({embed: embed});
         }
     }
-
-    /**
-     * @override
-     * @type {string}
-     */
-    help = "Use `!pso2 itemname <itemname>` in order to get the japanese or english name for everything including this one.";
-
-
 }
+
+/**
+ * @override
+ * @type {string}
+ */
+itemname.help = "Use `!pso2 itemname <itemname>` in order to get the japanese or english name for everything including this one.";
 
 module.exports = itemname;
