@@ -10,6 +10,11 @@ let logger = require('winston');
  * @date 28.08.2018
  */
 class itemname extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Use `!pso2 itemname <itemname>` in order to get the japanese or english name for everything including this one.";
+    }
+
     /**
      * @override
      * @param args {string[]}
