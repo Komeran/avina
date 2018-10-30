@@ -52,7 +52,7 @@ class ParentCommand extends BaseCommand {
         if(args[1]) {
             let subcmd = args[1];
             if(this.subCommands[subcmd]) {
-                this.subCommands[subcmd].execute();
+                this.subCommands[subcmd].execute(args, message);
             }
         }
     }

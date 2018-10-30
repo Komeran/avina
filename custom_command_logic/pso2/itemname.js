@@ -19,7 +19,7 @@ class itemname extends BaseCommand {
             color: 3447003,
             title: "Search results:",
             fields: []
-        }
+        };
         let replyFunction = function(m) {message.channel.send(m);};
         if(args[2]) {
             let searchstring = Utility.addStringArguments(2,args.length,args);
