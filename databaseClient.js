@@ -536,7 +536,7 @@ module.exports = {
                 " " + boolToTinyint(textChannel.notifyWarframeAlerts) + "," +
                 " '" + textChannel.guildSnowflake + "'),"
         });
-        this.addGuilds(true, ...guilds);
+        await this.addGuilds(true, ...guilds);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO t_textchannels (t_snowflake, t_welcomemessage, t_ignorecommands, t_updatewarframeversion, t_notifywarframealerts, t_g_guild) VALUES " + valuesString +
             (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE t_weclomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);"));
@@ -562,9 +562,9 @@ module.exports = {
                 " '" + app.userSnowflake + "'," +
                 " '" + app.roleSnowflake + "'),"
         });
-        this.addGuilds(true, ...guilds);
-        this.addUsers(...users);
-        this.addRoles(...roles);
+        await this.addGuilds(true, ...guilds);
+        await this.addUsers(...users);
+        await this.addRoles(...roles);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO a_applications (a_g_guild, a_u_user, a_r_role) VALUES " + valuesString + ";");
     },
@@ -582,7 +582,7 @@ module.exports = {
                 " " + boolToTinyint(message.wfAlertMessage) + "," +
                 " '" + message.textChannelSnowflake + "'),"
         });
-        this.addTextChannels(true, ...textChannels);
+        await this.addTextChannels(true, ...textChannels);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO m_messages (m_snowflake, m_wfalertmessage, m_t_textchannel) VALUES " + valuesString +
             " ON DUPLICATE KEY UPDATE m_wfalertmessage = VALUES(`m_wfalertmessage`);");
@@ -617,8 +617,8 @@ module.exports = {
                 " '" + notification.textChannelSnowflake + "'," +
                 (notification.filterLogic? " '" : " ") + notification.filterLogic + (notification.filterLogic? "')," : "),");
         });
-        this.addYouTubeSubscriptions(...subscriptions);
-        this.addTextChannels(true, ...textChannels);
+        await this.addYouTubeSubscriptions(...subscriptions);
+        await this.addTextChannels(true, ...textChannels);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO n_notifications (n_y_youtubesubscription, n_t_textchannel, n_filterlogic) VALUES " + valuesString +
             (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE n_filterlogic = VALUES(`n_filterlogic`);"));
@@ -640,7 +640,7 @@ module.exports = {
                 " '" + filter.attribute + "'," +
                 " '" + filter.value + "'),"
         });
-        this.addNotifications(true, ...notifications);
+        await this.addNotifications(true, ...notifications);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO f_filters (f_id, f_n_y_youtubesubscription, f_n_t_textchannel, f_attribute, f_filtervalue) VALUES " + valuesString +
             (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE f_attribute = VALUES(`f_attribute`), f_filtervalue = VALUES(`f_filtervalue`);"));
@@ -664,8 +664,8 @@ module.exports = {
                 " '" + game.playerMax + "'," +
                 " '" + game.dungeonMasterSnowflake + "'),"
         });
-        this.addGuilds(true,...guilds);
-        this.addDnDPlayers(...players);
+        await this.addGuilds(true,...guilds);
+        await this.addDnDPlayers(...players);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO d_dndgames (d_id, d_g_guild, d_name, d_playermax, d_dp_u_dungeonmaster) VALUES " + valuesString +
             (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE d_name = VALUES(`d_name`), d_playermax = VALUES(`d_playermax`), d_dp_u_dungeonmaster = VALUES(`d_dp_u_dungeonmaster`);"));
@@ -682,7 +682,7 @@ module.exports = {
             users.push(snowflake);
             valuesString += "('" + snowflake + "'),"
         });
-        this.addUsers(...users);
+        await this.addUsers(...users);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO dp_dndplayers (dp_u_user) VALUES " + valuesString + ";");
     },
@@ -702,7 +702,7 @@ module.exports = {
                 " '" + player.guildSnowflake + "'," +
                 " " + boolToTinyint(player.active) + "),"
         });
-        this.addDnDPlayers(...dndPlayers);
+        await this.addDnDPlayers(...dndPlayers);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO dpl_dndgameplayers (dpl_dp_dndplayer, dpl_d_dndgame, dpl_d_g_guild, dpl_active) VALUES " + valuesString +
             (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE dpl_active = VALUES(`dpl_active`);"));
