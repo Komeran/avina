@@ -5,9 +5,22 @@
 
 let logger = require('winston');
 let dbClient = require('../databaseClient.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class CompleteQuest extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!completequest <ID>` where `<ID>` is the ID number of a quest\n" +
+            "Marks the quest with the provided ID number as completed if it was open, or as open if it was completed. Only DMs may use this command.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -64,7 +77,7 @@ module.exports = {
             return;
         }
         message.author.send("Sorry, but something went wrong. The Quest was not updated. If this keeps happening, please tell your admin!");
-    },
-    help: "Usage: `!completequest <ID>` where `<ID>` is the ID number of a quest\n" +
-        "Marks the quest with the provided ID number as completed if it was open, or as open if it was completed. Only DMs may use this command."
-};
+    }
+}
+
+module.exports = CompleteQuest;

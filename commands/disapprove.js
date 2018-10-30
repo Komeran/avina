@@ -1,9 +1,21 @@
-var logger = require('winston');
-var applications = require('../util/applications.js');
 let dbClient = require('../databaseClient.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class Disapprove extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!disapprove <mention(s)>` where `<mention(s)>` is one or several user mentions, e.g. `@AwesomeGuy @SuperDude`\n" +
+            "Deletes all role applications of the mentioned users. " +
+            "This is an admin only command and will fail if non-admins of a server attempt to use it.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -20,11 +32,12 @@ module.exports = {
         if(args.length >= 2) {
             let appsToDelete = [];
             message.mentions.members.array().forEach(function(user) {
-                let userApps = dbClient.getApplications(user.id, gid);
-                if(userApps) {
-                    appsToDelete.concat(userApps);
-                    user.send(message.author.username + " has disapproved your role applications!");
-                }
+                dbClient.getApplications(user.id, gid).then(function(userApps) {
+                    if(userApps) {
+                        appsToDelete.concat(userApps);
+                        user.send(message.author.username + " has disapproved your role applications!");
+                    }
+                });
             });
             dbClient.deleteApplications(...appsToDelete);
         }
@@ -32,8 +45,7 @@ module.exports = {
             message.author.send('\'disapprove\' command invalid: Missing user parameter!');
         }
         message.delete();
-    },
-    help: "Usage: `!disapprove <mention(s)>` where `<mention(s)>` is one or several user mentions, e.g. `@AwesomeGuy @SuperDude`\n" +
-        "Deletes all role applications of the mentioned users. " +
-        "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+    }
+}
+
+module.exports = Disapprove;
