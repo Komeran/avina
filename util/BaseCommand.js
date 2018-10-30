@@ -21,5 +21,5 @@ class BaseCommand {
      * @type {string}
      * @abstract
      */
-    help = ""
+    help
 }
