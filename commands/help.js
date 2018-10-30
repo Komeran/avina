@@ -17,8 +17,8 @@ class Help extends BaseCommand {
      */
     execute(args, message) {
         if(args.length > 2) {
-            logger.log("Too many arguments for !help command.");
-            return;
+            logger.debug("Too many arguments for !help command.");
+            //return;
         }
 
         let commands = require('../util/commands.js');
