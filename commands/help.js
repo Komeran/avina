@@ -24,7 +24,7 @@ class Help extends BaseCommand {
                 message.author.send("Sorry, but `" + command + "` is not one of my commands!\nMaybe you misspelled it?\nUse `!help` to list all my commands!");
                 return;
             }
-            let msg = typeof commands.cmds[command].help === "string"? commands.cmds[command].help : commands.cmds[command].help();
+            let msg = typeof commands.cmds[command].help === "string"? commands.cmds[command].help : commands.cmds[command].help(args, message);
             message.channel.send({
                 embed: {
                     title: "Help for command `!" + command.toLowerCase() + "`",
