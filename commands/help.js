@@ -24,12 +24,16 @@ class Help extends BaseCommand {
                 message.author.send("Sorry, but `" + command + "` is not one of my commands!\nMaybe you misspelled it?\nUse `!help` to list all my commands!");
                 return;
             }
-            let msg = typeof commands.cmds[command].help === "string"? commands.cmds[command].help : commands.cmds[command].help(args, message);
+            let msg;
+            if(commands.cmds[command].help)
+                msg = typeof commands.cmds[command].help === "string"? commands.cmds[command].help : commands.cmds[command].help(args, message);
+            else
+                msg = "No help message was defined yet.";
             message.channel.send({
                 embed: {
                     title: "Help for command `!" + command.toLowerCase() + "`",
                     color: 3447003,
-                    description: commands.cmds[command].help
+                    description: msg
                 }
             });
             return;
