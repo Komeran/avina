@@ -302,10 +302,7 @@ function _recursiveAlertUpdater() {
                                         .then(function(message) {
                                             _alertMessages[channels[i]][alert.id] = message.id
                                         })
-                                        .catch(function(e) {
-                                            console.log("LEL");
-                                            logger.error(e);
-                                        });
+                                        .catch(logger.error);
                                 }
                             }
                         }

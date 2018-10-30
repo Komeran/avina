@@ -1,8 +1,21 @@
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let games = require('../dnd_util/games.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class AbandonDM extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!abandondm`\n" +
+        "If you are DM of a running game, this will make someone else the DM of it if someone applied, or delete the game session if not."
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -38,7 +51,7 @@ module.exports = {
         }
 
         message.author.send("Nice try, but you are no DM of a game right now.");
-    },
-    help: "Usage: `!abandondm`\n" +
-        "If you are DM of a running game, this will make someone else the DM of it if someone applied, or delete the game session if not."
-};
+    }
+}
+
+module.exports = AbandonDM;
