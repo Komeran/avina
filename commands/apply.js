@@ -45,8 +45,12 @@ class Apply extends BaseCommand {
                     return;
                 }
                 let gid = message.guild.id;
-                dbClient.addApplications(new Application(gid, message.author.id, appliedRole));
-                message.author.send('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
+                dbClient.addApplications(new Application(gid, message.author.id, appliedRole)).then(function() {
+                    message.author.send('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
+                }).catch(function(e) {
+                    logger.error(e);
+                    message.author.send("Sorry, something went wrong with your application! Please notify an admin!");
+                });
             }
             else {
                 message.author.send('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
