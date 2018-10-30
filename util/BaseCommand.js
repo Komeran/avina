@@ -18,10 +18,10 @@ class BaseCommand {
 
     /**
      * Help String to be displayed when using the !help command
-     * @type {string}
+     * @type {String|function(String[],Message):String}
      * @abstract
      */
-    static help = ""
+    static help;
 }
 
 module.exports = BaseCommand;

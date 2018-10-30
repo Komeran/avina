@@ -19,7 +19,7 @@ class shop extends BaseCommand {
             color: 3447003,
             title: "Search results:",
             fields: []
-        }
+        };
         let replyFunction;
         if(message.guild) {
             replyFunction = function(m) {message.reply(m);};
