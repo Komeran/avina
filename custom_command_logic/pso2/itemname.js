@@ -24,7 +24,7 @@ class itemname extends BaseCommand {
         console.log("itemname was called!");
         let replyFunction = function(m) {message.channel.send(m);};
         if(args[2]) {
-            let searchstring = Utility.addStringArguments(2,args.length,args);
+            let searchstring = Utility.addStringArguments(2,args.length-1,args);
             pso2.getItem(searchstring).then(function(js) {
                 for(let i = 0; i < js.length;i++) {
                     embed.fields.push({

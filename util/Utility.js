@@ -17,7 +17,7 @@ class Utility {
         if(!args[fromCh]) {
             return "Invalid";
         }
-        toCh = toCh || args.length;
+        toCh = toCh || args.length-1;
         if(!args[toCh]) {
             return "Invalid";
         }
