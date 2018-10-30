@@ -33,7 +33,7 @@ class AbandonDM extends BaseCommand {
             return;
         }
 
-        for (i = 0; i < games.length; i++) {
+        for (let i = 0; i < games.length; i++) {
             if (games[gid][i].dm === message.author.id) {
                 if (games[gid][i].claimRequester) {
                     games[gid][i].dm = games[gid][i].claimRequester;
