@@ -56,3 +56,5 @@ class Help extends BaseCommand {
     help = "Usage: `!help [<command>]` where `<command>` is one of my commands.\n" +
         "Lists all of my commands just like this if no command parameter was provided, or the usage description of the command if a valid one was provided."
 }
+
+module.exports = Help;

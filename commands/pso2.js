@@ -1,4 +1,4 @@
-const ParentCommand = require("../util/ParentCommand").ParentCommand;
+const ParentCommand = require("../util/ParentCommand");
 
 let logger = require('winston');
 
@@ -52,3 +52,5 @@ class pso2 extends ParentCommand {
     }
 
 }
+
+module.exports = pso2;

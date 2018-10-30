@@ -42,3 +42,5 @@ class itemname extends BaseCommand {
 
 
 }
+
+module.exports = itemname;

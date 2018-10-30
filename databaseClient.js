@@ -32,7 +32,7 @@ dbConnection.connect(function(err) {
  * @param checkhoist {boolean}
  * @constructor
  */
-export const Guild = function(snowflake, checkhoist) {
+const Guild = function(snowflake, checkhoist) {
     this.snowflake = snowflake;
     this.checkhoist = checkhoist;
 };
@@ -56,7 +56,7 @@ Guild.getDefault = function(snowflake) {
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild this text channel is in
  * @constructor
  */
-export const TextChannel = function(snowflake, welcomeMessage, ignoreCommands, updateWarframeVersion, notifyWarframeAlerts, guildSnowflake) {
+const TextChannel = function(snowflake, welcomeMessage, ignoreCommands, updateWarframeVersion, notifyWarframeAlerts, guildSnowflake) {
     this.snowflake = snowflake;
     this.welcomeMessage = welcomeMessage || null;
     this.ignoreCommands = ignoreCommands;
@@ -82,7 +82,7 @@ TextChannel.getDefault = function(snowflake, guildSnowflake) {
  * @param roleSnowflake {string} The Snowflake ID of the Discord Role
  * @constructor
  */
-export const Application = function(guildSnowflake, userSnowflake, roleSnowflake) {
+const Application = function(guildSnowflake, userSnowflake, roleSnowflake) {
     this.guildSnowflake = guildSnowflake;
     this.userSnowflake = userSnowflake;
     this.roleSnowflake = roleSnowflake;
@@ -96,7 +96,7 @@ export const Application = function(guildSnowflake, userSnowflake, roleSnowflake
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Message = function(snowflake, wfAlertMessage, textChannelSnowflake,guildSnowflake) {
+const Message = function(snowflake, wfAlertMessage, textChannelSnowflake,guildSnowflake) {
     this.snowflake = snowflake;
     this.wfAlertMessage = wfAlertMessage;
     this.textChannelSnowflake = textChannelSnowflake;
@@ -122,7 +122,7 @@ Message.getDefault = function(snowflake, textChannelSnowflake, guildSnowflake) {
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Notification = function(channelId, textChannelSnowflake, filterLogic, guildSnowflake) {
+const Notification = function(channelId, textChannelSnowflake, filterLogic, guildSnowflake) {
     this.channelId = channelId;
     this.textChannelSnowflake = textChannelSnowflake;
     this.filterLogic = filterLogic || null;
@@ -150,7 +150,7 @@ Notification.getDefault = function(channelId, textChannelSnowflake, guildSnowfla
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
  */
-export const Filter = function(id, channelId, textChannelSnowflake, attribute, value, guildSnowflake) {
+const Filter = function(id, channelId, textChannelSnowflake, attribute, value, guildSnowflake) {
     this.id = id;
     this.channelId = channelId;
     this.textChannelSnowflake = textChannelSnowflake;
@@ -168,7 +168,7 @@ export const Filter = function(id, channelId, textChannelSnowflake, attribute, v
  * @param dungeonMasterSnowflake {string} The Snowflake ID of the Discord User who is the DM of this DnDGame
  * @constructor
  */
-export const DnDGame = function(id, guildSnowflake, name, playerMax, dungeonMasterSnowflake) {
+const DnDGame = function(id, guildSnowflake, name, playerMax, dungeonMasterSnowflake) {
     this.id = id;
     this.guildSnowflake = guildSnowflake;
     this.name = name;
@@ -184,7 +184,7 @@ export const DnDGame = function(id, guildSnowflake, name, playerMax, dungeonMast
  * @param active {boolean} Whether or not the player is active in the game right now
  * @constructor
  */
-export const DnDGamePlayer = function(playerSnowflake, gameId, guildSnowflake, active) {
+const DnDGamePlayer = function(playerSnowflake, gameId, guildSnowflake, active) {
     this.playerSnowflake = playerSnowflake;
     this.gameId = gameId;
     this.guildSnowflake = guildSnowflake;
@@ -200,7 +200,7 @@ export const DnDGamePlayer = function(playerSnowflake, gameId, guildSnowflake, a
  * @param completed {boolean} Whether or not the quest has been completed
  * @constructor
  */
-export const DnDQuest = function(id, gameId, guildSnowflake, description, completed) {
+const DnDQuest = function(id, gameId, guildSnowflake, description, completed) {
     this.id = id;
     this.gameId = gameId;
     this.guildSnowflake = guildSnowflake;

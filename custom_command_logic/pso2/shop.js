@@ -47,3 +47,5 @@ class shop extends BaseCommand {
      */
     help = "Use `!pso2 shop <itemname>` in order to find the cheapest shop prices of a certain item for all ships.";
 }
+
+module.exports = shop;

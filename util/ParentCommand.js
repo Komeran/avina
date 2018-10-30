@@ -25,10 +25,9 @@ class ParentCommand extends BaseCommand {
             }
             let commandString = fileName.substring(0, fileName.length-3);
             if(eventType === 'change' || this.fs.existsSync(path.join(this.normalizedPath, fileName))) {
-                let commandClass = import(path.join(this.normalizedPath, fileName));
+                let commandClass = require(path.join(this.normalizedPath, fileName));
                 if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
                     this.subCommands[commandString] = new commandClass();
-                    return;
                 }
             } else {
                 delete this.subCommands[commandString];
