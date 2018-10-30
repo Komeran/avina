@@ -1,4 +1,3 @@
-let dbClient = require('../databaseClient.js');
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -8,6 +7,7 @@ class Apps extends BaseCommand {
         this.help = "Usage: `!apps`\n" +
             "Lists all current applications for roles on this server. " +
             "This is an admin only command and will fail if non-admins of a server attempt to use it.";
+        this.dbClient = require('../databaseClient.js');
     }
 
     /**
@@ -30,7 +30,7 @@ class Apps extends BaseCommand {
 
         let gid = message.guild.id;
 
-        let apps = dbClient.getApplicationsByGuild(gid);
+        let apps = this.dbClient.getApplicationsByGuild(gid);
 
         let appsPerUser = {};
         apps.forEach(function(app) {
