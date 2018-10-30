@@ -1,9 +1,23 @@
-var logger = require('winston');
-var fs = require('fs');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let fs = require('fs');
+let games = require('../dnd_util/games.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class Draw extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!draw [<count>]` where `<count>` is the number of cards you'd like to draw.\n" +
+            "Draws a number of cards equal to the provided count or only one card if none was provided of the DnD " +
+            "Deck of Many Things (22 Cards version) and sends a description of the drawn card(s) to your DM.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -20,7 +34,7 @@ module.exports = {
             return;
         }
 
-        let activeGame = null;
+        let game = null;
         let dm = null;
 
         games[gid].forEach(function(g) {
@@ -36,7 +50,7 @@ module.exports = {
         }
 
         if(args.length <= 2) {
-            var count = args[1];
+            let count = args[1];
             if(!count){
                 count = 1;
             }
@@ -51,13 +65,12 @@ module.exports = {
             }
             logger.info('Someone drew '+count+(count===1?' card!':' cards!'));
 
-            var result = Math.floor(Math.random() * 22) + 1;
+            let result = Math.floor(Math.random() * 22) + 1;
             message.author.send("", { file:'./domt/'+result+'.png' });
-            var description = fs.readFileSync('./domt/descriptions/'+result+'.txt', "utf8");
+            let description = fs.readFileSync('./domt/descriptions/'+result+'.txt', "utf8");
             dm.send(description);
         }
-    },
-    help: "Usage: `!draw [<count>]` where `<count>` is the number of cards you'd like to draw.\n" +
-        "Draws a number of cards equal to the provided count or only one card if none was provided of the DnD " +
-        "Deck of Many Things (22 Cards version) and sends a description of the drawn card(s) to your DM."
-};
+    }
+}
+
+module.exports = Draw;

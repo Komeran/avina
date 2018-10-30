@@ -1,8 +1,21 @@
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let games = require('../dnd_util/games.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class JoinGame extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!joingame <game>` where `<game>` is the name of the game you'd like to join.\n" +
+            "Joins the game with the provided name if it isn't already full and you are not the DM of this game.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -64,7 +77,7 @@ module.exports = {
         }
 
         message.reply("There is no game '" + args[1].toLowerCase() + "'! Have your DM create one using !claimdm " + args[1].toLowerCase());
-    },
-    help: "Usage: `!joingame <game>` where `<game>` is the name of the game you'd like to join.\n" +
-        "Joins the game with the provided name if it isn't already full and you are not the DM of this game."
-};
+    }
+}
+
+module.exports = JoinGame;

@@ -4,9 +4,24 @@
  */
 
 let guildSettings = require('../util/guildSettings.js');
+let logger = require('winston');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class Ignore extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!ignore`\n" +
+            "Marks/Unmarks a channel as 'ignored', meaning that Avina will ignore all commands and smalltalk attempts except the `!ignore` command. " +
+            "This is an admin only command and will fail if non-admins of a server attempt to use it.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("This command doesn't work in direct messages!");
             message.delete();
@@ -40,8 +55,7 @@ module.exports = {
                 color: 3447003
             }
         })
-    },
-    help: "Usage: `!ignore`\n" +
-        "Marks/Unmarks a channel as 'ignored', meaning that Avina will ignore all commands and smalltalk attempts except the `!ignore` command. " +
-        "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+    }
+}
+
+module.exports = Ignore;

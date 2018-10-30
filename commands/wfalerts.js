@@ -4,9 +4,23 @@
  */
 
 let wfclient = require("../wfclient.js")();
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class WFAlerts extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!wfalerts`\n" +
+            "Marks/Unmarks the text channel the command was used in for updates on Warframe Alert Missions. " +
+            "Avina will send and update messages with infos on current Alert Missions every 30 seconds.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("This command doesn't work in direct messages!");
             message.delete();
@@ -38,8 +52,7 @@ module.exports = {
             });
             message.delete();
         }
-    },
-    help: "Usage: `!wfalerts`\n" +
-        "Marks/Unmarks the text channel the command was used in for updates on Warframe Alert Missions. " +
-        "Avina will send and update messages with infos on current Alert Missions every 30 seconds."
-};
+    }
+}
+
+module.exports = WFAlerts;

@@ -1,9 +1,23 @@
-var logger = require('winston');
+let logger = require('winston');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class Roll extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!roll <dice>` where `<dice>` can be any calculation including dice and modifiers.\n" +
+            "Example: `!roll 3d6+4-2d4+3+d8`\n" +
+            "Will roll the given dice and add/subtract them accordingly. Only addition and subtraction are supported at the moment!";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!args[1]) {
-            logger.info('Missing Die Argument for !roll command!');
+            logger.debug('Missing Die Argument for !roll command!');
             return;
         }
 
@@ -86,8 +100,7 @@ module.exports = {
                 color: 3447003
             }
         });
-    },
-    help: "Usage: `!roll <dice>` where `<dice>` can be any calculation including dice and modifiers.\n" +
-        "Example: `!roll 3d6+4-2d4+3+d8`\n" +
-        "Will roll the given dice and add/subtract them accordingly. Only addition and subtraction are supported at the moment!"
-};
+    }
+}
+
+module.exports = Roll;

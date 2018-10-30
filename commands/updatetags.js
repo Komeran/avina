@@ -1,8 +1,23 @@
 let logger = require('winston');
 let guildSettings = require('../util/guildSettings.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class UpdateTags extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!updatetags`\n" +
+            "Updates the tags infront of the nicknames of all users on the server. " +
+            "This is an admin only command and will fail if non-admins of a server attempt to use it.";
+    }
+
+    // TODO: Migrate to Database
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("This command doesn't work in direct messages, sorry!");
             message.delete();
@@ -93,11 +108,10 @@ module.exports = {
             message.channel.send("Done updating role tags! I had to update " + updateCount + " role tags! " + addText);
             message.delete();
         }
-    },
-    help: "Usage: `!updatetags`\n" +
-        "Updates the tags infront of the nicknames of all users on the server. " +
-        "This is an admin only command and will fail if non-admins of a server attempt to use it."
-};
+    }
+}
+
+module.exports = UpdateTags;
 
 function getRoleForTag(text, roles) {
     text = text.toLowerCase();

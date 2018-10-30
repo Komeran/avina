@@ -14,8 +14,9 @@ let config = require('../config.json');
 let auth = require('../auth.json');
 let guildSettings = require('../util/guildSettings.js');
 let wfclient = require('../wfclient.js')();
+let connection;
 if(auth.database)
-    var connection = require('mysql').createConnection(auth.database);
+    connection = require('mysql').createConnection(auth.database);
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -53,8 +54,21 @@ emitter.on("applications", function(message, savingMessage) {
     message.delete();
 });
 
-module.exports = {
-    execute: function(args, message) {
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
+
+class Save extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Admin only command!";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(args.length > 1) {
             logger.log("Too many arguments for command '!save'.");
             return;
@@ -82,9 +96,10 @@ module.exports = {
             isSaving = true;
             saveGuildSettings(message, msg, true);
         });
-    },
-    help: "Admin only command!"
-};
+    }
+}
+
+module.exports = Save;
 
 let saveGames = function(message, msg, json) {
 

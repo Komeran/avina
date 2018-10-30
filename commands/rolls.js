@@ -1,7 +1,20 @@
-var logger = require('winston');
+let logger = require('winston');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function(args, message) {
+class Rolls extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!rolls <dice>[<modifier(s)>]` where `<dice>` are the dice you want to roll and `<modifier(s)>` are yn modifiers that apply to each of the rolls.\n" +
+            "Rolls the dice separately, adding given modifiers, if any, to each roll and replies with all totals.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!args[1]) {
             message.author.send('Missing dice Argument for !rolls command!');
             return;
@@ -100,7 +113,7 @@ module.exports = {
                 description: replyString
             }
         });
-    },
-    help: "Usage: `!rolls <dice>[<modifier(s)>]` where `<dice>` are the dice you want to roll and `<modifier(s)>` are yn modifiers that apply to each of the rolls.\n" +
-        "Rolls the dice separately, adding given modifiers, if any, to each roll and replies with all totals."
-};
+    }
+}
+
+module.exports = Rolls;

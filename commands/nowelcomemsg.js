@@ -3,6 +3,8 @@
  * @date 08.08.2018
  */
 
+// TODO: MIGRATE TO BASECOMMAND
+
 let guildSettings = require('../util/guildSettings.js');
 let dbClient = require('../databaseClient.js');
 

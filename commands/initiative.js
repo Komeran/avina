@@ -1,8 +1,22 @@
-var logger = require('winston');
-var games = require('../dnd_util/games.js');
+let logger = require('winston');
+let games = require('../dnd_util/games.js');
+const BaseCommand = require("../util/BaseCommand");
+const Message = require("discord.js").Message;
 
-module.exports = {
-    execute: function (args, message) {
+class Initiative extends BaseCommand {
+    constructor() {
+        super();
+        this.help = "Usage: `!initiative [<npc name>][advantage | disadvantage][<modifier>][advantage | disadvantage]` where `<modifier>` can be any calculation including dice and modifiers and `<npc name>` is the name of the npc you rolled initiative for if you are a DM. Also, only put either advantage or disadvantage once in the command parameters.\n" +
+            "Examples: `!initiative +4-2d4+3+d8 advantage` or `!initiative disadv -3` or `!initiative adv` or `!initiative MrGenericGuy `\n" +
+            "Will roll a d20 and add/subtract the given modifiers. Only addition and subtraction are supported at the moment! If advantage or disadvantage were given, it will roll twice and return the higher/lower result.";
+    }
+
+    /**
+     * @override
+     * @param args {string[]}
+     * @param message {Message}
+     */
+    execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
             return;
@@ -194,8 +208,7 @@ module.exports = {
                 color: 3447003
             }
         });
-    },
-    help: "Usage: `!initiative [<npc name>][advantage | disadvantage][<modifier>][advantage | disadvantage]` where `<modifier>` can be any calculation including dice and modifiers and `<npc name>` is the name of the npc you rolled initiative for if you are a DM. Also, only put either advantage or disadvantage once in the command parameters.\n" +
-        "Examples: `!initiative +4-2d4+3+d8 advantage` or `!initiative disadv -3` or `!initiative adv` or `!initiative MrGenericGuy `\n" +
-        "Will roll a d20 and add/subtract the given modifiers. Only addition and subtraction are supported at the moment! If advantage or disadvantage were given, it will roll twice and return the higher/lower result."
-};
+    }
+}
+
+module.exports = Initiative;
