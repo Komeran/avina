@@ -8,7 +8,7 @@ let logger = require('winston');
  * @author nico.faderbauer
  * @date 28.08.2018
  */
-export class itemname extends BaseCommand {
+class itemname extends BaseCommand {
     /**
      * @override
      * @param args {string[]}

@@ -8,7 +8,7 @@ let logger = require('winston');
  * @author nico.faderbauer
  * @date 30.08.2018
  */
-export class shop extends BaseCommand {
+class shop extends BaseCommand {
     /**
      * @override
      * @param args {string[]} arguments from the parent Command

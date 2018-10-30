@@ -3,7 +3,7 @@ const Message = require("discord.js").Message;
 
 let logger = require('winston');
 
-export class Help extends BaseCommand {
+class Help extends BaseCommand {
     /**
      * @override
      * @param args {string[]}

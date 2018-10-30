@@ -5,7 +5,7 @@ const Message = require("discord.js").Message;
  * @author marc.schaefer
  * @date 28.08.2018
  */
-export class BaseCommand {
+class BaseCommand {
     /**
      * Function to be executed when the command was used
      * @param args {string[]} Arguments the user provided when using the command including the command itself at index 0

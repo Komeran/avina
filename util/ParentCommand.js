@@ -7,7 +7,7 @@ let logger = require('winston');
  * @author nico.faderbauer
  * @date 28.08.2018
  */
-export class ParentCommand extends BaseCommand {
+class ParentCommand extends BaseCommand {
     fs = require('fs');
     /**
      * @abstract

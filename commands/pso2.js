@@ -6,7 +6,7 @@ let logger = require('winston');
  * @author nico.faderbauer
  * @date 28.08.2018
  */
-export class pso2 extends ParentCommand {
+class pso2 extends ParentCommand {
 
 
     subCommandDirectory="custom_command_logic/pso2";
