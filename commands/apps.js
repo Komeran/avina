@@ -30,37 +30,37 @@ class Apps extends BaseCommand {
 
         let gid = message.guild.id;
 
-        let apps = dbClient.getApplicationsByGuild(gid);
-
-        let appsPerUser = {};
-        apps.forEach(function(app) {
-            if(message.mentions.length > 0 && !message.mentions.users.has(app.userSnowflake))
-                return;
-            if(!appsPerUser[app.userSnowflake]) {
-                appsPerUser[app.userSnowflake] = [];
-            }
-            appsPerUser[app.userSnowflake].push(app.roleSnowflake);
-        });
-        for(let user in appsPerUser) {
-            let roles = "";
-            appsPerUser[user].forEach(function(role) {
-                roles += getRoleNameById(role, message.guild.id) + ", ";
+        dbClient.getApplicationsByGuild(gid).then(function(apps) {
+            let appsPerUser = {};
+            apps.forEach(function(app) {
+                if(message.mentions.length > 0 && !message.mentions.users.has(app.userSnowflake))
+                    return;
+                if(!appsPerUser[app.userSnowflake]) {
+                    appsPerUser[app.userSnowflake] = [];
+                }
+                appsPerUser[app.userSnowflake].push(app.roleSnowflake);
             });
-            roles = roles.substring(0, roles.length-2);
-            fields.push({
-                name: message.guild.member(user).nickname,
-                value: "Roles: " + roles
-            });
-        }
-
-        message.author.send({
-            embed: {
-                title: "List of current role applications",
-                fields: fields,
-                color: 3447003
+            for(let user in appsPerUser) {
+                let roles = "";
+                appsPerUser[user].forEach(function(role) {
+                    roles += getRoleNameById(role, message.guild.id) + ", ";
+                });
+                roles = roles.substring(0, roles.length-2);
+                fields.push({
+                    name: message.guild.member(user).nickname,
+                    value: "Roles: " + roles
+                });
             }
-        });
-        message.delete();
+
+            message.author.send({
+                embed: {
+                    title: "List of current role applications",
+                    fields: fields,
+                    color: 3447003
+                }
+            });
+            message.delete();
+        }).catch(logger.error);
     }
 }
 
