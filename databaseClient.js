@@ -905,13 +905,14 @@ module.exports = {
  * @returns {Promise}
  */
 let query = function(queryString) {
+    console.log("New Query:", queryString);
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
         if(result[0]) {
             resolve(result);
             return;
         }
         if(error) {
-            console.log("AHHHH");
+            resolve(error);
         }
         resolve();
     }));
