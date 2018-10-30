@@ -297,10 +297,13 @@ module.exports = {
      * @return {[Application]}
      */
     getApplicationsByGuild: async function(guildSnowflake) {
+        console.log("I happen!");
         let result = await query("SELECT * FROM a_applications WHERE a_g_guild = '" + guildSnowflake + "';");
+        console.log("Result:", result);
         if(result) {
             let apps = [];
             result.forEach(function(app) {
+                console.log(app);
                 apps.push(new Application(app.a_g_guild, app.a_u_user, app.a_r_role));
             });
             return apps;
