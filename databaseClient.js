@@ -910,6 +910,9 @@ module.exports = {
 let query = function(queryString) {
     console.log("New Query:", queryString);
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
+        console.log("error:", error);
+        console.log("result:", result);
+        console.log("fields:", fields);
         if(result[0]) {
             resolve(result);
             return;
