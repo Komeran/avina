@@ -4,7 +4,8 @@
  */
 
 let dbClient = require('../databaseClient.js');
-import {Guild, TextChannel} from '../databaseClient.js';
+const Guild = require('../databaseClient.js').Guild;
+const TextChannel = require('../databaseClient.js').TextChannel;
 
 module.exports = {
     execute: function(args, message) {

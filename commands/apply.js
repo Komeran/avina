@@ -1,5 +1,5 @@
 let dbClient = require('../databaseClient.js');
-import {Application} from '../databaseClient.js';
+const Application = require('../databaseClient.js').Application;
 
 module.exports = {
     execute: function(args, message) {

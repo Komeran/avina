@@ -1,4 +1,4 @@
-import {Message} from "discord.js";
+const Message = require("discord.js").Message;
 
 /**
  * Base Command class to be extended by Commands

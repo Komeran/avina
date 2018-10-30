@@ -1,5 +1,3 @@
-import {Message} from "discord.js";
-
 let logger = require('winston');
 
 /**

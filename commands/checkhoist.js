@@ -1,7 +1,7 @@
 let logger = require('winston');
 let guildSettings = require('../util/guildSettings.js');
 let dbClient = require('../databaseClient.js');
-import Guild from '../databaseClient.js';
+const Guild = require('../databaseClient.js').Guild;
 
 module.exports = {
     execute: function(args, message) {

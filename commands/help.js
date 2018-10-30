@@ -1,5 +1,5 @@
-import {BaseCommand} from "../util/BaseCommand";
-import {Message} from "discord.js";
+const BaseCommand = require("../util/BaseCommand").BaseCommand;
+const Message = require("discord.js").Message;
 
 let logger = require('winston');
 

@@ -5,7 +5,7 @@
 
 let logger = require('winston');
 let dbClient = require('../databaseClient.js');
-import DnDQuest from '../databaseClient.js';
+const DnDQuest = require('../databaseClient.js').DnDQuest;
 
 module.exports = {
     execute: function(args, message) {

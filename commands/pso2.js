@@ -1,4 +1,4 @@
-import {ParentCommand} from "../util/ParentCommand";
+const ParentCommand = require("../util/ParentCommand").ParentCommand;
 
 let logger = require('winston');
 

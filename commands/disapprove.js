@@ -1,7 +1,6 @@
 var logger = require('winston');
 var applications = require('../util/applications.js');
 let dbClient = require('../databaseClient.js');
-import {Application} from "../databaseClient";
 
 module.exports = {
     execute: function(args, message) {
