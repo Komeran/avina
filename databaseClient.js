@@ -934,7 +934,3 @@ let boolToTinyint = function(bool) {
 let tinyIntToBool = function(tinyInt) {
     return !!tinyInt;
 };
-
-module.exports = {
-
-}
