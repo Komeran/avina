@@ -186,50 +186,62 @@ function _recursiveAlertUpdater() {
         let ws = new WorldState(worldStateData);
         console.log("Updating Warframe Alerts!");
 
-        dbClient.getAllAlertMessages().then(function(messages) {
+        dbClient.getAllAlertMessages().then(
+            /**
+             *
+             * @param messages {Message[]}
+             */
+            function(messages) {
             let messagesToRemove = [];
             let existingAlerts = {};
             if(messages && messages.length !== 0) {
                 // Handle existing alert messages first
                 messages.forEach(function (message) {
-                    let discordMessage = _discordClient.messages.get(message.snowflake);
-                    if (discordMessage) {
-                        for (let alert of ws.alerts) {
-                            if (alert.id === message.wfAlertMessage) {
-                                discordMessage.edit({
-                                    embed: {
-                                        title: "ALERT",
-                                        description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
-                                        color: 3447003,
-                                        thumbnail: {
-                                            url: alert.mission.reward.thumbnail
-                                        },
-                                        fields: [
-                                            {
-                                                name: "Enemy:",
-                                                value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
-                                            },
-                                            {
-                                                name: "Reward:",
-                                                value: alert.mission.reward.asString
-                                            },
-                                            {
-                                                name: "Time left:",
-                                                value: alert.eta || 'N/A'
-                                            }
-                                        ]
+                    let guild = _discordClient.guilds.get(message.guildSnowflake);
+                    let discordChannel;
+                    if(guild) {
+                        discordChannel = guild.channels.get(message.textChannelSnowflake);
+                        if(discordChannel)
+                            discordChannel.fetchMessage(message.snowflake).then(function(discordMessage) {
+                                if (discordMessage) {
+                                    for (let alert of ws.alerts) {
+                                        if (alert.id === message.wfAlertMessage) {
+                                            discordMessage.edit({
+                                                embed: {
+                                                    title: "ALERT",
+                                                    description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
+                                                    color: 3447003,
+                                                    thumbnail: {
+                                                        url: alert.mission.reward.thumbnail
+                                                    },
+                                                    fields: [
+                                                        {
+                                                            name: "Enemy:",
+                                                            value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
+                                                        },
+                                                        {
+                                                            name: "Reward:",
+                                                            value: alert.mission.reward.asString
+                                                        },
+                                                        {
+                                                            name: "Time left:",
+                                                            value: alert.eta || 'N/A'
+                                                        }
+                                                    ]
+                                                }
+                                            });
+                                            existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
+                                            existingAlerts[discordMessage.guild.id].push(alert.id);
+                                            return;
+                                        }
                                     }
-                                });
-                                existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
-                                existingAlerts[discordMessage.guild.id].push(alert.id);
-                                return;
-                            }
-                        }
-                        discordMessage.delete();
-                        messagesToRemove.push(message);
-                    }
-                    else {
-                        messagesToRemove.push(message);
+                                    discordMessage.delete();
+                                    messagesToRemove.push(message);
+                                }
+                                else {
+                                    messagesToRemove.push(message);
+                                }
+                            });
                     }
                 });
             }
@@ -241,7 +253,10 @@ function _recursiveAlertUpdater() {
                 textChannels = textChannels || [];
 
                 textChannels.forEach(function(textChannel) {
-                    let discordChannel = _discordClient.channels.get(textChannel.snowflake);
+                    let guild = _discordClient.guilds.get(textChannel.guildSnowflake);
+                    let discordChannel;
+                    if(guild)
+                        discordChannel = guild.channels.get(textChannel.snowflake);
                     if(discordChannel) {
                         for(let alert of ws.alerts) {
                             if(existingAlerts[textChannel.guildSnowflake] && existingAlerts[textChannel.guildSnowflake].indexOf(alert.id) !== -1)
