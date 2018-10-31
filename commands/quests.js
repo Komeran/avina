@@ -27,12 +27,12 @@ class Quests extends BaseCommand {
         }
 
         if(args.length > 2) {
-            logger.log("Too many arguments for !quests command.");
+            logger.debug("Too many arguments for !quests command.");
             return;
         }
 
         if(!args[1]) {
-            logger.log("Not enough arguments for !quests command.");
+            logger.debug("Not enough arguments for !quests command.");
             return;
         }
 
