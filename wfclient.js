@@ -187,52 +187,52 @@ function _recursiveAlertUpdater() {
 
 
         dbClient.getAllAlertMessages().then(function(messages) {
-            if(!messages || messages.length === 0)
-                return;
-            let existingAlerts = {};
             let messagesToRemove = [];
-            // Handle existing alert messages first
-            messages.forEach(function(message) {
-                let discordMessage = _discordClient.messages.get(message.snowflake);
-                if(discordMessage) {
-                    for(let alert of ws.alerts) {
-                        if(alert.id === message.wfAlertMessage) {
-                            discordMessage.edit({
-                                embed: {
-                                    title: "ALERT",
-                                    description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
-                                    color: 3447003,
-                                    thumbnail: {
-                                        url: alert.mission.reward.thumbnail
-                                    },
-                                    fields: [
-                                        {
-                                            name: "Enemy:",
-                                            value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
+            if(messages && messages.length !== 0) {
+                let existingAlerts = {};
+                // Handle existing alert messages first
+                messages.forEach(function (message) {
+                    let discordMessage = _discordClient.messages.get(message.snowflake);
+                    if (discordMessage) {
+                        for (let alert of ws.alerts) {
+                            if (alert.id === message.wfAlertMessage) {
+                                discordMessage.edit({
+                                    embed: {
+                                        title: "ALERT",
+                                        description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
+                                        color: 3447003,
+                                        thumbnail: {
+                                            url: alert.mission.reward.thumbnail
                                         },
-                                        {
-                                            name: "Reward:",
-                                            value: alert.mission.reward.asString
-                                        },
-                                        {
-                                            name: "Time left:",
-                                            value: alert.eta || 'N/A'
-                                        }
-                                    ]
-                                }
-                            });
-                            existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
-                            existingAlerts[discordMessage.guild.id].push(alert.id);
-                            return;
+                                        fields: [
+                                            {
+                                                name: "Enemy:",
+                                                value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
+                                            },
+                                            {
+                                                name: "Reward:",
+                                                value: alert.mission.reward.asString
+                                            },
+                                            {
+                                                name: "Time left:",
+                                                value: alert.eta || 'N/A'
+                                            }
+                                        ]
+                                    }
+                                });
+                                existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
+                                existingAlerts[discordMessage.guild.id].push(alert.id);
+                                return;
+                            }
                         }
+                        discordMessage.delete();
+                        messagesToRemove.push(message);
                     }
-                    discordMessage.delete();
-                    messagesToRemove.push(message);
-                }
-                else {
-                    messagesToRemove.push(message);
-                }
-            });
+                    else {
+                        messagesToRemove.push(message);
+                    }
+                });
+            }
 
             let channelsToRemove = [];
 
