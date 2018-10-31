@@ -604,7 +604,7 @@ module.exports = {
         await this.addGuilds(true, ...guilds);
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO t_textchannels (t_snowflake, t_welcomemessage, t_ignorecommands, t_updatewarframeversion, t_notifywarframealerts, t_g_guild) VALUES " + valuesString +
-            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE t_weclomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);"));
+            (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE t_welcomemessage = VALUES(`t_welcomemessage`), t_ignorecommands = VALUES(`t_ignorecommands`), t_updatewarframeversion = VALUES(`t_updatewarframeversion`), t_notifywarframealerts = VALUES(`t_notifywarframealerts`);"));
     },
     /**
      * Adds one or several applications to the database if not already there.
@@ -971,7 +971,6 @@ module.exports = {
  * @returns {Promise}
  */
 let query = function(queryString) {
-    console.log("QUERY:", queryString);
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
         if(result && result[0]) {
             resolve(result);
