@@ -302,7 +302,7 @@ module.exports = {
             results.forEach(function(msg) {
                 messages.push(new Message(msg.m_snowflake, msg.m_wfalertmessage, msg.m_t_textchannel, msg.t_g_guild));
             });
-            return results;
+            return messages;
         }
         return null;
     },
@@ -318,7 +318,7 @@ module.exports = {
             results.forEach(function(msg) {
                 messages.push(new Message(msg.m_snowflake, msg.m_wfalertmessage, msg.m_t_textchannel, msg.t_g_guild));
             });
-            return results;
+            return messages;
         }
         return null;
     },
