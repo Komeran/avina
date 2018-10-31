@@ -51,7 +51,7 @@ class Games extends BaseCommand {
                     if(fetchedGamePlayers === gamesCount) {
                         message.channel.send({'embed': embed});
                     }
-                });
+                }).catch(logger.error);
             }, this);
         }).catch(logger.error);
     }
