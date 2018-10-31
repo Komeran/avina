@@ -32,26 +32,30 @@ class WFUpdates extends BaseCommand {
             return;
         }
 
-        if(wfclient.isSubbedToWfUpdates(message.guild.id, message.channel.id)) {
-            wfclient.unsubWfUpdates(message.guild.id, message.channel.id);
-            message.channel.send({
-                embed: {
-                    title: "I will no longer let this channel know when new Warframe versions are out!",
-                    color: 3447003
-                }
-            });
-            message.delete();
-        }
-        else {
-            wfclient.subToWfUpdates(message.guild.id, message.channel.id);
-            message.channel.send({
-                embed: {
-                    title: "I will now let this channel know when new Warframe versions are out!",
-                    color: 3447003
-                }
-            });
-            message.delete();
-        }
+        wfclient.constructor.isSubbedToWfUpdates(message.channel.id).then(function(isSubbed) {
+            if(isSubbed) {
+                wfclient.constructor.unsubWfUpdates(message.channel.id).then(function() {
+                    message.channel.send({
+                        embed: {
+                            title: "I will no longer let this channel know when new Warframe versions are out!",
+                            color: 3447003
+                        }
+                    });
+                    message.delete();
+                });
+            }
+            else {
+                wfclient.constructor.subToWfUpdates(message.guild.id, message.channel.id).then(function() {
+                    message.channel.send({
+                        embed: {
+                            title: "I will now let this channel know when new Warframe versions are out!",
+                            color: 3447003
+                        }
+                    });
+                    message.delete();
+                });
+            }
+        })
     }
 }
 

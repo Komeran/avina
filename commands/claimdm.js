@@ -3,8 +3,9 @@
  * @date 26.07.2018
  */
 
-var logger = require('winston');
-var currentGames = require('../dnd_util/games.js');
+let logger = require('winston');
+let currentGames = require('../dnd_util/games.js');
+let dbClient = require("../databaseClient.js");
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -28,54 +29,55 @@ class ClaimDM extends BaseCommand {
         }
 
         if(args.length > 3) {
-            logger.info('The !claimdm command takes only 1 argument but it was given at least 2!');
+            message.author.send("Sorry, but this command needs only 1 argument!");
             return;
         }
 
         if(!args[1]) {
-            logger.log("Not enough arguments for !claimdm command.");
+            message.author.send("Sorry, but this command needs at least 1 argument!");
             return;
         }
 
         let gid = '' + message.guild.id;
 
-        let cg = currentGames[gid];
-
-        if(!cg) {
-            currentGames[gid] = [];
-        }
-
-        for(let game in cg) {
-            if(cg[game].dm === message.author.id) {
-                message.reply("You are already DM of game '" + cg[game].session + "'. Please use !abandondm first before" +
-                    " claiming DM status of a new game.");
-                return;
+        dbClient.getDnDGames(gid).then(function(cg) {
+            if(!cg) {
+                currentGames[gid] = [];
             }
-        }
 
-        for(let game in cg) {
-            if(cg[game].session === args[1].toLowerCase()) {
-                cg[game].claimRequester = message.author.id;
-                message.reply("<@" + cg[game].dm + "> is the current DM of game '" + cg[game].session + "'. Your request for" +
-                    " a claim has been noted. As soon as the current DM uses the !abandondm command, you will be the new" +
-                    " DM.");
-                return;
+            for(let g in cg) {
+                if(cg[g].dungeonMasterSnowflake === message.author.id) {
+                    message.reply("You are already DM of game '" + cg[g].name + "'. Please use !abandondm first before" +
+                        " claiming DM status of a new game.");
+                    return;
+                }
             }
-        }
 
-        currentGames[gid].push({
-            session: args[1].toLowerCase(),
-            dm: message.author.id,
-            players: [],
-            quests: [],
-            maxPlayers: 6
+            // TODO: Update Database to make claim requests of existing games possible
+            for(let g in cg) {
+                if(cg[g].name === args[1].toLowerCase()) {
+                    cg[g].claimRequester = message.author.id;
+                    message.reply("<@" + cg[g].dungeonMasterSnowflake + "> is the current DM of game '" + cg[g].name + "'. Your request for" +
+                        " a claim has been noted. As soon as the current DM uses the !abandondm command, you will be the new" +
+                        " DM.");
+                    return;
+                }
+            }
+
+            currentGames[gid].push({
+                session: args[1].toLowerCase(),
+                dm: message.author.id,
+                players: [],
+                quests: [],
+                maxPlayers: 6
+            });
+
+            if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
+                currentGames[gid][currentGames[gid].length-1].maxPlayers = Number(args[2]);
+
+            message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
+                + " to join the game!");
         });
-
-        if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
-            currentGames[gid][currentGames[gid].length-1].maxPlayers = Number(args[2]);
-
-        message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
-            + " to join the game!");
     }
 }
 

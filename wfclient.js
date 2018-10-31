@@ -9,7 +9,12 @@ let WarframeVersion = require('warframe-updates');
 let warframeVersion = new WarframeVersion();
 let WorldState = require('warframe-worldstate-parser');
 let config = require('./config.json');
-let guildSettings = require('./util/guildSettings.js');
+//let guildSettings = require('./util/guildSettings.js');
+let dbClient = require('./databaseClient.js');
+let Guild = require('./databaseClient.js').Guild;
+let TextChannel = require('./databaseClient.js').TextChannel;
+let Message = require('./databaseClient.js').Message;
+let DiscordClient = require('discord.js').Client;
 
 /**
  *
@@ -17,47 +22,55 @@ let guildSettings = require('./util/guildSettings.js');
  * @private
  */
 let _discordClient = null;
-let _alertMessages = null;
 
 warframeVersion.on("update", update => {
     logger.info("New Warframe Version: " + update.version + "\n" + update.title);
-    for(let gid in guildSettings) {
-        if(guildSettings[gid].warframe && guildSettings[gid].warframe.versionUpdateChannels){
-            let channels = guildSettings[gid].warframe.versionUpdateChannels;
-            for(let i = 0; i < channels.length; i++) {
-                if(_discordClient.guilds.get(gid)) {
-                    if(_discordClient.guilds.get(gid).channels.get(channels[i])) {
-                        _discordClient.guilds.get(gid).channels.get(channels[i]).send({
-                            embed: {
-                                title: "New Warframe Version is out!",
-                                description: '***"' + update.title + '"***',
-                                color: 3447003,
-                                fields: [
-                                    {
-                                        name: "Version:",
-                                        value: update.version
-                                    },
-                                    {
-                                        name: "Link:",
-                                        value: update.link
-                                    }
-                                ]
-                            }
-                        });
-                    }
-                    else
-                        guildSettings[gid].warframe.versionUpdateChannels.remove(channels[i]);
+    dbClient.getWfUpdateTextChannels().then(
+        /**
+         *
+         * @param channels {TextChannel[]}
+         */
+        function(channels) {
+            channels.forEach(function(channel) {
+                let guild = _discordClient.guilds.get(channel.guildSnowflake);
+                if(!guild) {
+                    // Guild doesn't exist anymore. Delete everything of it from the database...
+                    dbClient.deleteGuilds(Guild.getDefault(channel.guildSnowflake));
+                    return;
                 }
-            }
+                let textChannel = guild.channels.get(channel.snowflake);
+                if(!textChannel) {
+                    // The text channel doesn't exist anymore. Delete everything of it from the database...
+                    dbClient.deleteTextChannels(channel);
+                    return;
+                }
+                textChannel.send({
+                    embed: {
+                        title: "A new Warframe Version is out!",
+                        description: '***"' + update.title + '"***',
+                        color: 3447003,
+                        fields: [
+                            {
+                                name: "Version:",
+                                value: update.version
+                            },
+                            {
+                                name: "Link:",
+                                value: update.link
+                            }
+                        ]
+                    }
+                });
+            });
         }
-    }
+    );
 });
 
 let client = null;
 
 /**
  *
- * @param [discordClient] {Object}
+ * @param [discordClient] {DiscordClient}
  */
 module.exports = function(discordClient) {
     if(!client) {
@@ -69,116 +82,94 @@ module.exports = function(discordClient) {
 };
 
 class WarframeClient {
-
     /**
      *
-     * @param discordClient {Object}
-     * @param [alertMessages] {Object}
+     * @param discordClient {DiscordClient}
      */
-    constructor(discordClient, alertMessages) {
+    constructor(discordClient) {
         _discordClient = discordClient;
-        _alertMessages = alertMessages;
         _recursiveAlertUpdater();
     }
 
     /**
      *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+     * @param guildId {string} The ID Snowflake of the Discord Guild
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     * @async
+     * @return {Promise<void>}
      */
-    subToWfUpdates(guildId, discordChannelId) {
-        if(!guildSettings[guildId]) {
-            guildSettings[guildId] = {
-                warframe: {
-                    versionUpdateChannels: []
-                }
-            };
-        }
-        if(!guildSettings[guildId].warframe) {
-            guildSettings[guildId].warframe = {
-                versionUpdateChannels: []
-            };
-        }
-        if(!guildSettings[guildId].warframe.versionUpdateChannels) {
-            guildSettings[guildId].warframe.versionUpdateChannels = [];
-        }
-        if(guildSettings[guildId].warframe.versionUpdateChannels.indexOf(discordChannelId) === -1) {
-            guildSettings[guildId].warframe.versionUpdateChannels.push(discordChannelId);
-        }
+    static async subToWfUpdates(guildId, discordChannelId) {
+        await dbClient.addGuilds(true, Guild.getDefault(guildId));
+
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        textChannel = textChannel || TextChannel.getDefault(discordChannelId, guildId);
+        textChannel.updateWarframeVersion = true;
+        await dbClient.addTextChannels(false, textChannel);
     }
     /**
      *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
-     * @returns {boolean}
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     * @returns {Promise<boolean>}
      */
-    isSubbedToWfUpdates(guildId, discordChannelId) {
-        return guildSettings[guildId]
-            && guildSettings[guildId].warframe
-            && guildSettings[guildId].warframe.versionUpdateChannels
-            && guildSettings[guildId].warframe.versionUpdateChannels.indexOf(discordChannelId) !== -1;
+    static async isSubbedToWfUpdates(discordChannelId) {
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        return !!textChannel && textChannel.updateWarframeVersion;
     }
     /**
      *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     * @async
+     * @return {Promise<void>}
      */
-    unsubWfUpdates(guildId, discordChannelId) {
-        if(this.isSubbedToWfUpdates(guildId, discordChannelId)) {
-            guildSettings[guildId].warframe.versionUpdateChannels.remove(discordChannelId);
+    static async unsubWfUpdates(discordChannelId) {
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        if(textChannel) {
+            textChannel.updateWarframeVersion = false;
+            await dbClient.addTextChannels(false, textChannel);
         }
     }
 
     /**
      *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
+     * @param guildId {string} The ID Snowflake of the Discord Guild
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     * @async
+     * @return {Promise<void>}
      */
-    subToAlerts(guildId, discordChannelId) {
-        if(!guildSettings[guildId]) {
-            guildSettings[guildId] = {
-                warframe: {
-                    alertChannels: []
-                }
-            };
-        }
-        if(!guildSettings[guildId].warframe) {
-            guildSettings[guildId].warframe = {
-                alertChannels: []
-            };
-        }
-        if(!guildSettings[guildId].warframe.alertChannels) {
-            guildSettings[guildId].warframe.alertChannels = [];
-        }
-        if(guildSettings[guildId].warframe.alertChannels.indexOf(discordChannelId) === -1) {
-            guildSettings[guildId].warframe.alertChannels.push(discordChannelId);
-        }
-    }
-    /**
-     *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
-     * @returns {boolean}
-     */
-    isSubbedToAlerts(guildId, discordChannelId) {
-        return guildSettings[guildId]
-            && guildSettings[guildId].warframe
-            && guildSettings[guildId].warframe.alertChannels
-            && guildSettings[guildId].warframe.alertChannels.indexOf(discordChannelId) !== -1;
-    }
-    /**
-     *
-     * @param guildId {(string|number)} The ID Snowflake of the Discord Guild
-     * @param discordChannelId {(string|number)} The ID Snowflake of the Discord Channel
-     */
-    unsubAlerts(guildId, discordChannelId) {
-        if(this.isSubbedToAlerts(guildId, discordChannelId)) {
-            guildSettings[guildId].warframe.alertChannels.remove(discordChannelId);
-        }
-    }
+    static async subToAlerts(guildId, discordChannelId) {
+        // Make sure the Guild is saved
+        await dbClient.addGuilds(true, Guild.getDefault(guildId));
 
-    getAlertMessages() {
-        return _alertMessages;
+        // Get the existing TextChannel save data if it exists, or create a new one otherwise
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        textChannel = textChannel || TextChannel.getDefault(discordChannelId, guildId);
+
+        // Mark the text channel for alert notifications
+        textChannel.notifyWarframeAlerts = true;
+
+        // Force update the text channel
+        await dbClient.addTextChannels(false, textChannel);
+    }
+    /**
+     *
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     * @returns {Promise<boolean>}
+     * @async
+     */
+    static async isSubbedToAlerts(discordChannelId) {
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        return !!textChannel && textChannel.notifyWarframeAlerts;
+    }
+    /**
+     *
+     * @param discordChannelId {string} The ID Snowflake of the Discord Channel
+     */
+    static async unsubAlerts(discordChannelId) {
+        let textChannel = await dbClient.getTextChannel(discordChannelId);
+        if(textChannel) {
+            textChannel.notifyWarframeAlerts = false;
+            await dbClient.addTextChannels(false, textChannel);
+        }
     }
 }
 
@@ -192,127 +183,105 @@ function _recursiveAlertUpdater() {
     require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
         let ws = new WorldState(worldStateData);
 
-        logger.debug("Polled Alerts: " + ws.alerts.length);
-        logger.debug("Guild Settings: " + Object.keys(guildSettings).length);
 
-        for(let gid in guildSettings) {
-            logger.debug("Guild: " + gid);
-            logger.debug("Guild has Warframe Setting: " + !!guildSettings[gid].warframe);
-            logger.debug("Guild has Alert Channels: " + (!!guildSettings[gid].warframe && !!guildSettings[gid].warframe.alertChannels));
-            if(guildSettings[gid].warframe && guildSettings[gid].warframe.alertChannels){
-                let channels = guildSettings[gid].warframe.alertChannels;
-                logger.debug("Alert Channels: " + channels.length);
-                for(let i = 0; i < channels.length; i++) {
-                    logger.debug("Alert Channel: " + channels[i]);
-                    logger.debug("Client Guilds: " + _discordClient.guilds.array().length);
-                    let guild = _discordClient.guilds.get(gid);
-                    logger.debug("Client has Guild: " + !!guild);
-                    if(guild) {
-                        let channel = guild.channels.get(channels[i]);
-                        logger.debug("Guild has Channel: " + !!channel);
-                        if(channel) {
-                            logger.debug("Alert Message Channels: " + (_alertMessages? Object.keys(_alertMessages).length : 0));
-                            logger.debug("Channel has Alert Messages: " + (!!_alertMessages && !!_alertMessages[channels[i]]));
-                            if(_alertMessages && _alertMessages[channels[i]]) {
-                                logger.debug("Channel Alert Messages: " + Object.keys(_alertMessages[channels[i]]).length);
-                                let curAlerts = [];
-                                for(let alert of ws.alerts) {
-                                    curAlerts.push(alert.id);
-                                }
-                                for(let id in _alertMessages[channels[i]]) {
-                                    if(curAlerts.indexOf(id) === -1) {
-                                        channel.fetchMessage(_alertMessages[channels[i]][id])
-                                            .then(message => message.delete())
-                                            .catch(function(e) {
-                                                console.log("WEE");
-                                                logger.error(e);
-                                            });
-                                        delete _alertMessages[channels[i]][id];
-                                    }
-                                    else {
-                                        for(let alert of ws.alerts) {
-                                            if(alert.id === id) {
-                                                channel.fetchMessage(_alertMessages[channels[i]][id])
-                                                    .then(message => message.edit({
-                                                        embed: {
-                                                            title: "ALERT",
-                                                            description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
-                                                            color: 3447003,
-                                                            thumbnail: {
-                                                                url: alert.mission.reward.thumbnail
-                                                            },
-                                                            fields: [
-                                                                {
-                                                                    name: "Enemy:",
-                                                                    value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
-                                                                },
-                                                                {
-                                                                    name: "Reward:",
-                                                                    value: alert.mission.reward.asString
-                                                                },
-                                                                {
-                                                                    name: "Time left:",
-                                                                    value: alert.eta || 'N/A'
-                                                                }
-                                                            ]
-                                                        }
-                                                    }))
-                                                    .catch(function(err) {
-                                                        console.log("MOO");
-                                                        logger.error(err);
-                                                        delete _alertMessages[channels[i]][id];
-                                                    });
-                                                break;
-                                            }
+        dbClient.getAllAlertMessages().then(function(messages) {
+            if(!messages || messages.length === 0)
+                return;
+            let existingAlerts = {};
+            let messagesToRemove = [];
+            // Handle existing alert messages first
+            messages.forEach(function(message) {
+                let discordMessage = _discordClient.messages.get(message.snowflake);
+                if(discordMessage) {
+                    for(let alert of ws.alerts) {
+                        if(alert.id === message.wfAlertMessage) {
+                            discordMessage.edit({
+                                embed: {
+                                    title: "ALERT",
+                                    description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
+                                    color: 3447003,
+                                    thumbnail: {
+                                        url: alert.mission.reward.thumbnail
+                                    },
+                                    fields: [
+                                        {
+                                            name: "Enemy:",
+                                            value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
+                                        },
+                                        {
+                                            name: "Reward:",
+                                            value: alert.mission.reward.asString
+                                        },
+                                        {
+                                            name: "Time left:",
+                                            value: alert.eta || 'N/A'
                                         }
-                                    }
+                                    ]
                                 }
-                            }
-                            if(!_alertMessages)
-                                _alertMessages = {};
-                            for(let alert of ws.alerts) {
-                                if(!_alertMessages[channels[i]])
-                                    _alertMessages[channels[i]] = {};
-                                logger.debug("Is new Alert: " + !_alertMessages[channels[i]][alert.id]);
-                                if(!_alertMessages[channels[i]][alert.id]) {
-                                    channel.send({
-                                        embed: {
-                                            title: "ALERT",
-                                            description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
-                                            color: 3447003,
-                                            thumbnail: {
-                                                url: alert.mission.reward.thumbnail
-                                            },
-                                            fields: [
-                                                {
-                                                    name: "Enemy:",
-                                                    value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
-                                                },
-                                                {
-                                                    name: "Reward:",
-                                                    value: alert.mission.reward.asString
-                                                },
-                                                {
-                                                    name: "Time left:",
-                                                    value: alert.eta || 'N/A'
-                                                }
-                                            ]
-                                        }
-                                    })
-                                        .then(function(message) {
-                                            _alertMessages[channels[i]][alert.id] = message.id
-                                        })
-                                        .catch(logger.error);
-                                }
-                            }
-                        }
-                        else {
-                            guildSettings[gid].warframe.alertChannels.remove(channels[i]);
+                            });
+                            existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
+                            existingAlerts[discordMessage.guild.id].push(alert.id);
+                            return;
                         }
                     }
+                    discordMessage.delete();
+                    messagesToRemove.push(message);
                 }
-            }
-        }
+                else {
+                    messagesToRemove.push(message);
+                }
+            });
+
+            let channelsToRemove = [];
+
+            // Now send new ones where needed.
+            dbClient.getWarframeAlertTextChannels().then(function(textChannels) {
+                if(!textChannels || textChannels.length === 0)
+                    return;
+
+                textChannels.forEach(function(textChannel) {
+                    let discordChannel = _discordClient.channels.get(textChannel.snowflake);
+                    if(discordChannel) {
+                        for(let alert of ws.alerts) {
+                            if(existingAlerts[textChannel.guildSnowflake].indexOf(alert.id) !== -1)
+                                continue;
+                            discordChannel.send({
+                                embed: {
+                                    title: "ALERT",
+                                    description: '**' + alert.mission.node + ' [' + alert.mission.type + ']**',
+                                    color: 3447003,
+                                    thumbnail: {
+                                        url: alert.mission.reward.thumbnail
+                                    },
+                                    fields: [
+                                        {
+                                            name: "Enemy:",
+                                            value: alert.mission.faction + ' (Lv ' + alert.mission.minEnemyLevel + '-' + alert.mission.maxEnemyLevel + ')'
+                                        },
+                                        {
+                                            name: "Reward:",
+                                            value: alert.mission.reward.asString
+                                        },
+                                        {
+                                            name: "Time left:",
+                                            value: alert.eta || 'N/A'
+                                        }
+                                    ]
+                                }
+                            }).then(function(msg) {
+                                dbClient.addMessages(new Message(msg.id, alert.id, textChannel.snowflake, textChannel.guildSnowflake));
+                            });
+                        }
+                    }
+                    else {
+                        channelsToRemove.push(textChannel);
+                    }
+                });
+                // Make sure to delete the channels and messages from the database that now don't exist anymore
+                dbClient.deleteTextChannels(...channelsToRemove);
+                dbClient.deleteMessages(...messagesToRemove);
+            })
+        });
         setTimeout(_recursiveAlertUpdater, (config && config.warframe && config.warframe.alertUpdateRate) ? config.warframe.alertUpdateRate : 30000);
     });
 }

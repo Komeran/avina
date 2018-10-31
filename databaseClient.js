@@ -91,7 +91,7 @@ const Application = function(guildSnowflake, userSnowflake, roleSnowflake) {
 /**
  * Message DAO Object
  * @param snowflake {string} The Snowflake ID of the Discord Message
- * @param wfAlertMessage {boolean}
+ * @param [wfAlertMessage] {string} The ID of the Warframe Alert
  * @param textChannelSnowflake {string} The Snowflake ID of the Discord Text Channel
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @constructor
@@ -111,7 +111,7 @@ const Message = function(snowflake, wfAlertMessage, textChannelSnowflake,guildSn
  * @return {Message} A Message Object with default values for non-key parameters
  */
 Message.getDefault = function(snowflake, textChannelSnowflake, guildSnowflake) {
-    return new Message(snowflake, false, textChannelSnowflake, guildSnowflake);
+    return new Message(snowflake, null, textChannelSnowflake, guildSnowflake);
 };
 
 /**
@@ -226,21 +226,38 @@ module.exports = {
     //region GET ENTRIES
 
     /**
+     * Retrieves saved TextChannels that are marked for Warframe version updates
+     * @return {Promise<TextChannel[]>}
+     */
+    getWfUpdateTextChannels: async function() {
+        let results = await query("SELECT * FROM t_textchannels where t_updatewarframeversion = 1;");
+        if(results) {
+            let textChannels = [];
+            results.forEach(function(tc) {
+                textChannels.push(new TextChannel(tc.t_snowflake, tc.t_welcomemessage, tinyIntToBool(tc.t_ignorecommands), tinyIntToBool(tc.t_updatewarframeversion), tinyIntToBool(tc.t_notifywarframealerts), tc.t_g_guild));
+            });
+            return results;
+        }
+        return null;
+    },
+    /** TODO: Create User Object
      * Retrieves saved information of a user
      * @param snowflake {string} The snowflake ID of the user
      * @async
+     * @return {Promise<User>}
+     * @deprecated Don't use yet!
      */
     getUser: async function(snowflake) {
         let result = await query("SELECT * FROM u_users where u_snowflake = '" + snowflake + "';");
         if(result)
-            return result[0];
+            return result[0].u_snowflake;
         return null;
     },
     /**
      * Retrieves saved information of a guild
      * @param snowflake {string} The snowflake ID of the guild
      * @async
-     * @return {Guild}
+     * @return {Promise<Guild>}
      */
     getGuild: async function(snowflake) {
         let result =  await query("SELECT * FROM g_guilds where g_snowflake = '" + snowflake + "';");
@@ -252,7 +269,7 @@ module.exports = {
      * Retrieves saved information of a text channel
      * @param snowflake {string} The snowflake ID of the text channel
      * @async
-     * @return {TextChannel}
+     * @return {Promise<TextChannel>}
      */
     getTextChannel: async function(snowflake) {
         let result = await query("SELECT * FROM t_textchannels where t_snowflake = '" + snowflake + "';");
@@ -264,12 +281,45 @@ module.exports = {
      * Retrieves saved information of a message
      * @param snowflake {string} The snowflake ID of the message
      * @async
-     * @return {Message}
+     * @return {Promise<Message>}
      */
     getMessage: async function(snowflake) {
         let result = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_snowflake = '" + snowflake + "';");
         if(result)
-            return new Message(result[0].m_snowflake, tinyIntToBool(result[0].m_wfalertmessage), result[0].m_t_textchannel, result[0].t_g_guild);
+            return new Message(result[0].m_snowflake, result[0].m_wfalertmessage, result[0].m_t_textchannel, result[0].t_g_guild);
+        return null;
+    },
+    /**
+     * Retrieves saved information of messages associated with the given alert ID
+     * @param alertId {string} The ID of the Warframe Alert
+     * @async
+     * @return {Promise<Message[]>}
+     */
+    getAlertMessages: async function(alertId) {
+        let results = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_wfalertmessage = '" + alertId + "';");
+        if(results) {
+            let messages = [];
+            results.forEach(function(msg) {
+                messages.push(new Message(msg.m_snowflake, msg.m_wfalertmessage, msg.m_t_textchannel, msg.t_g_guild));
+            });
+            return results;
+        }
+        return null;
+    },
+    /**
+     * Retrieves saved information of all messages associated with alert IDs
+     * @async
+     * @return {Promise<Message[]>}
+     */
+    getAllAlertMessages: async function() {
+        let results = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_wfalertmessage IS NOT NULL;");
+        if(results) {
+            let messages = [];
+            results.forEach(function(msg) {
+                messages.push(new Message(msg.m_snowflake, msg.m_wfalertmessage, msg.m_t_textchannel, msg.t_g_guild));
+            });
+            return results;
+        }
         return null;
     },
     /**
@@ -420,6 +470,22 @@ module.exports = {
                 messages.push(new Message(msg.m_snowflake, tinyIntToBool(msg.m_wfalertmessage), msg.m_t_textchannel));
             });
             return messages;
+        }
+        return null;
+    },
+    /**
+     * Retrieves all saved Warframe Alert Messages of a Text Channel
+     * @async
+     * @return {Promise<[TextChannel]>}
+     */
+    getWarframeAlertTextChannels: async function() {
+        let result = await query("SELECT * FROM t_textchannels WHERE t_notifywarframealerts = 1;");
+        if(result) {
+            let channels = [];
+            result.forEach(function(tc) {
+                channels.push(new TextChannel(tc.t_snowflake, tc.t_welcomemessage, tinyIntToBool(tc.t_ignorecommands), tinyIntToBool(tc.t_updatewarframeversion), tinyIntToBool(tc.t_notifywarframealerts), tc.t_g_guild));
+            });
+            return channels;
         }
         return null;
     },
