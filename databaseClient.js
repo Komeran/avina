@@ -273,8 +273,6 @@ module.exports = {
      */
     getTextChannel: async function(snowflake) {
         let result = await query("SELECT * FROM t_textchannels where t_snowflake = '" + snowflake + "';");
-        console.log("result:", result);
-        console.log("query:", "SELECT * FROM t_textchannels where t_snowflake = '" + snowflake + "';");
         if(result)
             return new TextChannel(result[0].t_snowflake, result[0].t_welcomemessage, tinyIntToBool(result[0].t_ignorecommands), tinyIntToBool(result[0].t_updatewarframeversion), tinyIntToBool(result[0].t_notifywarframealerts), result[0].t_g_guild);
         return null;
@@ -353,7 +351,6 @@ module.exports = {
         if(result) {
             let apps = [];
             result.forEach(function(app) {
-                console.log(app);
                 apps.push(new Application(app.a_g_guild, app.a_u_user, app.a_r_role));
             });
             return apps;
@@ -974,6 +971,7 @@ module.exports = {
  * @returns {Promise}
  */
 let query = function(queryString) {
+    console.log("QUERY:", queryString);
     return new Promise(resolve => dbConnection.query(queryString, function(error, result, fields) {
         if(result && result[0]) {
             resolve(result);
