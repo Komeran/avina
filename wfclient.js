@@ -184,12 +184,12 @@ function _recursiveAlertUpdater() {
     logger.debug("Fetching Warframe State...");
     require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
         let ws = new WorldState(worldStateData);
-
+        console.log("Updating Warframe Alerts!");
 
         dbClient.getAllAlertMessages().then(function(messages) {
             let messagesToRemove = [];
+            let existingAlerts = {};
             if(messages && messages.length !== 0) {
-                let existingAlerts = {};
                 // Handle existing alert messages first
                 messages.forEach(function (message) {
                     let discordMessage = _discordClient.messages.get(message.snowflake);
