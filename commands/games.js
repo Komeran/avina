@@ -23,7 +23,10 @@ class Games extends BaseCommand {
 
         let gid = message.guild.id;
 
+        logger.debug("Fetching Games...");
+
         dbClient.getDnDGames(gid).then(function(games) {
+            logger.debug("Games:", games);
             if(!games || games.length === 0) {
                 message.author.send("There are no games currently! Be the first to start one using `!claimdm <Game>` , or have your DM do it!");
                 return;
@@ -39,8 +42,12 @@ class Games extends BaseCommand {
             let gamesCount = games.length;
             let fetchedGamePlayers = 0;
 
+            logger.debug("Fetching Game Players...");
+
             games.forEach(function(game) {
                 dbClient.getDnDGamePlayers(gid, game.id).then(function(players) {
+
+                    logger.debug("Got players for game '" + game.id + "':", players);
 
                     let playerCount = players? players.length : 0;
                     embed.fields.push({
@@ -49,9 +56,10 @@ class Games extends BaseCommand {
                     });
                     fetchedGamePlayers++;
                     if(fetchedGamePlayers === gamesCount) {
+                        logger.debug("Done fetching players.");
                         message.channel.send({'embed': embed});
                     }
-                });
+                }).catch(logger.error);
             }, this);
         }).catch(logger.error);
     }
