@@ -33,6 +33,7 @@ class WFAlerts extends BaseCommand {
         }
 
         wfclient.constructor.isSubbedToAlerts(message.channel.id).then(function(isSubbed) {
+            console.log("isSubbed", isSubbed);
             if(isSubbed) {
                 wfclient.constructor.unsubAlerts(message.channel.id).then(function() {
                     message.channel.send({
