@@ -158,6 +158,9 @@ class WarframeClient {
      */
     static async isSubbedToAlerts(discordChannelId) {
         let textChannel = await dbClient.getTextChannel(discordChannelId);
+        console.log("discordChannelId:", discordChannelId);
+        console.log("textChannel:", textChannel);
+        console.log("notifyWarframeAlerts:", textChannel.notifyWarframeAlerts);
         return !!textChannel && textChannel.notifyWarframeAlerts;
     }
     /**
