@@ -142,10 +142,12 @@ class WarframeClient {
 
         // Get the existing TextChannel save data if it exists, or create a new one otherwise
         let textChannel = await dbClient.getTextChannel(discordChannelId);
+        console.log("textChannel", textChannel);
         textChannel = textChannel || TextChannel.getDefault(discordChannelId, guildId);
 
         // Mark the text channel for alert notifications
         textChannel.notifyWarframeAlerts = true;
+        console.log("textChannel", textChannel);
 
         // Force update the text channel
         await dbClient.addTextChannels(false, textChannel);

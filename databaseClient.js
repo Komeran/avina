@@ -644,7 +644,7 @@ module.exports = {
         messages.forEach(function(message) {
             textChannels.push(TextChannel.getDefault(message.textChannelSnowflake, message.guildSnowflake));
             valuesString += "('" + message.snowflake + "'," +
-                " " + boolToTinyint(message.wfAlertMessage) + "," +
+                " '" + message.wfAlertMessage + "'," +
                 " '" + message.textChannelSnowflake + "'),"
         });
         await this.addTextChannels(true, ...textChannels);
