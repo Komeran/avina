@@ -315,7 +315,7 @@ module.exports = {
      * @return {[DnDGame]}
      */
     getDnDGames: async function(snowflake) {
-        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + ";");
+        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + "';");
         if(result) {
             let games = [];
             result.forEach(function(game) {
@@ -333,7 +333,7 @@ module.exports = {
      * @return {DnDGame}
      */
     getDnDGame: async function(snowflake, id) {
-        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + " and d_id = " + id + ";");
+        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + "' and d_id = " + id + ";");
         if(result)
             return new DnDGame(result[0].d_id, result[0].d_g_guild, result[0].d_name, result[0].d_playermax, result[0].d_dp_u_dungeonmaster);
     },
@@ -345,7 +345,7 @@ module.exports = {
      * @return {DnDGame}
      */
     getDnDGameByDM: async function(guildSnowflake, dmSnowflake) {
-        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + guildSnowflake + " and d_dp_u_dungeonmaster = '" + dmSnowflake + "';");
+        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + guildSnowflake + "' and d_dp_u_dungeonmaster = '" + dmSnowflake + "';");
         if(result)
             return new DnDGame(result[0].d_id, result[0].d_g_guild, result[0].d_name, result[0].d_playermax, result[0].d_dp_u_dungeonmaster);
     },
@@ -357,7 +357,7 @@ module.exports = {
      * @return {[DnDQuest]}
      */
     getDnDQuests: async function(snowflake, id) {
-        let result = await query("SELECT * FROM dq_dndquests where dq_d_g_guild = '" + snowflake + " and dq_d_dndgame = " + id + ";");
+        let result = await query("SELECT * FROM dq_dndquests where dq_d_g_guild = '" + snowflake + "' and dq_d_dndgame = " + id + ";");
         if(result) {
             let quests = [];
             result.forEach(function(quest) {
@@ -376,7 +376,7 @@ module.exports = {
      * @return {DnDQuest}
      */
     getDnDQuest: async function(snowflake, gameId, questId) {
-        let result = await query("SELECT * FROM dq_dndquests where dq_d_g_guild = '" + snowflake + " and dq_d_dndgame = " + gameId + " and dq_id = " + questId + ";");
+        let result = await query("SELECT * FROM dq_dndquests where dq_d_g_guild = '" + snowflake + "' and dq_d_dndgame = " + gameId + " and dq_id = " + questId + ";");
         if(result)
             return new DnDQuest(result[0].dq_id, result[0].dq_d_dndgame, result[0].dq_d_g_guild, result[0].dq_description, tinyIntToBool(result[0].dq_completed));
         return null;
