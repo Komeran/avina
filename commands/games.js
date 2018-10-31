@@ -36,16 +36,23 @@ class Games extends BaseCommand {
                 fields: []
             };
 
+            let gamesCount = games.length;
+            let fetchedGamePlayers = 0;
+
             games.forEach(function(game) {
-                let players = dbClient.getDnDGamePlayers(gid, game.id);
-                let playerCount = players? players.length : 0;
-                embed.fields.push({
-                    name: game.name,
-                    value: "DM: <@" + game.dungeonMasterSnowflake + ">\nPlayers: " + playerCount + "/" + game.playerMax
+                dbClient.getDnDGamePlayers(gid, game.id).then(function(players) {
+
+                    let playerCount = players? players.length : 0;
+                    embed.fields.push({
+                        name: game.name,
+                        value: "DM: <@" + game.dungeonMasterSnowflake + ">\nPlayers: " + playerCount + "/" + game.playerMax
+                    });
+                    fetchedGamePlayers++;
+                    if(fetchedGamePlayers === gamesCount) {
+                        message.channel.send({'embed': embed});
+                    }
                 });
             }, this);
-
-            message.channel.send({'embed': embed});
         }).catch(logger.error);
     }
 }
