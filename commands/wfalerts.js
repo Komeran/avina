@@ -37,7 +37,7 @@ class WFAlerts extends BaseCommand {
                 wfclient.constructor.unsubAlerts(message.channel.id).then(function() {
                     message.channel.send({
                         embed: {
-                            title: "I will no longer let this channel know when new Warframe versions are out!",
+                            title: "I will no longer update this Channel about Warframe alerts!",
                             color: 3447003
                         }
                     });
@@ -48,7 +48,7 @@ class WFAlerts extends BaseCommand {
                 wfclient.constructor.subToAlerts(message.guild.id, message.channel.id).then(function() {
                     message.channel.send({
                         embed: {
-                            title: "I will now let this channel know when new Warframe versions are out!",
+                            title: "I will now update this Channel about Warframe alerts!",
                             color: 3447003
                         }
                     });
