@@ -161,7 +161,7 @@ const Filter = function(id, channelId, textChannelSnowflake, attribute, value, g
 
 /**
  * DnDGame DAO Object
- * @param id {number} The ID of the DnDGame
+ * @param [id] {number} The ID of the DnDGame
  * @param guildSnowflake {string} The Snowflake ID of the Discord Guild
  * @param name {string} The name of the DnDGame
  * @param playerMax {number} The maximum player count of the DnDGame
@@ -208,6 +208,19 @@ const DnDQuest = function(id, gameId, guildSnowflake, description, completed) {
     this.completed = completed;
 };
 
+/**
+ * DnDDmRequest DAO Object
+ * @param userSnowflake {string}
+ * @param gameId {number}
+ * @param guildSnowflake {string}
+ * @constructor
+ */
+const DnDDmRequest = function(userSnowflake, gameId, guildSnowflake) {
+    this.userSnowflake = userSnowflake;
+    this.gameId = gameId;
+    this.guildSnowflake = guildSnowflake;
+};
+
 //endregion
 
 module.exports = {
@@ -221,6 +234,7 @@ module.exports = {
     DnDGame: DnDGame,
     DnDGamePlayer: DnDGamePlayer,
     DnDQuest: DnDQuest,
+    DnDDmRequest: DnDDmRequest,
     //endregion
 
     //region GET ENTRIES
@@ -236,7 +250,22 @@ module.exports = {
             results.forEach(function(tc) {
                 textChannels.push(new TextChannel(tc.t_snowflake, tc.t_welcomemessage, tinyIntToBool(tc.t_ignorecommands), tinyIntToBool(tc.t_updatewarframeversion), tinyIntToBool(tc.t_notifywarframealerts), tc.t_g_guild));
             });
-            return results;
+            return textChannels;
+        }
+        return null;
+    },
+    /**
+     * Retrieves saved DnDDmRequests that relate to a given Game
+     * @return {Promise<DnDDmRequest[]>}
+     */
+    getDnDDmRequestsByGame: async function(gameName, guildSnowflake) {
+        let results = await query("SELECT * FROM dr_dnddmrequest LEFT JOIN d_dndgames ON dr_d_gameid = d_id WHERE d_name = '" + gameName + "' AND dr_d_g_guildid = '" + guildSnowflake + "';");
+        if(results) {
+            let requests = [];
+            results.forEach(function(request) {
+                requests.push(new DnDDmRequest(request.dr_dp_u_player, request.dr_d_gameid, request.dr_d_g_guildid));
+            });
+            return requests;
         }
         return null;
     },
@@ -410,10 +439,15 @@ module.exports = {
      * @async
      * @return {DnDGame}
      */
-    getDnDGameByDM: async function(guildSnowflake, dmSnowflake) {
+    getDnDGamesByDM: async function(guildSnowflake, dmSnowflake) {
         let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + guildSnowflake + "' and d_dp_u_dungeonmaster = '" + dmSnowflake + "';");
-        if(result)
-            return new DnDGame(result[0].d_id, result[0].d_g_guild, result[0].d_name, result[0].d_playermax, result[0].d_dp_u_dungeonmaster);
+        if(result) {
+            let games = [];
+            result.forEach(function(game) {
+                games.push(new DnDGame(game.d_id, game.d_g_guild, game.d_name, game.d_playermax, game.d_dp_u_dungeonmaster));
+            });
+        }
+        return null;
     },
     /**
      * Retrieves saved quests of a dnd game
@@ -586,6 +620,22 @@ module.exports = {
         });
         valuesString = valuesString.substring(0, valuesString.length-1);
         return await query("INSERT INTO g_guilds (g_snowflake, g_checkhoist) VALUES " + valuesString + (ifNotExists? ";" : " ON DUPLICATE KEY UPDATE g_checkhoist = VALUES(`g_checkhoist`);"));
+    },
+    /**
+     * Adds one or several guilds to the database if not already there.
+     * @param requests {...DnDDmRequest} The DnDDmRequest object(s)
+     * @async
+     */
+    addDnDDmRequests: async function(...requests) {
+        let valuesString = "";
+        let dndPlayers = [];
+        requests.forEach(function(request) {
+            valuesString += "('" + request.userSnowflake + "', '" + request.gameId + "', '" + request.guildSnowflake + "'),";
+            dndPlayers.push(request.userSnowflake);
+        });
+        valuesString = valuesString.substring(0, valuesString.length-1);
+        await this.addDnDPlayers(...dndPlayers);
+        return await query("INSERT INTO dr_dnddmrequest (dr_dp_u_player, dr_d_gameid, dr_d_g_guildid) VALUES " + valuesString + ";");
     },
     /**
      * Adds one or several roles to the database if not already there.
@@ -812,6 +862,20 @@ module.exports = {
 
     //region DELETE ENTRIES
 
+    /**
+     * Deletes all given DnDDmRequests from the database
+     * @param requests {...DnDDmRequest} The DnDDmRequest(s) to be deleted
+     */
+    deleteDnDDmRequests: async function(...requests) {
+        let inString = "(";
+        requests.forEach(function(request) {
+            inString += "('" + request.userSnowflake + "',";
+            inString += "" + request.gameId + ",";
+            inString += "'" + request.guildSnowflake + "'),";
+        });
+        inString = inString.substring(0, inString.length-1) + ")";
+        return await query("DELETE FROM dr_dnddmrequest WHERE (dr_dp_u_player, dr_d_gameid, dr_d_g_guildid) IN " + inString + ";");
+    },
     /**
      * Deletes all given guilds from the database
      * @param guilds {...Guild} The Guild(s) to be deleted

@@ -4,8 +4,9 @@
  */
 
 let logger = require('winston');
-let currentGames = require('../dnd_util/games.js');
 let dbClient = require("../databaseClient.js");
+let DnDDmRequest = require("../databaseClient.js").DnDDmRequest;
+let DnDGame = require("../databaseClient.js").DnDGame;
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -42,41 +43,41 @@ class ClaimDM extends BaseCommand {
 
         dbClient.getDnDGames(gid).then(function(cg) {
             if(!cg) {
-                currentGames[gid] = [];
+                cg = [];
             }
 
             for(let g in cg) {
                 if(cg[g].dungeonMasterSnowflake === message.author.id) {
                     message.reply("You are already DM of game '" + cg[g].name + "'. Please use !abandondm first before" +
                         " claiming DM status of a new game.");
-                    return;
+                    break;
                 }
             }
 
-            // TODO: Update Database to make claim requests of existing games possible
             for(let g in cg) {
                 if(cg[g].name === args[1].toLowerCase()) {
-                    cg[g].claimRequester = message.author.id;
-                    message.reply("<@" + cg[g].dungeonMasterSnowflake + "> is the current DM of game '" + cg[g].name + "'. Your request for" +
-                        " a claim has been noted. As soon as the current DM uses the !abandondm command, you will be the new" +
-                        " DM.");
-                    return;
+                    if(cg[g].dungeonMasterSnowflake === message.author.id) {
+                        message.author.send("You are already the DM of game '" + cg[g].name + "'.");
+                        message.delete();
+                        return;
+                    }
+                    // Add a DM request if there isn't one already
+                    dbClient.addDnDDmRequests(new DnDDmRequest(message.author.id, cg[g].id, message.guild.id)).then(function() {
+                        message.reply("<@" + cg[g].dungeonMasterSnowflake + "> is the current DM of game '" + cg[g].name + "'. Your request for" +
+                            " a claim has been noted.");
+                    }).catch(logger.error);
+                    break;
                 }
             }
 
-            currentGames[gid].push({
-                session: args[1].toLowerCase(),
-                dm: message.author.id,
-                players: [],
-                quests: [],
-                maxPlayers: 6
-            });
+            let playerMax = isNaN(Number(args[2])) ? 6 : parseInt(args[2]);
 
-            if(args[2] && !isNaN(Number(args[2])) && Number(args[2]) % 1 === 0)
-                currentGames[gid][currentGames[gid].length-1].maxPlayers = Number(args[2]);
+            let newGame = new DnDGame(null, gid, args[1].toLowerCase(), playerMax, message.author.id);
 
-            message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
-                + " to join the game!");
+            dbClient.addDnDGames(false, newGame).then(function() {
+                message.reply("You successfully created the game '" + args[1].toLowerCase() + "'! Players can now use !joingame " + args[1].toLowerCase()
+                    + " to join the game!");
+            }).catch(logger.error);
         });
     }
 }

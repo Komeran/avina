@@ -49,7 +49,6 @@ class Games extends BaseCommand {
                     });
                     fetchedGamePlayers++;
                     if(fetchedGamePlayers === gamesCount) {
-                        logger.debug("Done fetching players.");
                         message.channel.send({'embed': embed});
                     }
                 }).catch(logger.error);
