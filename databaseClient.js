@@ -446,6 +446,7 @@ module.exports = {
             result.forEach(function(game) {
                 games.push(new DnDGame(game.d_id, game.d_g_guild, game.d_name, game.d_playermax, game.d_dp_u_dungeonmaster));
             });
+            return games;
         }
         return null;
     },
