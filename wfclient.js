@@ -205,7 +205,12 @@ function _recursiveAlertUpdater() {
                             if (guild) {
                                 discordChannel = guild.channels.get(message.textChannelSnowflake);
                                 if (discordChannel) {
-                                    discordMessage = await discordChannel.fetchMessage(message.snowflake);
+                                    try {
+                                        discordMessage = await discordChannel.fetchMessage(message.snowflake);
+                                    }
+                                    catch(e) {
+                                        discordMessage = null;
+                                    }
                                     if (discordMessage) {
                                         for (let alert of ws.alerts) {
                                             if (alert.id === message.wfAlertMessage) {
