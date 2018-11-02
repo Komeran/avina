@@ -99,11 +99,17 @@ class WarframeClient {
      * @return {Promise<void>}
      */
     static async subToWfUpdates(guildId, discordChannelId) {
+        // Make sure the Guild is saved
         await dbClient.addGuilds(true, Guild.getDefault(guildId));
 
+        // Get the existing TextChannel save data if it exists, or create a new one otherwise
         let textChannel = await dbClient.getTextChannel(discordChannelId);
         textChannel = textChannel || TextChannel.getDefault(discordChannelId, guildId);
+
+        // Mark the text channel for version update notifications
         textChannel.updateWarframeVersion = true;
+
+        // Force update the text channel
         await dbClient.addTextChannels(false, textChannel);
     }
     /**
