@@ -18,11 +18,13 @@ class AbandonDM extends BaseCommand {
     execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
+            message.delete();
             return;
         }
 
         if (args.length > 3) {
             message.author.send("Too many arguments for command '!abandondm'.");
+            message.delete();
             return;
         }
 
@@ -59,6 +61,7 @@ class AbandonDM extends BaseCommand {
                 }
 
                 message.author.send({embed: embed});
+                message.delete();
                 return;
             }
 
@@ -83,6 +86,7 @@ class AbandonDM extends BaseCommand {
                     }
 
                     message.author.send({embed: embed});
+                    message.delete();
                     return;
                 }
                 if(requests.length === 1) {
