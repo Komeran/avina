@@ -21,14 +21,14 @@ class AbandonDM extends BaseCommand {
             return;
         }
 
-        if (args.length > 2) {
+        if (args.length > 3) {
             message.author.send("Too many arguments for command '!abandondm'.");
             return;
         }
 
         let gid = '' + message.guild.id;
 
-        let func = args.length > 1 ? getGamesOfPlayer.bind(this, message.author.id, gid) : getGame.bind(this, args[2].toLowerCase(), gid);
+        let func = args.length > 2 ? getGame.bind(this, args[2].toLowerCase(), gid) : getGamesOfPlayer.bind(this, message.author.id, gid);
 
         func().then(function(games) {
             if(!games) {
