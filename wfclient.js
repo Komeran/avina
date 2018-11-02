@@ -192,22 +192,20 @@ function _recursiveAlertUpdater() {
              * @param messages {Message[]}
              */
             function(messages) {
-                console.log("Fetched Alert Messages:", messages);
                 let messagesToRemove = [];
                 let existingAlerts = {};
                 (async function() {
                     if (messages && messages.length > 0) {
+                        console.log("Fetched Alert Messages:", messages.length);
                         // Handle existing alert messages first
-                        for(let i = 0; i < messages.length; i++) {
+                        messageLoop : for(let i = 0; i < messages.length; i++) {
                             let message = messages[i];
                             let guild = _discordClient.guilds.get(message.guildSnowflake);
                             let discordChannel, discordMessage;
                             if (guild) {
                                 discordChannel = guild.channels.get(message.textChannelSnowflake);
                                 if (discordChannel) {
-                                    discordMessage = await discordChannel.fetchMessage(message.snowflake).catch(function() {
-                                        discordMessage = null;
-                                    });
+                                    discordMessage = await discordChannel.fetchMessage(message.snowflake);
                                     if (discordMessage) {
                                         for (let alert of ws.alerts) {
                                             if (alert.id === message.wfAlertMessage) {
@@ -237,7 +235,7 @@ function _recursiveAlertUpdater() {
                                                 });
                                                 existingAlerts[discordMessage.guild.id] = existingAlerts[discordMessage.guild.id] || [];
                                                 existingAlerts[discordMessage.guild.id].push(alert.id);
-                                                return;
+                                                continue messageLoop;
                                             }
                                         }
                                         discordMessage.delete();
