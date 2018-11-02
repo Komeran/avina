@@ -4,6 +4,7 @@
  */
 
 let wfclient = require("../wfclient.js")();
+let dbclient = require("../databaseClient.js");
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -34,14 +35,21 @@ class WFAlerts extends BaseCommand {
 
         wfclient.constructor.isSubbedToAlerts(message.channel.id).then(function(isSubbed) {
             if(isSubbed) {
-                wfclient.constructor.unsubAlerts(message.channel.id).then(function() {
-                    message.channel.send({
-                        embed: {
-                            title: "I will no longer update this Channel about Warframe alerts!",
-                            color: 3447003
+                dbclient.getAlertMessagesByTextChannel(message.channel.id).then(function(alertMessages) {
+                    if(alertMessages && alertMessages.length > 0) {
+                        for(let msg of alertMessages) {
+                            message.channel.fetchMessage(msg.snowflake).then(am => am.delete()).catch();
                         }
+                    }
+                    wfclient.constructor.unsubAlerts(message.channel.id).then(function() {
+                        message.channel.send({
+                            embed: {
+                                title: "I will no longer update this Channel about Warframe alerts!",
+                                color: 3447003
+                            }
+                        });
+                        message.delete();
                     });
-                    message.delete();
                 });
             }
             else {
