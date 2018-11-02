@@ -307,6 +307,23 @@ module.exports = {
         return null;
     },
     /**
+     * Retrieves saved information of messages associated with the given alert ID
+     * @param textChannelId {string} The snowflake ID of the text channel
+     * @async
+     * @return {Promise<Message[]>}
+     */
+    getAlertMessagesByTextChannel: async function(textChannelId) {
+        let results = await query("SELECT m_messages.*, t_textchannels.t_g_guild FROM m_messages LEFT JOIN t_textchannels ON t_snowflake = m_t_textchannel WHERE m_wfalertmessage IS NOT NULL AND t_snowflake = '" + textChannelId + "';");
+        if(results) {
+            let messages = [];
+            results.forEach(function(msg) {
+                messages.push(new Message(msg.m_snowflake, msg.m_wfalertmessage, msg.m_t_textchannel, msg.t_g_guild));
+            });
+            return messages;
+        }
+        return null;
+    },
+    /**
      * Retrieves saved information of all messages associated with alert IDs
      * @async
      * @return {Promise<Message[]>}

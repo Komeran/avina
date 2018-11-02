@@ -172,6 +172,10 @@ class WarframeClient {
             textChannel.notifyWarframeAlerts = false;
             await dbClient.addTextChannels(false, textChannel);
         }
+        let alertMessages = await dbClient.getAlertMessagesByTextChannel(discordChannelId);
+        alertMessages = alertMessages || [];
+        if(alertMessages.length > 0)
+            await dbClient.deleteMessages(...alertMessages);
     }
 }
 
@@ -184,7 +188,6 @@ function _recursiveAlertUpdater() {
     logger.debug("Fetching Warframe State...");
     require('request-promise')('http://content.warframe.com/dynamic/worldState.php').then(function(worldStateData) {
         let ws = new WorldState(worldStateData);
-        console.log("Updating Warframe Alerts!");
 
         dbClient.getAllAlertMessages().then(
             /**
@@ -196,7 +199,6 @@ function _recursiveAlertUpdater() {
                 let existingAlerts = {};
                 (async function() {
                     if (messages && messages.length > 0) {
-                        console.log("Fetched Alert Messages:", messages.length);
                         // Handle existing alert messages first
                         messageLoop : for(let i = 0; i < messages.length; i++) {
                             let message = messages[i];
