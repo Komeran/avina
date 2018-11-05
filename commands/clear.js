@@ -23,10 +23,11 @@ class Clear extends BaseCommand {
             message.channel.fetchMessages()
                 .then(function(list){
                     message.channel.bulkDelete(list);
-                }, function(err){
-                    message.channel.send("ERROR: ERROR CLEARING CHANNEL.");
-                    logger.error(err);
                 })
+                .catch(function(err){
+                    message.author.send("ERROR: ERROR CLEARING CHANNEL.");
+                    logger.error(err);
+                });
         }
     }
 }

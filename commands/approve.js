@@ -1,4 +1,5 @@
 let dbClient = require('../databaseClient.js');
+let logger = require('winston');
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -30,15 +31,17 @@ class Approve extends BaseCommand {
         if(args.length >= 2) {
             message.mentions.members.array().forEach(function(user) {
                 let gid = message.guild.id;
-                let apps = dbClient.getApplications(user.id, gid);
-                apps.forEach(function(app) {
-                    let role = message.guild.roles.find('id', app.roleSnowflake);
-                    if(role) {
-                        user.addRole(role.id);
-                    }
-                });
-                dbClient.deleteApplications(...apps);
-                message.author.send("Applications of member " + user.nickname + " have been approved!");
+                dbClient.getApplications(user.id, gid).then(function(apps) {
+                    apps.forEach(function(app) {
+                        let role = message.guild.roles.find('id', app.roleSnowflake);
+                        if(role) {
+                            user.addRole(role.id);
+                        }
+                    });
+                    dbClient.deleteApplications(...apps).catch(errorFunc.bind(this, message));
+                    message.author.send("Applications of member " + user.nickname + " have been approved!");
+
+                }).catch(errorFunc.bind(this, message));
             });
         }
         else if(args.length === 1) {
@@ -52,3 +55,16 @@ class Approve extends BaseCommand {
 }
 
 module.exports = Approve;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}

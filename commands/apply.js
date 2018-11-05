@@ -1,4 +1,5 @@
 let dbClient = require('../databaseClient.js');
+let logger = require('winston');
 const Application = require('../databaseClient.js').Application;
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
@@ -47,10 +48,7 @@ class Apply extends BaseCommand {
                 let gid = message.guild.id;
                 dbClient.addApplications(new Application(gid, message.author.id, appliedRole)).then(function() {
                     message.author.send('Your Application for ' + getRoleForTag(args[1], message.guild.roles).name + ' has been registered and will be reviewed by an admin shortly!');
-                }).catch(function(e) {
-                    logger.error(e);
-                    message.author.send("Sorry, something went wrong with your application! Please notify an admin!");
-                });
+                }).catch(errorFunc.bind(this, message));
             }
             else {
                 message.author.send('Invalid role tag \''+args[1]+'\'. It has to be one of the Server\'s role tags. A tag is a text between \'[\' and \']\' and is between 2 and 4 characters long. It\'s case insensitive!');
@@ -81,4 +79,17 @@ function getRoleForTag(text, roles) {
         }
     }
     return undefined;
+}
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
 }

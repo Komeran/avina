@@ -24,18 +24,20 @@ class NewQuest extends BaseCommand {
     execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
+            message.delete();
             return;
         }
 
         if(!args[1]) {
-            logger.log("Not enough arguments for !newquest command.");
+            message.author.send("Not enough arguments for !newquest command.");
+            message.delete();
             return;
         }
 
         let gid = message.guild.id;
         let dmId = message.author.id;
 
-        dbClient.getDnDGameByDM(gid, dmId).then(function(game) {
+        dbClient.getDnDGamesByDM(gid, dmId).then(function(game) {
             if(!game) {
                 message.author.send("Sorry, but you are currently not the DM of a game. New quests can only be added by DMs!");
                 return;
@@ -60,13 +62,23 @@ class NewQuest extends BaseCommand {
                             color: 3447003
                         }
                     });
-                }).catch(function(error) {
-                    logger.error(error);
-                    message.author.send("Sorry, but something went wrong. The Quest was not added. If this keeps happening, please tell your admin!");
-                });
-            });
-        });
+                }).catch(errorFunc.bind(this, message));
+            }).catch(errorFunc.bind(this, message));
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = NewQuest;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}

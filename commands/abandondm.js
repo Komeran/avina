@@ -96,18 +96,18 @@ class AbandonDM extends BaseCommand {
                         dbClient.addDnDGames(false, game).then(function() {
                             message.author.send("You are no longer the DM of the game '" + game.name + "'! You handed it over to " + message.guild.member(requests[0].userSnowflake).nickname + "!");
                             message.delete();
-                        }).catch(logger.error);
-                    }).catch(logger.error);
+                        }).catch(errorFunc.bind(this, message));
+                    }).catch(errorFunc.bind(this, message));
                 }
                 else {
                     // No DM request. Delete the game.
                     dbClient.deleteDnDGames(game).then(function() {
                         message.author.send("Nobody requested to be the new DM for the game, so it was deleted!");
                         message.delete();
-                    }).catch(logger.error);
+                    }).catch(errorFunc.bind(this, message));
                 }
-            })
-        });
+            }).catch(errorFunc.bind(this, message));
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
@@ -119,4 +119,15 @@ async function getGame(gameId, guildSnowflake) {
 
 async function getGamesOfPlayer(userSnowflake, guildSnowflake) {
     return await dbClient.getDnDGamesByDM(guildSnowflake, userSnowflake);
+}
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message)
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
 }

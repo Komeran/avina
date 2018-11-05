@@ -29,25 +29,33 @@ class CheckHoist extends BaseCommand {
 
         let gid = message.guild.id;
 
-        let guild = dbClient.getGuild(gid);
+        dbClient.getGuild(gid).then(function(guild) {
+            if(!guild) {
+                guild = new Guild(gid, true);
+            }
+            else {
+                guild.checkhoist = !guild.checkhoist;
+            }
 
-        if(!guild) {
-            guild = new Guild(gid, true);
-        }
-        else {
-            guild.checkhoist = !guild.checkhoist;
-        }
+            dbClient.addGuilds(guild).then(function() {
+                message.author.send("Guild settings updated! `Checkhoist` is now " + (guild.checkhoist? "active" : "inactive") + ". That means, when updating role tags of user nicknames, I will " + (guild.checkhoist? "ignore" : "include") + " all roles that don't have the `Display role members separately from members` setting enabled.");
+            }).catch(errorFunc.bind(this, message));
 
-        dbClient.addGuilds(guild);
-
-        let newGuild = dbClient.getGuild(gid);
-
-        if(!newGuild || newGuild.checkhoist !== guild.checkhoist) {
-            message.author.send("Sorry, but something went wrong. The Guild Settings were not updated. If this keeps happening, please tell your admin!");
-            return;
-        }
-        message.author.send("Guild settings updated! `Checkhoist` is now " + (newGuild.checkhoist? "active" : "inactive") + ". That means, when updating role tags of user nicknames, I will " + (newGuild.checkhoist? "ignore" : "include") + " all roles that don't have the `Display role members separately from members` setting enabled.");
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = CheckHoist;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}

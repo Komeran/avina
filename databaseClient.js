@@ -425,22 +425,54 @@ module.exports = {
      * @param snowflake {string} The snowflake ID of the guild
      * @param id {number} The ID of the game
      * @async
-     * @return {DnDGame}
+     * @return {Promise<DnDGame>}
      */
     getDnDGame: async function(snowflake, id) {
         let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + "' and d_id = " + id + ";");
         if(result)
             return new DnDGame(result[0].d_id, result[0].d_g_guild, result[0].d_name, result[0].d_playermax, result[0].d_dp_u_dungeonmaster);
+        return null;
     },
     /**
-     * Retrieves a saved dnd game of a guild
+     * Retrieves the saved dnd game of a guild with the specified name
+     * @param snowflake {string} The snowflake ID of the guild
+     * @param name {string} The Name of the game
+     * @async
+     * @return {Promise<DnDGame>}
+     */
+    getDnDGameByName: async function(snowflake, name) {
+        let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + snowflake + "' and d_name = '" + name + "';");
+        if(result)
+            return new DnDGame(result[0].d_id, result[0].d_g_guild, result[0].d_name, result[0].d_playermax, result[0].d_dp_u_dungeonmaster);
+        return null;
+    },
+    /**
+     * Retrieves all saved dnd games of a guild where the given user is the DM of the game
      * @param guildSnowflake {string} The snowflake ID of the guild
      * @param dmSnowflake {string} The snowflake ID of the User who is the DM of the game
      * @async
-     * @return {DnDGame}
+     * @return {Promise<DnDGame[]>}
      */
     getDnDGamesByDM: async function(guildSnowflake, dmSnowflake) {
         let result = await query("SELECT * FROM d_dndgames where d_g_guild = '" + guildSnowflake + "' and d_dp_u_dungeonmaster = '" + dmSnowflake + "';");
+        if(result) {
+            let games = [];
+            result.forEach(function(game) {
+                games.push(new DnDGame(game.d_id, game.d_g_guild, game.d_name, game.d_playermax, game.d_dp_u_dungeonmaster));
+            });
+            return games;
+        }
+        return null;
+    },
+    /**
+     * Retrieves all saved dnd games of a guild where the given user joined as player
+     * @param guildSnowflake {string} The snowflake ID of the guild
+     * @param playerSnowflake {string} The snowflake ID of the User who is a player of the game
+     * @async
+     * @return {Promise<DnDGame[]>}
+     */
+    getDnDGamesByPlayer: async function(guildSnowflake, playerSnowflake) {
+        let result = await query("SELECT * FROM d_dndgames LEFT JOIN dpl_dndgameplayers ON d_id = dpl_d_dndgame AND dpl_d_g_guild = d_g_guild WHERE d_g_guild = '" + guildSnowflake + "' and dpl_dp_dndplayer = '" + playerSnowflake + "';");
         if(result) {
             let games = [];
             result.forEach(function(game) {

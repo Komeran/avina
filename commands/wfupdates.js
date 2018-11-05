@@ -49,7 +49,7 @@ class WFUpdates extends BaseCommand {
                         message.author.send("I'm sorry but I don't have permission to do things in that channel... Please make sure I can send, read and manage messages, aswell as send links and attach files!");
                         logger.error(e);
                     }
-                });
+                }).catch(errorFunc.bind(this, message));
             }
             else {
                 wfclient.constructor.subToWfUpdates(message.guild.id, message.channel.id).then(function() {
@@ -66,10 +66,23 @@ class WFUpdates extends BaseCommand {
                         message.author.send("I'm sorry but I don't have permission to do things in that channel... Please make sure I can send, read and manage messages, aswell as send links and attach files!");
                         logger.error(e);
                     }
-                });
+                }).catch(errorFunc.bind(this, message));
             }
-        })
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = WFUpdates;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}

@@ -51,10 +51,23 @@ class Games extends BaseCommand {
                     if(fetchedGamePlayers === gamesCount) {
                         message.channel.send({'embed': embed});
                     }
-                }).catch(logger.error);
+                }).catch(errorFunc.bind(this, message));
             }, this);
-        }).catch(logger.error);
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = Games;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}
