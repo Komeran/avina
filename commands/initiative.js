@@ -1,5 +1,5 @@
 let logger = require('winston');
-let games = require('../dnd_util/games.js');
+let dbClient = require('../databaseClient.js');
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
@@ -211,4 +211,4 @@ class Initiative extends BaseCommand {
     }
 }
 
-module.exports = Initiative;
+module.exports = null; //Initiative; // TODO: Uncomment once functionality is implemented

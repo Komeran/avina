@@ -3,7 +3,8 @@
  * @date 08.08.2018
  */
 
-let guildSettings = require('../util/guildSettings.js');
+let dbClient = require('../databaseClient.js');
+let TextChannel = require('../databaseClient.js').TextChannel;
 let logger = require('winston');
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
@@ -36,26 +37,35 @@ class Ignore extends BaseCommand {
 
         let gid = message.guild.id;
 
-        if(!guildSettings[gid]) {
-            guildSettings[gid] = {};
-        }
+        dbClient.getTextChannel(message.channel.id).then(function(textChannel) {
+            textChannel = textChannel || TextChannel.getDefault(message.channel.id, gid);
+            textChannel.ignoreCommands = !textChannel.ignoreCommands;
 
-        if(!guildSettings[gid].ignoredChannels) {
-            guildSettings[gid].ignoredChannels = {};
-        }
-
-        let cid = message.channel.id;
-
-        let ignored = guildSettings[gid].ignoredChannels[cid] = !guildSettings[gid].ignoredChannels[cid];
-
-        message.channel.send({
-            embed: {
-                title: "This channel is now " + (ignored? "" : "no longer ") + "ignored.",
-                description: "This means that I will " + (ignored? "" : "no longer ") + "ignore any commands people send in this channel, except the `!ignore` command.",
-                color: 3447003
-            }
-        })
+            dbClient.addTextChannels(false, textChannel).then(function() {
+                message.channel.send({
+                    embed: {
+                        title: "This channel is now " + (textChannel.ignoreCommands? "" : "no longer ") + "ignored.",
+                        description: "This means that I will " + (textChannel.ignoreCommands? "" : "no longer ") + "ignore any commands people send in this channel, except the `!ignore` command.",
+                        color: 3447003
+                    }
+                });
+                message.delete();
+            }).catch(errorFunc.bind(this, message));
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = Ignore;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}

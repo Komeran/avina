@@ -40,6 +40,7 @@ class NewQuest extends BaseCommand {
         dbClient.getDnDGamesByDM(gid, dmId).then(function(game) {
             if(!game) {
                 message.author.send("Sorry, but you are currently not the DM of a game. New quests can only be added by DMs!");
+                message.delete();
                 return;
             }
 
@@ -62,6 +63,7 @@ class NewQuest extends BaseCommand {
                             color: 3447003
                         }
                     });
+                    message.delete();
                 }).catch(errorFunc.bind(this, message));
             }).catch(errorFunc.bind(this, message));
         }).catch(errorFunc.bind(this, message));
