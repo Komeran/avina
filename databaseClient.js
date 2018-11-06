@@ -295,6 +295,23 @@ module.exports = {
         return null;
     },
     /**
+     * Retrieves saved information of all text channels in a guild with a welcome message
+     * @param snowflake {string} The snowflake ID of the guild
+     * @async
+     * @return {Promise<TextChannel[]>}
+     */
+    getWelcomeTextChannelsByGuild: async function(snowflake) {
+        let results = await query("SELECT * FROM t_textchannels WHERE t_g_guild = '" + snowflake + "' AND t_welcomeMessage IS NOT NULL;");
+        if(results) {
+            let channels = [];
+            results.forEach(function(channel) {
+                channels.push(new TextChannel(channel.t_snowflake, channel.t_welcomemessage, tinyIntToBool(channel.t_ignorecommands), tinyIntToBool(channel.t_updatewarframeversion), tinyIntToBool(channel.t_notifywarframealerts), channel.t_g_guild));
+            });
+            return channels;
+        }
+        return null;
+    },
+    /**
      * Retrieves saved information of a text channel
      * @param snowflake {string} The snowflake ID of the text channel
      * @async

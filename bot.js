@@ -1,12 +1,9 @@
-var Discord = require('discord.js');
-var logger = require('winston');
-var auth = require('./auth.json');
-var games = require('./dnd_util/games.js');
-var fs = require("fs");
-var path = require("path");
-var config = require('./config.json');
+let Discord = require('discord.js');
+let logger = require('winston');
+let auth = require('./auth.json');
+let config = require('./config.json');
 let reactTo = require('./util/reactTo.js');
-let guildSettings = require('./util/guildSettings.js');
+let dbClient = require('./databaseClient.js');
 
 // Fall back to default config if there is no config
 if(!config) {
@@ -25,7 +22,7 @@ if(!config) {
 }
 
 // Setup Discord client
-var client = new Discord.Client();
+let client = new Discord.Client();
 
 // Configure logger settings
 logger.clear();
@@ -53,65 +50,6 @@ for(let f in config.logger.files) {
     }));
 }
 
-// Load save data
-logger.info("Loading save data...");
-
-let guildSettingsPath = path.join(__dirname, config.saving.path,"guildSettings.json");
-if(fs.existsSync(guildSettingsPath)) {
-    let dataString = fs.readFileSync(guildSettingsPath);
-    let data = JSON.parse(dataString);
-    for(let gid in data) {
-        guildSettings[gid] = data[gid];
-        logger.debug("Settings of server " + gid + "loaded");
-    }
-    logger.info("Guild Settings save loaded.");
-}
-else {
-    logger.info("No Guild Settings save found.");
-}
-
-let gamesPath = path.join(__dirname, config.saving.path,"games.json");
-if(fs.existsSync(gamesPath)) {
-    let dataString = fs.readFileSync(gamesPath);
-    let data = JSON.parse(dataString);
-    for(let gid in data) {
-        games[gid] = data[gid];
-	    logger.debug("Games of server " + gid + "loaded");
-    }
-    logger.info("Games save loaded.");
-}
-else {
-	logger.info("No games save found.");
-}
-let applications = require('./util/applications.js');
-let appsPath = path.join(__dirname, config.saving.path,"applications.json");
-if(fs.existsSync(appsPath)) {
-    let dataString = fs.readFileSync(appsPath);
-    let apps = JSON.parse(dataString);
-    for(let a in apps) {
-        applications[a] = apps[a];
-    }
-    logger.info("Applications save loaded.");
-}
-else {
-    logger.info("No applications save found.");
-}
-let alertMessages = null;
-let wfPath = path.join(__dirname, config.saving.path,"warframe");
-let alertMessagesPath = path.join(wfPath, "alertMessages.json");
-if(fs.existsSync(alertMessagesPath)) {
-    let dataString = fs.readFileSync(alertMessagesPath);
-    alertMessages = JSON.parse(dataString);
-    logger.info("Applications save loaded.");
-}
-else {
-    logger.info("No applications save found.");
-}
-let wfClient = require("./wfclient.js")(client, alertMessages);
-//let ytClient = require("./ytclient.js")(client);
-logger.info("Done loading save data.");
-// End Load save data
-
 //Load commands
 var commands = require('./util/commands.js');
 // End Load commands
@@ -121,31 +59,35 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    let isIgnored = message.guild
-        && message.guild.id
-        && guildSettings[message.guild.id]
-        && guildSettings[message.guild.id].ignoredChannels
-        && guildSettings[message.guild.id].ignoredChannels[message.channel.id];
-	if (message.content.substring(0,1) === '!') {
-		let args = message.content.substring(1).split(' ');
-		let cmd = args[0].toLowerCase();
-		if(commands.cmds[cmd] && (cmd === "ignore" || !isIgnored))
-            commands.callCommand(cmd, message, args);
-		return;
-	}
-	if(!message.guild && message.author.id !== client.user.id) {
-        reactTo(message, client.user.id);
-        return;
-    }
-    if(message.author.id === client.user.id || isIgnored)
-        return;
-	for(let user of message.mentions.users) {
-	    if(user[0] === client.user.id) {
-            logger.info('Hey! I have been mentioned!');
+    dbClient.getTextChannel(message.channel.id).then(function(textChannel) {
+        let isIgnored = !!textChannel && !!textChannel.ignoreCommands;
+
+        if (message.content.substring(0,1) === '!') {
+            let args = message.content.substring(1).split(' ');
+            let cmd = args[0].toLowerCase();
+            if(commands.cmds[cmd] && (cmd === "ignore" || !isIgnored)) {
+                try {
+                    commands.callCommand(cmd, message, args);
+                }
+                catch(e) {
+                    logger.error(e);
+                }
+            }
+            return;
+        }
+        if(!message.guild && message.author.id !== client.user.id) {
             reactTo(message, client.user.id);
             return;
         }
-    }
+        if(message.author.id === client.user.id || isIgnored)
+            return;
+        for(let user of message.mentions.users) {
+            if(user[0] === client.user.id) {
+                reactTo(message, client.user.id);
+                return;
+            }
+        }
+    }).catch(logger.error);
 });
 
 client.on('guildMemberUpdate', function(oldMember, newMember) {
@@ -154,43 +96,57 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
 
     let gid = newMember.guild.id;
 
-    newMember.roles.array().forEach(function(role) {
-        if((!guildSettings[gid] || !guildSettings[gid].checkhoist || role.hoist) && role.position > pos) {
-            newTag = getTagForRole(role.id, newMember.guild.roles) || newTag;
-            pos = getTagForRole(role.id, newMember.guild.roles) ? role.position : pos;
+    dbClient.getGuild(gid).then(function(guild) {
+        let checkhoist = !!guild && !!guild.checkhoist;
+
+        newMember.roles.array().forEach(function(role) {
+            if((!checkhoist || role.hoist) && role.position > pos) {
+                newTag = getTagForRole(role.id, newMember.guild.roles) || newTag;
+                pos = getTagForRole(role.id, newMember.guild.roles) ? role.position : pos;
+            }
+        });
+
+        let nickname = newMember.nickname;
+        if(!nickname)
+            nickname = oldMember.user.username;
+        let memberTag = nickname.split(' ')[0].replace('[', '').replace(']', '');
+        if(nickname.indexOf('[') !== 0) {
+            memberTag = "";
         }
-    });
+        if(getRoleForTag(memberTag, newMember.guild.roles)) {
+            nickname = nickname.substring((memberTag === "" ? 0 : (memberTag.length+3)), nickname.length);
+        }
 
-    let nickname = newMember.nickname;
-    if(!nickname)
-        nickname = oldMember.user.username;
-    let memberTag = nickname.split(' ')[0].replace('[', '').replace(']', '');
-    if(nickname.indexOf('[') !== 0) {
-        memberTag = "";
-    }
-    if(getRoleForTag(memberTag, newMember.guild.roles)) {
-        nickname = nickname.substring((memberTag === "" ? 0 : (memberTag.length+3)), nickname.length);
-    }
+        if(memberTag === newTag) {
+            return;
+        }
 
-    if(memberTag === newTag) {
-        return;
-    }
-
-    newMember.edit({
-        nick: newTag + ' ' + nickname
-    }).catch(function(e) {
-        logger.warn(e.message);
-    });
+        newMember.edit({
+            nick: newTag + ' ' + nickname
+        }).catch(function(e) {
+            logger.error(e.message);
+        });
+    }).catch(logger.error);
 });
 
 client.on('guildMemberAdd', function(member) {
     console.log(member.user.username + " just joined");
     let gid = member.guild.id;
-    if(guildSettings[gid] && guildSettings[gid].welcomeMsgs) {
-        for(let cid in guildSettings[gid].welcomeMsgs) {
-            member.guild.channels.get(cid).send('<@' + member.id + '>, ' + guildSettings[gid].welcomeMsgs[cid]);
+
+    dbClient.getWelcomeTextChannelsByGuild(gid).then(function(channels) {
+        channels = channels || [];
+        let channelsToDelete = [];
+        for(let channel of channels) {
+            let discordChannel = member.guild.channels.get(channel.snowflake);
+            if(!discordChannel) {
+                channelsToDelete.push(channel);
+                continue;
+            }
+            discordChannel.send('<@' + member.id + '>, ' + channel.welcomeMessage);
         }
-    }
+        if(channelsToDelete.length > 0)
+            dbClient.deleteTextChannels(...channelsToDelete).catch(logger.error);
+    }).catch(logger.error);
 });
 
 client.login(auth.token);
