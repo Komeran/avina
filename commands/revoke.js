@@ -17,6 +17,7 @@ class Revoke extends BaseCommand {
     execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
+            message.delete();
             return;
         }
 
@@ -27,7 +28,6 @@ class Revoke extends BaseCommand {
         }
 
         if(args.length >= 3) {
-
             let rolesToRevoke = [];
             let reason = "";
             for(let i = 2; i < args.length; i++) {
@@ -47,7 +47,10 @@ class Revoke extends BaseCommand {
             }
 
             let user = message.mentions.members.array()[0];
-            user.removeRoles(rolesToRevoke, reason);
+            user.removeRoles(rolesToRevoke, reason).then(function() {
+                message.author.send("Successfully revoked the roles!");
+                message.delete();
+            }).catch(errorFunc.bind(this, message));
         }
         else if(args.length === 2) {
             message.author.send('\'apply\' command invalid: Missing Role Tag parameter(s)!');
@@ -77,4 +80,17 @@ function getRoleForTag(text, roles) {
         }
     }
     return undefined;
+}
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
 }

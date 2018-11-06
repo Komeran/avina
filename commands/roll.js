@@ -17,7 +17,8 @@ class Roll extends BaseCommand {
      */
     execute(args, message) {
         if(!args[1]) {
-            logger.debug('Missing Die Argument for !roll command!');
+            message.author.send('Missing arguments for !roll command! I need to know what you want me to roll!');
+            message.delete();
             return;
         }
 
@@ -27,6 +28,8 @@ class Roll extends BaseCommand {
             calculationString += args[i];
         }
         calculationString = calculationString.toLowerCase();
+
+        let diceVals = [];
 
         // First, let's go for mathematical approach and assume, there are maths to be done. We only do addition and subtraction though.
 
@@ -52,6 +55,7 @@ class Roll extends BaseCommand {
                         minusToSubtract += Number(minusPart);
                     else {
                         message.author.send(minusPart + " is neither a valid die nor a valid number.");
+                        message.delete();
                         return;
                     }
                 }
@@ -63,12 +67,14 @@ class Roll extends BaseCommand {
                         diceCount = Number(dieParts[0]);
                         if(isNaN(diceCount)) {
                             message.author.send(minusPart + " is neither a valid die nor a valid number.");
+                            message.delete();
                             return;
                         }
                     }
                     diceValue = Number(dieParts[1]);
                     if(isNaN(diceValue) || diceValue < 2) {
                         message.author.send(minusPart + " is neither a valid die nor a valid number.");
+                        message.delete();
                         return;
                     }
                     let result = 0;
@@ -76,9 +82,11 @@ class Roll extends BaseCommand {
                         result += Math.floor(Math.random() * diceValue) + 1;
                     }
                     minusToSubtract += result;
+                    diceVals.push(result);
                 }
                 else {
                     message.author.send(minusPart + " is neither a valid die nor a valid number.");
+                    message.delete();
                     return;
                 }
                 // Now subtract the resulting minusToSubtract from plusToAdd.
@@ -94,9 +102,16 @@ class Roll extends BaseCommand {
             total += plusToAdd;
         }
 
+        let i = 0;
+        let mathString = calculationString.replace(/(([^+-])*[dD])\w*/g, function(substring) {
+            i++;
+            return " **" + diceVals[i-1] + " (" + substring + ")** ";
+        });
+
         message.channel.send({
             embed: {
                 title: (message.guild ? message.guild.member(message.author).nickname : "You") + " rolled a " + total,
+                description: mathString + " = **" + total + "**",
                 color: 3447003
             }
         });

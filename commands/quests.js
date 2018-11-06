@@ -23,35 +23,34 @@ class Quests extends BaseCommand {
     execute(args, message) {
         if(!message.guild) {
             message.author.send("Sorry, but this command doesn't work in direct messages!");
+            message.delete();
             return;
         }
 
         if(args.length > 2) {
-            logger.debug("Too many arguments for !quests command.");
+            message.author.send("Too many arguments for !quests command.");
+            message.delete();
             return;
         }
 
         if(!args[1]) {
-            logger.debug("Not enough arguments for !quests command.");
+            message.author.send("Not enough arguments for !quests command.");
+            message.delete();
             return;
         }
 
         let gid = message.guild.id;
 
-        let gameId = Number(args[1]);
+        let gameName = args[1];
 
-        if(isNaN(gameId)) {
-            message.author.send("Sorry, but '" + args[1] + "' is not a valid Game ID!");
-            return;
-        }
-
-        dbClient.getDnDGame(gid, gameId).then(function(game) {
+        dbClient.getDnDGameByName(gid, gameName.toLowerCase()).then(function(game) {
             if(!game) {
-                message.author.send("Sorry, but there is no game with the ID '" + args[1] + "'!");
+                message.author.send("Sorry, but there is no game with the name '" + gameName + "'! Check for typos.");
+                message.delete();
                 return;
             }
 
-            dbClient.getDnDQuests(gid, gameId).then(function(quests) {
+            dbClient.getDnDQuests(gid, game.id).then(function(quests) {
                 if(!quests || quests.length === 0) {
                     message.channel.send({
                         embed: {
@@ -60,6 +59,7 @@ class Quests extends BaseCommand {
                             color: 3447003
                         }
                     });
+                    message.delete();
                     return;
                 }
                 for(let q in quests) {
@@ -75,6 +75,7 @@ class Quests extends BaseCommand {
                         fields: fields
                     }
                 });
+                message.delete();
             }).catch(errorFunc.bind(this, message));
         }).catch(errorFunc.bind(this, message));
     }
