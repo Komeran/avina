@@ -119,7 +119,7 @@ class Roll extends BaseCommand {
         message.channel.send({
             embed: {
                 title: (message.guild ? message.guild.member(message.author).nickname : "You") + " rolled a " + total,
-                description: mathString + " = **" + total + "**",
+                description: mathString + " = " + total + "",
                 color: 3447003
             }
         });
