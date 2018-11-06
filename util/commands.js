@@ -58,6 +58,7 @@ fs.watch(normalizedPath, { recursive:true }, function(eventType,fileName) {
     let commandString = fileName.substring(0, fileName.length-3);
     deleteCommand(commandString);
     if(eventType === 'change' || fs.existsSync(path.join(normalizedPath, fileName))) {
+        delete require.cache[path.join(normalizedPath, fileName)];
         let commandClass = require(path.join(normalizedPath, fileName));
         if(commandClass && commandClass.prototype && commandClass.prototype instanceof BaseCommand) {
             commands[commandString] = new commandClass();
