@@ -99,7 +99,7 @@ class Save extends BaseCommand {
     }
 }
 
-module.exports = Save;
+module.exports = null; // TODO: Check whether this command makes sense anymore now that there is a database
 
 let saveGames = function(message, msg, json) {
 

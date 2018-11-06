@@ -60,13 +60,24 @@ class SetWelcomeMsg extends BaseCommand {
 
                 dbClient.addTextChannels(textChannel).then(function() {
                     message.channel.send("The welcome message of this channel has been " + (isUpdate? "updated" : "set") + "!");
-                }).catch(function(error) {
-                    logger.error(error);
-                    message.author.send("Sorry, but something went wrong. The Text Channel settings were not updated. If this keeps happening, please tell your admin!");
-                });
-            });
-        });
+                    message.delete();
+                }).catch(errorFunc.bind(this, message));
+            }).catch(errorFunc.bind(this, message));
+        }).catch(errorFunc.bind(this, message));
     }
 }
 
 module.exports = SetWelcomeMsg;
+
+/**
+ * Relays an error message to the default error output and tells the user to consult admins.
+ * @param [message] {Message}
+ * @param error {Error}
+ */
+function errorFunc(message, error) {
+    logger.error(error);
+    if(message) {
+        message.author.send("Sorry, but something went wrong. If this keeps happening, please tell your admin!");
+        message.delete();
+    }
+}
