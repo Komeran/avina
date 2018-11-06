@@ -78,11 +78,14 @@ class Roll extends BaseCommand {
                         return;
                     }
                     let result = 0;
+                    let diceVal = [];
                     for(let i = 1; i <= diceCount; i++) {
-                        result += Math.floor(Math.random() * diceValue) + 1;
+                        let r = Math.floor(Math.random() * diceValue) + 1;
+                        diceVal.push(r);
+                        result += r;
                     }
                     minusToSubtract += result;
-                    diceVals.push(result);
+                    diceVals.push(diceVal);
                 }
                 else {
                     message.author.send(minusPart + " is neither a valid die nor a valid number.");
@@ -104,8 +107,13 @@ class Roll extends BaseCommand {
 
         let i = 0;
         let mathString = calculationString.replace(/(([^+-])*[dD])\w*/g, function(substring) {
+            let diceString = "";
+            for(let val of diceVals[i]) {
+                diceString += "+ " + val;
+            }
+            diceString = diceString.substr(2, diceString.length);
             i++;
-            return " **" + diceVals[i-1] + " (" + substring + ")** ";
+            return " **" + diceString + " (" + substring + ")** ";
         });
 
         message.channel.send({
