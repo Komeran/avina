@@ -24,6 +24,9 @@ if(!config) {
 // Setup Discord client
 let client = new Discord.Client();
 
+// Initialize Warframe Client
+let wfClient = require("./wfclient.js")(client);
+
 // Configure logger settings
 logger.clear();
 logger.add(new logger.transports.Console({
