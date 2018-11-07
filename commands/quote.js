@@ -53,6 +53,8 @@ class quote extends BaseCommand {
                 return String.fromCharCode($1);
             });
 
+            console.log("*\"" + res[0].content.replace("<p>", "").replace("<\\/p>\\n", "") + "\"*\n-" + res[0].title);
+
             message.channel.send("*\"" + res[0].content.replace("<p>", "").replace("<\\/p>\\n", "") + "\"*\n-" + res[0].title);
             if(wasCommand)
                 message.delete();
