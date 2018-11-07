@@ -30,27 +30,17 @@ class quote extends BaseCommand {
 
         request({
             method: 'GET',
-            uri: "http://quotesondesign.com/wp-json/posts"
+            uri: "https://talaikis.com/api/quotes/random/"
         }, function(error, response, body) {
             let res = JSON.parse(body);
 
-            if(!res || res.length === 0) {
+            if(!res) {
                 message.author.send("Something went wrong. Please tell your admin if this keeps happening!");
                 message.delete();
                 return;
             }
 
-            let regex_num_set = /&#(\d+);/g;
-            res[0].content = res[0].content.replace(regex_num_set, function(_, $1) {
-                return String.fromCharCode($1);
-            });
-            res[0].title = res[0].title.replace(regex_num_set, function(_, $1) {
-                return String.fromCharCode($1);
-            });
-
-            console.log("*\"" + res[0].content.replace("<p>", "").replace("<\\/p>\\n", "") + "\"*\n-" + res[0].title);
-
-            message.channel.send("*\"" + res[0].content.replace("<p>", "").replace("<\\/p>\\n", "") + "\"*\n-" + res[0].title);
+            message.channel.send("*\"" + res.quote + "\"*\n-" + res.author);
             if(wasCommand)
                 message.delete();
         });
