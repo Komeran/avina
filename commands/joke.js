@@ -11,7 +11,9 @@ const request = require("request");
 class joke extends BaseCommand {
     constructor() {
         super();
-        this.help = "";
+        this.help = "Usage: `!joke [<term>]` where `<term>` is an optional search term that the joke has to contain.\n" +
+            "Searches for a random joke containing the given term and replies it, or sends an entirely random joke if no" +
+            " term was provided.";
     }
 
     /**
