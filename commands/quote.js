@@ -6,6 +6,7 @@
 let logger = require('winston');
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
+const request = require("request");
 
 class quote extends BaseCommand {
     constructor() {
@@ -28,30 +29,22 @@ class quote extends BaseCommand {
 
         let wasCommand = args[0] !== null;
 
-        try {
-            request({
-                method: 'GET',
-                uri: "https://talaikis.com/api/quotes/random/"
-            }, function (error, response, body) {
-                console.log(body);
+        request({
+            method: 'GET',
+            uri: "https://talaikis.com/api/quotes/random/"
+        }, function (error, response, body) {
+            let res = JSON.parse(body);
 
-                let res = JSON.parse(body);
+            if (!res) {
+                message.author.send("Something went wrong. Please tell your admin if this keeps happening!");
+                message.delete();
+                return;
+            }
 
-                if (!res) {
-                    message.author.send("Something went wrong. Please tell your admin if this keeps happening!");
-                    message.delete();
-                    return;
-                }
-
-                message.channel.send("*\"" + res.quote + "\"*\n-" + res.author);
-                if (wasCommand)
-                    message.delete();
-            });
-        }
-        catch(e) {
-            console.log("WTF???");
-            console.log(e.message);
-        }
+            message.channel.send("*\"" + res.quote + "\"*\n-" + res.author);
+            if (wasCommand)
+                message.delete();
+        });
     }
 }
 
