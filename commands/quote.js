@@ -32,11 +32,6 @@ class quote extends BaseCommand {
             method: 'GET',
             uri: "http://quotesondesign.com/wp-json/posts"
         }, function(error, response, body) {
-            if(error) {
-                logger.error(error);
-                return;
-            }
-
             let res = JSON.parse(body);
 
             if(!res || res.length === 0) {
