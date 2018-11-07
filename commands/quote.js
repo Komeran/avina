@@ -32,6 +32,8 @@ class quote extends BaseCommand {
             method: 'GET',
             uri: "https://talaikis.com/api/quotes/random/"
         }, function(error, response, body) {
+            console.log(body);
+
             let res = JSON.parse(body);
 
             if(!res) {
