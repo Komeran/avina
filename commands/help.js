@@ -28,6 +28,7 @@ class Help extends BaseCommand {
 
             if(!commands.cmds[command.toLowerCase()]) {
                 message.author.send("Sorry, but `" + command + "` is not one of my commands!\nMaybe you misspelled it?\nUse `!help` to list all my commands!");
+                message.delete();
                 return;
             }
             let msg;
@@ -42,6 +43,7 @@ class Help extends BaseCommand {
                     description: msg
                 }
             });
+            message.delete();
             return;
         }
 
@@ -58,6 +60,7 @@ class Help extends BaseCommand {
                 description: description
             }
         }).catch(e => logger.warn(e.message));
+        message.delete();
     }
 }
 
