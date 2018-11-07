@@ -269,6 +269,20 @@ module.exports = {
         }
         return null;
     },
+    /**
+     * Retrieves a saved DnDDmRequest
+     * @param gameId {number} The ID of the game
+     * @param guildSnowflake {string} The Snowflake ID of the discord guild
+     * @param userSnowflake {string} The Snowflake ID of the discord user
+     * @return {Promise<DnDDmRequest>}
+     */
+    getDnDDmRequest: async function(gameId, guildSnowflake, userSnowflake) {
+        let result = await query("SELECT * FROM dr_dnddmrequest WHERE dr_d_gameid = '" + gameId + "' AND dr_d_g_guildid = '" + guildSnowflake + "' AND dr_dp_u_player = '" + userSnowflake + "';");
+        if(result) {
+            return new DnDDmRequest(result.dr_dp_u_player, result.dr_d_gameid, result.dr_d_g_guildid);
+        }
+        return null;
+    },
     /** TODO: Create User Object
      * Retrieves saved information of a user
      * @param snowflake {string} The snowflake ID of the user

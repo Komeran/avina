@@ -59,13 +59,11 @@ Here is a list of the commands that are already implemented.
 * `!apps` command to list all current applications for roles. Only users with Administrator permission can use this command.
 
   Usage: `!apps`
-* `!save` command for saving the current data. Saved data will be loaded on (re-)start of the bot.
-
-  Usage: `!save`
 * `!checkhoist` command to enable or disable checking of the `Display role members separately from members` property of roles when updating tags.
 
   Usage: `!checkhoist`
-* `!updatetags` command to update all user nickname tags on your server according to their roles.
+* `!updatetags` command to update all user nickname tags on your server according to their roles manually.
+  Useful for when Avina has been down for maintenance, updates or similar things.
 
   Usage: `!updatetags`
 * `!help` command to display a list of all commands.
@@ -77,7 +75,8 @@ Here is a list of the commands that are already implemented.
 * `!nowelcomemsg` command for admins only to tell Avina to stop sending welcome messages in the channel, the command was used in.
 
   Usage: `!nowelcomemsg`
-* `!ignore` command for admins only to mark text-channels als "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command. She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.
+* `!ignore` command for admins only to mark text-channels as "ignored" for Avina, meaning that she will not react to any commands of that channel except the `!ignore` command.
+  She will still continue sending welcome messages in that channel if it was set up. To unmark an "ignored" channel, simply use the `!ignore` command again.
 
   Usage: `!ignore`
 ## D&D
@@ -86,24 +85,25 @@ Yes, I use this bot for my D&D 5e Campaigns.
 ### Commands
 Here is a list of the commands that are already implemented.
 
-* `!roll` command to roll dice and return the total. This supports addition and subtractuion of several dice and numbers!
+* `!roll` command to roll dice and return the total. This supports addition and subtraction of several dice and numbers!
 
   Usage examples: `!roll d20` or `!roll 4d6` or `!roll 2d20+5-2+3d6-d4`
 * `!draw` command to draw a card of the default (22 cards) Deck of Many Things. Will send a picture of the drawn card to the user and a
   text description to the DM.
 
-  Usage: `!draw`
+  Usage: `!draw [<game>]` where `<game>`  is the name of the game you're playing, that is required if you joined several 
+  games on that server.
 * `!rolls` command to roll several dice and return every result.
 
   Usage example: `!rolls 5d20+23` Possible output: `You rolled 35, 29, 42, 27, 43!`
 * `!claimdm` command to claim DM status for a game and create the game if it doesn't already exist. If the game already exists, the
-  claim request will be noted and when the current DM abandons the game, the requester will be the new DM of the game. Fails, if the
-  user currently is the DM of a game.
+  claim request will be noted and when the current DM abandons the game, one of the requesters selected by the DM will be the new DM of the game.
+  Fails, if the user currently is the DM of that game.
   
   Usage example: `!claimdm AwesomeGame` -> All Game Names will be changed to lowercase and spaces will cause the command to fail.
 * `!abandondm` command to abandon DM status of the current game and delete the game instance if nobody else requested DM status for it.
 
-  Usage: `!abandondm`
+  Usage: `!abandondm <`
 * `!joingame` command to join a running game. Fails, if the game doesn't exist, or the user is the DM of the game.
 
   Usage: `!joingame AwesomeGame` -> Will join the game 'awesomegame'.

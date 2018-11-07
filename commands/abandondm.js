@@ -1,13 +1,15 @@
 let logger = require('winston');
 let dbClient = require("../databaseClient.js");
+let DnDGamePlayer = require("../databaseClient.js").DnDGamePlayer;
 const BaseCommand = require("../util/BaseCommand");
 const Message = require("discord.js").Message;
 
 class AbandonDM extends BaseCommand {
     constructor() {
         super();
-        this.help = "Usage: `!abandondm`\n" +
-        "If you are DM of a running game, this will make someone else the DM of it if someone applied, or delete the game session if not."
+        this.help = "Usage: `!abandondm [<game>] [<mention>]` where `<game>` is the optional name of the game and `<mention>` is an optional user mention e.g. @LeDude\n" +
+            "If you are DM of a running game, this will make someone else the DM of it if only one user applied, or delete the game session if no user applied. If several users " +
+            "applied for the DM role, you need to mention one of them to make that user the new DM. If you are DMing several games on that server, you need to provide the game's name.";
     }
 
     /**
@@ -69,6 +71,35 @@ class AbandonDM extends BaseCommand {
             if(game.length)
                 game = game[0];
 
+            let mentions = message.mentions.members.array();
+            // User wants to make someone DM
+            if(mentions.length === 1) {
+                dbClient.getDnDDmRequest(game.id, gid, mentions[0].id).then(function(request) {
+                    if(!request) {
+                        message.author.send("The user " + mentions[0].nickname + " didn't request to be DM for the game " + game.name + "!");
+                        message.delete();
+                        return;
+                    }
+
+                    dbClient.deleteDnDDmRequests(request).then(function() {
+                        dbClient.deleteDnDGamePlayers(new DnDGamePlayer(request.userSnowflake, game.id, gid, false)).then(function() {
+                            game.dungeonMasterSnowflake = request.userSnowflake;
+                            dbClient.addDnDGames(false, game).then(function() {
+                                message.author.send("You are no longer the DM of the game '" + game.name + "'! You handed it over to " + message.guild.member(request.userSnowflake).nickname + "!");
+                                message.guild.member(request.userSnowflake).send("You have been assigned the new DM of the game " + game.name + " on the server " + message.guild.name + " by " + message.guild.member(message.author).nickname+ "!");
+                                message.delete();
+                            }).catch(errorFunc.bind(this, message));
+                        }).catch(errorFunc.bind(this, message));
+                    }).catch(errorFunc.bind(this, message));
+                }).catch(errorFunc.bind(this, message));
+                return;
+            }
+            if(mentions.length > 1) {
+                message.author.send("Sorry, but I don't know who to make the new DM. Please only mention one user!");
+                message.delete();
+                return;
+            }
+
             dbClient.getDnDDmRequestsByGame(game.name, game.guildSnowflake).then(function(requests) {
                 if(!requests) {
                     requests = [];
@@ -92,10 +123,13 @@ class AbandonDM extends BaseCommand {
                 if(requests.length === 1) {
                     // Exactly one requester. Make him the new DM.
                     dbClient.deleteDnDDmRequests(requests[0]).then(function() {
-                        game.dungeonMasterSnowflake = requests[0].userSnowflake;
-                        dbClient.addDnDGames(false, game).then(function() {
-                            message.author.send("You are no longer the DM of the game '" + game.name + "'! You handed it over to " + message.guild.member(requests[0].userSnowflake).nickname + "!");
-                            message.delete();
+                        dbClient.deleteDnDGamePlayers(new DnDGamePlayer(request.userSnowflake, game.id, gid, false)).then(function() {
+                            game.dungeonMasterSnowflake = requests[0].userSnowflake;
+                            dbClient.addDnDGames(false, game).then(function () {
+                                message.author.send("You are no longer the DM of the game '" + game.name + "'! You handed it over to " + message.guild.member(requests[0].userSnowflake).nickname + "!");
+                                message.guild.member(requests[0].userSnowflake).send("You have been assigned the new DM of the game " + game.name + " on the server " + message.guild.name + " by " + message.guild.member(message.author).nickname + "!");
+                                message.delete();
+                            }).catch(errorFunc.bind(this, message));
                         }).catch(errorFunc.bind(this, message));
                     }).catch(errorFunc.bind(this, message));
                 }
