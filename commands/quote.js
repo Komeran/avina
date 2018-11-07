@@ -28,24 +28,30 @@ class quote extends BaseCommand {
 
         let wasCommand = args[0] !== null;
 
-        request({
-            method: 'GET',
-            uri: "https://talaikis.com/api/quotes/random/"
-        }, function(error, response, body) {
-            console.log(body);
+        try {
+            request({
+                method: 'GET',
+                uri: "https://talaikis.com/api/quotes/random/"
+            }, function (error, response, body) {
+                console.log(body);
 
-            let res = JSON.parse(body);
+                let res = JSON.parse(body);
 
-            if(!res) {
-                message.author.send("Something went wrong. Please tell your admin if this keeps happening!");
-                message.delete();
-                return;
-            }
+                if (!res) {
+                    message.author.send("Something went wrong. Please tell your admin if this keeps happening!");
+                    message.delete();
+                    return;
+                }
 
-            message.channel.send("*\"" + res.quote + "\"*\n-" + res.author);
-            if(wasCommand)
-                message.delete();
-        });
+                message.channel.send("*\"" + res.quote + "\"*\n-" + res.author);
+                if (wasCommand)
+                    message.delete();
+            });
+        }
+        catch(e) {
+            console.log("WTF???");
+            console.log(e.message);
+        }
     }
 }
 
