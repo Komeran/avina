@@ -14,6 +14,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "sharp": "^0.20.5",
+    "twss": "^0.1.6",
     "warframe-items": "^1.29.0",
     "warframe-worldstate-parser": "^2.0.2",
     "winston": "^3.0.0",
