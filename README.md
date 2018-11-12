@@ -1,2 +1,2 @@
 # avina.Net
-Windows Desktop UI for the Daiscord Bot Avina.
+Windows Desktop UI for the Discord Bot Avina.
