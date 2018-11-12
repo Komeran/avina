@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DBConnections" targetNamespace="http://tempuri.org/DBConnections.xsd" xmlns:mstns="http://tempuri.org/DBConnections.xsd" xmlns="http://tempuri.org/DBConnections.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DBConnections" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DBConnections" msprop:Generator_UserDSName="DBConnections">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Connection" msprop:Generator_TableClassName="ConnectionDataTable" msprop:Generator_TableVarName="tableConnection" msprop:Generator_TablePropName="Connection" msprop:Generator_RowDeletingName="ConnectionRowDeleting" msprop:Generator_RowChangingName="ConnectionRowChanging" msprop:Generator_RowEvHandlerName="ConnectionRowChangeEventHandler" msprop:Generator_RowDeletedName="ConnectionRowDeleted" msprop:Generator_UserTableName="Connection" msprop:Generator_RowChangedName="ConnectionRowChanged" msprop:Generator_RowEvArgName="ConnectionRowChangeEvent" msprop:Generator_RowClassName="ConnectionRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="host" msprop:Generator_ColumnVarNameInTable="columnhost" msprop:Generator_ColumnPropNameInRow="host" msprop:Generator_ColumnPropNameInTable="hostColumn" msprop:Generator_UserColumnName="host" type="xs:string" />
+              <xs:element name="port" msprop:Generator_ColumnVarNameInTable="columnport" msprop:Generator_ColumnPropNameInRow="port" msprop:Generator_ColumnPropNameInTable="portColumn" msprop:Generator_UserColumnName="port" type="xs:short" default="3306" />
+              <xs:element name="user" msprop:nullValue="_null" msprop:Generator_ColumnPropNameInRow="user" msprop:Generator_ColumnVarNameInTable="columnuser" msprop:Generator_ColumnPropNameInTable="userColumn" msprop:Generator_UserColumnName="user" type="xs:string" minOccurs="0" />
+              <xs:element name="password" msprop:nullValue="_null" msprop:Generator_ColumnPropNameInRow="password" msprop:Generator_ColumnVarNameInTable="columnpassword" msprop:Generator_ColumnPropNameInTable="passwordColumn" msprop:Generator_UserColumnName="password" type="xs:string" minOccurs="0" />
+              <xs:element name="database" msprop:nullValue="_null" msprop:Generator_ColumnPropNameInRow="database" msprop:Generator_ColumnVarNameInTable="columndatabase" msprop:Generator_ColumnPropNameInTable="databaseColumn" msprop:Generator_UserColumnName="database" type="xs:string" minOccurs="0" />
+              <xs:element name="name" msprop:Generator_ColumnVarNameInTable="columnname" msprop:Generator_ColumnPropNameInRow="name" msprop:Generator_ColumnPropNameInTable="nameColumn" msprop:Generator_UserColumnName="name" type="xs:string" />
+              <xs:element name="ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Connection" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="Constraint2">
+      <xs:selector xpath=".//mstns:Connection" />
+      <xs:field xpath="mstns:name" />
+    </xs:unique>
+  </xs:element>
+</xs:schema>

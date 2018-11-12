@@ -1,0 +1,34 @@
+﻿<Window x:Class="WpfApp1.Windows.Database.ConnectDatabase"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Connect To Database" Height="190" Width="300" WindowStyle="ToolWindow" Closing="Window_Closing" ResizeMode="NoResize">
+    <DockPanel Margin="0,2,0,0">
+        <!-- Host -->
+        <DockPanel DockPanel.Dock="Top" Height="Auto" VerticalAlignment="Top">
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Left" Height="25" VerticalContentAlignment="Center" Padding="5,0,5,0">Host:</Label>
+            <TextBox x:Name="HostText" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="36,0,0,0" Width="200" Height="20" MaxLines="1"></TextBox>
+        </DockPanel>
+        <!-- Port -->
+        <DockPanel DockPanel.Dock="Top" Height="Auto" VerticalAlignment="Top">
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Left" Height="25" VerticalContentAlignment="Center" Padding="5,0,5,0">Port:</Label>
+            <TextBox x:Name="PortText" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="38,0,0,0" Width="70" Height="20" MaxLines="1" MaxLength="6"></TextBox>
+        </DockPanel>
+        <!-- User -->
+        <DockPanel DockPanel.Dock="Top" Height="Auto" VerticalAlignment="Top">
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Left" Height="25" VerticalContentAlignment="Center" Padding="5,0,5,0">User:</Label>
+            <TextBox x:Name="UserText" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="37,0,0,0" Width="200" Height="20" MaxLines="1"></TextBox>
+        </DockPanel>
+        <!-- Password -->
+        <DockPanel DockPanel.Dock="Top" Height="Auto" VerticalAlignment="Top">
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Left" Height="25" VerticalContentAlignment="Center" Padding="5,0,5,0">Password:</Label>
+            <PasswordBox x:Name="PasswordText" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="10,0,0,0" Width="200" Height="20"/>
+        </DockPanel>
+        <!-- Database -->
+        <DockPanel DockPanel.Dock="Top" Height="Auto" VerticalAlignment="Top">
+            <Label HorizontalAlignment="Left" DockPanel.Dock="Left" Height="25" VerticalContentAlignment="Center" Padding="5,0,5,0">Database:</Label>
+            <ComboBox x:Name="DatabaseBox" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="11,0,0,0" Width="200" Height="20" IsEditable="True" DropDownOpened="DatabaseDropdown"/>
+        </DockPanel>
+        
+        <Button HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,2,10,2" Margin="0,-2,0,0" Click="Connect">Connect</Button>
+    </DockPanel>
+</Window>
