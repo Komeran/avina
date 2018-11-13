@@ -58,7 +58,7 @@ class SetWelcomeMsg extends BaseCommand {
                     isUpdate = true;
                 }
 
-                dbClient.addTextChannels(textChannel).then(function() {
+                dbClient.addTextChannels(false, textChannel).then(function() {
                     message.channel.send("The welcome message of this channel has been " + (isUpdate? "updated" : "set") + "!");
                     message.delete();
                 }).catch(errorFunc.bind(this, message));
