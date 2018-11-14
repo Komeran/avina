@@ -40,7 +40,7 @@ class SetWelcomeMsg extends BaseCommand {
         let welcomeMsg = message.content.substring(command.length, message.content.length);
         let codes = [];
         for(let i = 0; i < welcomeMsg.length; i++) {
-            codes.push(parseInt(welcomeMsg[i],16));
+            codes.push(welcomeMsg.charCodeAt(i));
         }
         logger.error(String.fromCharCode(codes));
 
