@@ -15,11 +15,11 @@
     "request-promise": "^4.2.2",
     "sharp": "^0.20.5",
     "twss": "^0.1.6",
-    "warframe-items": "^1.29.0",
+    "warframe-items": "^1.119.0",
+    "warframe-updates": "^1.0.6",
     "warframe-worldstate-parser": "^2.0.2",
     "winston": "^3.0.0",
-    "xml2js": "^0.4.19",
-    "youtube-api": "^2.0.9"
+    "xml2js": "^0.4.19"
   },
   "repository": "https://github.com/Komeran/avina"
 }
