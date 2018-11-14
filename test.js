@@ -23,7 +23,7 @@ dbConnection.connect(function(err) {
 
     console.log("Testing...");
 
-    query("SELECT * FROM t_textchannels WHERE t_g_guild = '376105297057677322' AND t_welcomeMessage IS NOT NULL;").then(function(results) {
+    query("SELECT * FROM t_textchannels WHERE t_g_guild = '345628365337657345' AND t_welcomeMessage IS NOT NULL;").then(function(results) {
         if(results) {
             //let channels = [];
             results.forEach(function(channel) {
