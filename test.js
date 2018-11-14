@@ -31,7 +31,7 @@ dbConnection.connect(function(err) {
                 //channels.push(new TextChannel(channel.t_snowflake, channel.t_welcomeMessage, tinyIntToBool(channel.t_ignorecommands), tinyIntToBool(channel.t_updatewarframeversion), tinyIntToBool(channel.t_notifywarframealerts), channel.t_g_guild));
             });
         }
-    });
+    }).catch(console.error);
 });
 
 let query = function(queryString) {
