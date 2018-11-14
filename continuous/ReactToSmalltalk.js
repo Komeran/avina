@@ -14,18 +14,22 @@ class ReactToSmalltalk extends MessageListener {
      * @param message {Message}
      */
     execute(message) {
-        if(!message.guild && message.author.id !== message.client.user.id) {
-            reactTo(message, message.client.user.id);
-            return;
-        }
-        if(message.author.id === message.client.user.id || isIgnored)
-            return;
-        for(let user of message.mentions.users) {
-            if(user[0] === message.client.user.id) {
+        dbClient.getTextChannel(message.channel.id).then(function(textChannel) {
+            let isIgnored = !!textChannel && !!textChannel.ignoreCommands;
+            
+            if(!message.guild && message.author.id !== message.client.user.id) {
                 reactTo(message, message.client.user.id);
                 return;
             }
-        }
+            if(message.author.id === message.client.user.id || isIgnored)
+                return;
+            for(let user of message.mentions.users) {
+                if(user[0] === message.client.user.id) {
+                    reactTo(message, message.client.user.id);
+                    return;
+                }
+            }
+        }).catch(logger.error);
     }
 }
 
