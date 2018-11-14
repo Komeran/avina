@@ -133,7 +133,6 @@ client.on('guildMemberUpdate', function(oldMember, newMember) {
 });
 
 client.on('guildMemberAdd', function(member) {
-    console.log(member.user.username + " just joined");
     let gid = member.guild.id;
 
     dbClient.getWelcomeTextChannelsByGuild(gid).then(function(channels) {
