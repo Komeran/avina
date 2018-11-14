@@ -52,11 +52,16 @@ Array.prototype.removeAll = function(target) {
  * @static
  */
 const executeListeners = function(event, ...args) {
-    if(!listeners[event] || listeners[event].length === 0)
-        return;
-    listeners[event].forEach(function(listener) {
-        listener.execute(...args);
-    });
+    try {
+        if (!listeners[event] || listeners[event].length === 0)
+            return;
+        listeners[event].forEach(function (listener) {
+            listener.execute(...args);
+        });
+    }
+    catch(e) {
+        logger.error(e);
+    }
 };
 
 /**
