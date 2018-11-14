@@ -37,8 +37,8 @@ class SetWelcomeMsg extends BaseCommand {
         }
 
         let command = "!setwelcomemsg";
-        let welcomeMsg = message.content.substring(command.length, message.content.length);
-        logger.error(welcomeMsg);
+        let welcomeMsg = message.content.substring(command.length+1, message.content.length);
+        logger.error(message.cleanContent);
 
         let gid = message.guild.id;
 
