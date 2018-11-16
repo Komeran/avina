@@ -23,9 +23,11 @@ dbConnection.connect(function(err) {
 
     console.log("Testing...");
 
-    console.log("Setting to: 🇬");
+    let testString = decodeURI(encodeURI("🇬"));
 
-    query("UPDATE t_textchannels SET t_welcomeMessage = '" + decodeURIComponent(escape("🇬")) + "' WHERE t_snowflake = '478920624509550602';").then(function() {
+    console.log("Setting to:", testString);
+
+    query("UPDATE t_textchannels SET t_welcomeMessage = '" + testString + "' WHERE t_snowflake = '478920624509550602';").then(function() {
         query("SELECT * FROM t_textchannels WHERE t_snowflake = '478920624509550602';").then(function(results) {
             if(results) {
                 results.forEach(function(channel) {
