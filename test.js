@@ -25,13 +25,11 @@ dbConnection.connect(function(err) {
 
     console.log("Setting to: 🇬");
 
-    query("UPDATE t_textchannels SET t_welcomeMessage = '🇬' WHERE t_snowflake = '478920624509550602';").then(function() {
+    query("UPDATE t_textchannels SET t_welcomeMessage = '" + decodeURIComponent(escape("🇬")) + "' WHERE t_snowflake = '478920624509550602';").then(function() {
         query("SELECT * FROM t_textchannels WHERE t_snowflake = '478920624509550602';").then(function(results) {
             if(results) {
-                //let channels = [];
                 results.forEach(function(channel) {
                     console.log("Welcome Message:", channel.t_welcomeMessage, "[" + channel.t_welcomeMessage.length + "]");
-                    //channels.push(new TextChannel(channel.t_snowflake, channel.t_welcomeMessage, tinyIntToBool(channel.t_ignorecommands), tinyIntToBool(channel.t_updatewarframeversion), tinyIntToBool(channel.t_notifywarframealerts), channel.t_g_guild));
                 });
                 return;
             }
