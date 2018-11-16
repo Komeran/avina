@@ -26,7 +26,7 @@ class SendWelcomeMessages extends JoinGuildListener {
                     channelsToDelete.push(channel);
                     continue;
                 }
-                discordChannel.send('<@' + member.id + '>, ' + channel.welcomeMessage);
+                discordChannel.send('<@' + member.id + '>, ' + decodeURI(channel.welcomeMessage));
             }
             if(channelsToDelete.length > 0)
                 dbClient.deleteTextChannels(...channelsToDelete).catch(logger.error);
