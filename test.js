@@ -27,18 +27,21 @@ dbConnection.connect(function(err) {
 
     console.log("Setting to:", testString);
 
-    query("UPDATE t_textchannels SET t_welcomeMessage = '" + testString + "' WHERE t_snowflake = '478920624509550602';").then(function() {
-        query("SELECT * FROM t_textchannels WHERE t_snowflake = '478920624509550602';").then(function(results) {
+
+        query("SELECT * FROM t_textchannels WHERE t_snowflake = '376105297057677322';").then(function(results) {
             if(results) {
+                let encodedMsgs = [];
                 results.forEach(function(channel) {
-                    let wmsg = decodeURI(channel.t_welcomeMessage);
+                    encodedMsgs.push(encodeURI(channel.t_welcomeMessage));
                     console.log("Welcome Message:", wmsg, "[" + wmsg.length + "]");
                 });
+                query("UPDATE t_textchannels SET t_welcomeMessage = '" + encodeURI(encodedMsgs[0]) + "' WHERE t_snowflake = '376105297057677322';").then(function() {
+                    console.log("DONE");
+                }).catch(console.error);
                 return;
             }
             console.log("No results!");
         }).catch(console.error);
-    }).catch(console.error);
 
 
 });
