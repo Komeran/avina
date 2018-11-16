@@ -57,22 +57,19 @@ let commands = require('./util/commands.js');
 // Load continuous behaviours
 let continuous = require('./util/continuous.js');
 
+// Client is ready
 client.on('ready', () => {
 	logger.info('I am ready!');
-	continuous.executeListeners('ready');
+	//continuous.executeListeners('ready');
 });
 
-client.on('message', message => {
-    continuous.executeListeners('message', message);
-});
+let events = require("./util/botEvents.json");
 
-client.on('guildMemberUpdate', function(oldMember, newMember) {
-    continuous.executeListeners('guildMemberUpdate', oldMember, newMember);
-});
-
-client.on('guildMemberAdd', function(member) {
-    continuous.executeListeners('guildMemberAdd', member);
-});
+for(let event of events) {
+    client.on(event, function() {
+        continuous.executeListeners(event, ...arguments);
+    });
+}
 
 client.login(auth.token);
 // End Setup Discord client
