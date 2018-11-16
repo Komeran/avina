@@ -23,7 +23,7 @@ dbConnection.connect(function(err) {
 
     console.log("Testing...");
 
-    let testString = decodeURI(encodeURI("🇬"));
+    let testString = encodeURI("Test String 🇬");
 
     console.log("Setting to:", testString);
 
@@ -31,7 +31,8 @@ dbConnection.connect(function(err) {
         query("SELECT * FROM t_textchannels WHERE t_snowflake = '478920624509550602';").then(function(results) {
             if(results) {
                 results.forEach(function(channel) {
-                    console.log("Welcome Message:", channel.t_welcomeMessage, "[" + channel.t_welcomeMessage.length + "]");
+                    let wmsg = decodeURI(channel.t_welcomeMessage);
+                    console.log("Welcome Message:", wmsg, "[" + wmsg.length + "]");
                 });
                 return;
             }
