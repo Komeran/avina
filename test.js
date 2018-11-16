@@ -33,7 +33,6 @@ dbConnection.connect(function(err) {
                 let encodedMsgs = [];
                 results.forEach(function(channel) {
                     encodedMsgs.push(encodeURI(channel.t_welcomeMessage));
-                    console.log("Welcome Message:", wmsg, "[" + wmsg.length + "]");
                 });
                 query("UPDATE t_textchannels SET t_welcomeMessage = '" + encodeURI(encodedMsgs[0]) + "' WHERE t_snowflake = '376105297057677322';").then(function() {
                     console.log("DONE");
