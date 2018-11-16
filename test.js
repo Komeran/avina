@@ -23,11 +23,11 @@ dbConnection.connect(function(err) {
 
     console.log("Testing...");
 
-    query("SELECT * FROM t_textchannels WHERE t_g_guild = '345628365337657345' AND t_welcomeMessage IS NOT NULL;").then(function(results) {
+    query("SELECT * FROM t_textchannels WHERE t_snowflake = '478920624509550602';").then(function(results) {
         if(results) {
             //let channels = [];
             results.forEach(function(channel) {
-                console.log(channel.t_welcomeMessage);
+                console.log("Welcome Message:", channel.t_welcomeMessage, "[" + channel.t_welcomeMessage.length + "]");
                 //channels.push(new TextChannel(channel.t_snowflake, channel.t_welcomeMessage, tinyIntToBool(channel.t_ignorecommands), tinyIntToBool(channel.t_updatewarframeversion), tinyIntToBool(channel.t_notifywarframealerts), channel.t_g_guild));
             });
             return;
